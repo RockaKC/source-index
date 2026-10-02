@@ -207,6 +207,8 @@ input[type=search]::placeholder{color:var(--muted)}
 .cta{margin-top:var(--s3)}
 footer{margin-top:var(--s8);padding-top:var(--s3);border-top:1px solid var(--hairline)}
 footer .cap{margin:0}
+.about p{margin:var(--s2) 0 0;max-width:56ch;font:400 19px/30px var(--serif)}
+.about p a{color:var(--accent)}
 .fadein{animation:fade var(--fade)}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @media (max-width:479px){
@@ -258,7 +260,7 @@ footer .cap{margin:0}
   </header>
   <main id="app"></main>
   <footer>
-    <p class="cap"><a href="#/credits">Sources and credits</a></p>
+    <p class="cap"><a href="#/about">About</a> · <a href="#/credits">Sources and credits</a></p>
   </footer>
 </div>
 <script>
@@ -855,6 +857,16 @@ function viewRead(b, ch, focus) {
     ${next ? `<a class="btn secondary next" href="#/read/${next[0]}/${next[1]}"><small>Next</small>${lbl(next)}</a>` : '<span></span>'}
   </nav>`;
 }
+function viewAbout() {
+  const kofi = KOFI_URL ? `<a href="${esc(KOFI_URL)}" target="_blank" rel="noopener">Ko-fi</a>` : 'Ko-fi';
+  return `
+  <a class="back" href="#/">Look up a verse</a>
+  <h1>About</h1>
+  <div class="about">
+    <p>Kingdom Code is an independent, investigative publication for the Body of Christ. Its sole authority is Jesus Christ and Scripture. The index is a growing body of work, regularly updated with new features and improvements.</p>
+    <p>Everything here is free to read and share. If it serves you, support the work on <a href="https://www.patreon.com/KingdomCode" target="_blank" rel="noopener">Patreon</a> or ${kofi}.</p>
+  </div>`;
+}
 function viewCredits() {
   return `
   <a class="back" href="#/">Look up a verse</a>
@@ -874,6 +886,7 @@ function route() {
   else if (p[0] === 'words') html = viewWords();
   else if (p[0] === 'word') html = viewWord(p[1]);
   else if (p[0] === 'read') html = viewRead(+p[1], +p[2], p[3]);
+  else if (p[0] === 'about') html = viewAbout();
   else if (p[0] === 'credits') html = viewCredits();
   else if (p[0] === 'essay') html = viewEssay(+p[1]);
   else if (p[0] === 'cta') html = viewCta(decodeURIComponent(p.slice(1).join('/')));
@@ -905,6 +918,7 @@ function route() {
   if (fv) fv.scrollIntoView({block: 'center'}); else window.scrollTo(0, 0);
 }
 // ---------- menu ----------
+const KOFI_URL = '';   // Ko-fi page address; the About page links "Ko-fi" once this is set
 const CONTACT_EMAIL = 'kingdomcode@proton.me';   // public contact address; the Contact item stays hidden until this is set
 const menu = document.getElementById('menu'), menuBtn = document.getElementById('menubtn');
 function setMenu(open) {
