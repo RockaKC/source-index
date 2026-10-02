@@ -345,9 +345,14 @@ function findBook(raw) {
   return hits.length === 1 ? hits[0] : null;
 }
 function parseRef(q) {
-  const m = q.trim().toLowerCase().replace(/\./g,'').match(/^((?:[123]\s*)?[a-z][a-z\s]*?)\s*(?:(\d+)(?:\s*[:]\s*(\d+))?)?$/);
+  const m = q.trim().toLowerCase().replace(/\./g,'').match(/^((?:[123]\s*)?[a-z][a-z\s]*?)\s*(?:(\d+)(?:\s*[:]\s*(\d+)(?:\s*[-–—]\s*(\d*))?)?)?$/);
   if (!m) return null; const b = findBook(m[1]); if (!b) return null;
-  return {b, ch: m[2] ? +m[2] : null, v: m[3] ? +m[3] : null};
+  return {b, ch: m[2] ? +m[2] : null, v: m[3] ? +m[3] : null, ve: m[4] ? +m[4] : null};
+}
+function rangeRef(b, ch, vs, ve) {      // typed English range -> [chapter, first, last] in the indexed numbering, or null
+  if (!(ve > vs)) return null;
+  const a = mapRef(b, ch, vs), z = mapRef(b, ch, ve);
+  return a[0] === z[0] && z[1] > a[1] ? [a[0], a[1], z[1]] : null;
 }
 function go(q) {
   q = q.trim(); if (!q) return;
@@ -355,7 +360,11 @@ function go(q) {
   const wd = !r && findWord(q);
   if (wd) { location.hash = '#/word/' + wd.slug; return; }
   if (r) {
-    if (r.ch && r.v) { const m = mapRef(r.b, r.ch, r.v); location.hash = `#/verse/${r.b}/${m[0]}/${m[1]}`; }
+    if (r.ch && r.v) {
+      const rg = r.ve && rangeRef(r.b, r.ch, r.v, r.ve);
+      if (rg) location.hash = `#/range/${r.b}/${rg[0]}/${rg[1]}/${rg[2]}`;
+      else { const m = mapRef(r.b, r.ch, r.v); location.hash = `#/verse/${r.b}/${m[0]}/${m[1]}`; }
+    }
     else if (r.ch) { const m = mapRef(r.b, r.ch, null); location.hash = chapterText(r.b, m[0]) ? `#/read/${r.b}/${m[0]}` : `#/book/${D.bookEntry[r.b]}`; }
     else location.hash = `#/book/${D.bookEntry[r.b]}`;
   } else location.hash = '#/search/' + encodeURIComponent(q);
@@ -379,7 +388,7 @@ function suggest(raw) {
     return {label: `${bname(b)} ${ch}:${v}${e ? ` (English ${e[0]}:${e[1]})` : ''}`, meta: n ? `Verse \u00b7 ${plural(n,'essay')}` : 'Verse', href: `#/verse/${b}/${ch}/${v}`};
   };
   const bookOpt = b => { const n = essayCount(b); return {label: bname(b), meta: n ? `Book \u00b7 ${plural(n,'essay')}` : 'Book', href: `#/book/${D.bookEntry[b]}`}; };
-  const m = q.match(/^((?:[123]\s*)?[a-z][a-z\s]*?)\s*(?:(\d+)(?:\s*:\s*(\d*))?)?$/);
+  const m = q.match(/^((?:[123]\s*)?[a-z][a-z\s]*?)\s*(?:(\d+)(?:\s*:\s*(\d*)(?:\s*[-–—]\s*(\d*))?)?)?$/);
   let bookHits = [];
   if (m) {
     const key = m[1].replace(/[^a-z0-9]/g, ''), ch = m[2], vp = m[3];
@@ -387,7 +396,10 @@ function suggest(raw) {
     const exact = bookHits.find(b => (aliasKeys[b] || []).some(k => k === key));
     const target = exact != null ? exact : (bookHits.length === 1 ? bookHits[0] : null);
     if (target != null && ch !== undefined) {
-      if (target === PSALMS && vp) {                       // typed English psalm verse -> Septuagint verse
+      const rg = vp && m[4] ? rangeRef(target, +ch, +vp, +m[4]) : null;
+      if (rg) add({label: `${bname(target)} ${ch}:${vp}\u2013${m[4]}`, meta: 'Passage \u00b7 range', href: `#/range/${target}/${rg[0]}/${rg[1]}/${rg[2]}`});
+      else if (m[4] !== undefined && vp) { const lc = mapRef(target, +ch, +vp); if (verseText(target, lc[0], lc[1])) add(verseOpt(target, lc[0], lc[1])); }
+      else if (target === PSALMS && vp) {                       // typed English psalm verse -> Septuagint verse
         const mm = mapRef(target, +ch, +vp);
         if (verseText(target, mm[0], mm[1])) add(verseOpt(target, mm[0], mm[1]));
       } else {
@@ -597,6 +609,29 @@ function viewVerse(b, ch, v) {
   ${keepReading(ids.slice(0,3), 2)}
   ${sib.length ? `<h2>More from ${esc(bname(b))} ${ch}</h2><ul class="chips">${sib.map(x => `<li><a class="chip" href="#/verse/${b}/${ch}/${x}" aria-label="${esc(bname(b))} ${ch}:${x}">${ch}:${x}</a></li>`).join('')}</ul>` : ''}`;
 }
+function viewRange(b, ch, vs, ve) {
+  if (!D.books[b] || !(ve > vs) || ve - vs > 60) return viewMissing();
+  const score = {}, cited = [];
+  for (let v = vs; v <= ve; v++) { const ps = ((D.verses[b] || {})[ch] || {})[v]; if (!ps) continue; cited.push(v); ps.forEach(p => { score[p] = (score[p] || 0) + 1; }); }
+  const ids = rank(Object.keys(score).map(Number)).sort((a,c) => score[c] - score[a]);
+  const label = `${bname(b)} ${ch}:${vs}\u2013${ve}`, n = ve - vs + 1;
+  const card = textCard(b, ch, vs, ve, label);
+  const more = n > 4 ? `<p class="cap" style="margin-top:8px">Showing the first 4 of ${n} verses. <a href="#/read/${b}/${ch}/${vs}" style="color:var(--accent)">Read the full passage</a>.</p>` : '';
+  const list = ids.length ? `<ul class="list">${ids.slice(1).map(pid => `<li class="piece">${seriesCap(pid)}
+    <div class="t"><a ${link(pid)}>${esc(P[pid][0])}</a></div><p class="cap">${plural(score[pid],'verse')} in this passage \u00b7 ${meta(pid)}${srcLink(pid)}</p></li>`).join('')}</ul>` : '';
+  const main = ids.length
+    ? `<h2>Start here</h2><div style="margin-top:16px">${feature(ids[0])}</div><p class="cap" style="margin-top:8px">Cites ${plural(score[ids[0]],'verse')} in this passage.</p>
+       ${ids.length > 1 ? `<h2>Also quote this passage</h2><div class="card">${list}</div>` : ''}`
+    : `<h2>Not in the index yet</h2><div class="card" style="margin-top:16px"><p style="margin:0">No essay in this index quotes a verse in this passage yet.</p></div>`;
+  const chips = cited.length ? `<h2>Cited verses in this passage</h2><ul class="chips">${cited.map(v => `<li><a class="chip" href="#/verse/${b}/${ch}/${v}" aria-label="${esc(bname(b))} ${ch}:${v}, ${plural(D.verses[b][ch][v].length,'essay')}">${ch}:${v}</a></li>`).join('')}</ul>` : '';
+  return `
+  <a class="back" href="#/book/${D.bookEntry[b]}">${esc(bname(b))}</a>
+  <h1>${esc(label)}</h1>
+  ${card}${more}
+  ${main}
+  ${chips}
+  ${keepReading(ids.slice(0,3), 2)}`;
+}
 function viewSearch(q) {
   const words = q.toLowerCase().split(/\s+/).filter(Boolean);
   const hits = Object.keys(P).filter(pid => P[pid] && words.every(w => P[pid][0].toLowerCase().includes(w))).sort((a,b) => P[b][5]-P[a][5]);
@@ -759,6 +794,7 @@ function route() {
   else if (p[0] === 'cta') html = viewCta(decodeURIComponent(p.slice(1).join('/')));
   else if (p[0] === 'book') html = viewBook(+p[1]);
   else if (p[0] === 'verse') html = viewVerse(+p[1], +p[2], +p[3]);
+  else if (p[0] === 'range') html = viewRange(+p[1], +p[2], +p[3], +p[4]);
   else if (p[0] === 'search') html = viewSearch(decodeURIComponent(p.slice(1).join('/')));
   else html = viewMissing();
   app.innerHTML = `<div class="fadein">${html}</div>`;
