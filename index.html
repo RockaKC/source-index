@@ -93,7 +93,6 @@ header{display:flex;align-items:center;justify-content:space-between;gap:var(--s
 .text sup{font:600 11px/1 var(--sans);color:var(--muted);margin-right:4px;vertical-align:super}
 .text a.vv{display:block;margin-left:-14px;padding:2px 0 2px 11px;border-left:3px solid var(--accent);color:inherit;text-decoration:none;border-radius:0 6px 6px 0;transition:background var(--fade)}
 .text a.vv:hover{background:var(--tint)}
-.text a.vv .cnt{display:block;margin-top:2px;font:600 13px/18px var(--sans);color:var(--accent)}
 .text .f{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
 .endnav{display:grid;grid-template-columns:1fr 1fr;gap:var(--s1);margin-top:24px}
 .endnav .btn{width:100%;height:auto;min-height:56px;padding:8px 12px;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;line-height:20px}
@@ -782,7 +781,7 @@ function viewRead(b, ch, focus) {
   const verses = chap.map(([v, tx]) => {
     const num = typeof v === 'number', n = num && hasVerse(b, ch, v) ? D.verses[b][ch][v].length : 0;
     const f = focus && String(focus) === String(v) ? ' f' : '';
-    if (n) return `<p id="v${v}"><a class="vv${f}" href="#/verse/${b}/${ch}/${v}" aria-label="${esc(bname(b))} ${ch}:${v}, cited in ${plural(n,'essay')}. Open the verse."><sup>${v}</sup>${fmtText(b, tx)}<span class="cnt" aria-hidden="true">${plural(n,'essay')}</span></a></p>`;
+    if (n) return `<p id="v${v}"><a class="vv${f}" href="#/verse/${b}/${ch}/${v}" aria-label="${esc(bname(b))} ${ch}:${v}, cited in ${plural(n,'essay')}. Open the verse."><sup>${v}</sup>${fmtText(b, tx)}</a></p>`;
     return `<p id="v${v}"${f ? ' class="f"' : ''}><sup>${esc(String(v))}</sup>${fmtText(b, tx)}</p>`;
   }).join('');
   const prev = neighbour(b, ch, -1), next = neighbour(b, ch, 1);
