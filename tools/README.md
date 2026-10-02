@@ -24,6 +24,10 @@ Running it twice in a row changes nothing the second time.
 - A citation at a verse missing from the stored text (for example Acts 8:37, which the Berean Literal Bible omits) is still shown as a hit. The verse page lists the essay without verse text, and the report names each one so the database can be checked.
 - Raw view counts do not leave the database. The page gets a ranking order only.
 
+## English and Septuagint numbering
+
+The page converts typed English references to the Septuagint numbers the text uses, from `verse_map` in the database. The Psalms have a complete map. Other books have only the verses your published essays cite (dataset `kc_cited_remaps`), so the page marks those books as numbered differently from English Bibles and tells a reader who typed an unmapped number. A book's map is treated as complete only if its English chapters and verses run without gaps.
+
 ## What stays out of the repo
 
 The database file is never copied here (`.gitignore` blocks `*.db`). The exporter does not read the patron, pledge, income or identity tables. It stops if an email address or an unpublished item turns up in the output.
