@@ -1,0 +1,883 @@
+{
+ "_about": "Things that live only on the page, not in kc_v13.db. Edit here; the exporter reads this file. Nothing in this file may be private.",
+ "translation_labels": {
+  "LXX": "Septuagint",
+  "BLB": "Berean Literal Bible",
+  "CHARLES": "R. H. Charles"
+ },
+ "entries": {
+  "1": {
+   "name": "Genesis",
+   "extra": false
+  },
+  "2": {
+   "name": "Exodus",
+   "extra": false
+  },
+  "3": {
+   "name": "Leviticus",
+   "extra": false
+  },
+  "4": {
+   "name": "Numbers",
+   "extra": false
+  },
+  "5": {
+   "name": "Deuteronomy",
+   "extra": false
+  },
+  "6": {
+   "name": "Joshua",
+   "extra": false
+  },
+  "7": {
+   "name": "Judges",
+   "extra": false
+  },
+  "8": {
+   "name": "Ruth",
+   "extra": false
+  },
+  "9": {
+   "name": "1 Samuel and 2 Samuel",
+   "extra": false
+  },
+  "10": {
+   "name": "1 Kings and 2 Kings",
+   "extra": false
+  },
+  "11": {
+   "name": "1 Chronicles",
+   "extra": false
+  },
+  "12": {
+   "name": "2 Chronicles",
+   "extra": false
+  },
+  "13": {
+   "name": "Jubilees",
+   "extra": true
+  },
+  "14": {
+   "name": "Enoch",
+   "extra": true
+  },
+  "15": {
+   "name": "Ezra and Nehemiah",
+   "extra": false
+  },
+  "16": {
+   "name": "Ezra (2nd) and Ezra Sutuel",
+   "extra": true
+  },
+  "17": {
+   "name": "Tobit",
+   "extra": true
+  },
+  "18": {
+   "name": "Judith",
+   "extra": true
+  },
+  "19": {
+   "name": "Esther",
+   "extra": false
+  },
+  "20": {
+   "name": "1 Maccabees",
+   "extra": true
+  },
+  "21": {
+   "name": "2 Maccabees and 3 Maccabees",
+   "extra": true
+  },
+  "22": {
+   "name": "Job",
+   "extra": false
+  },
+  "23": {
+   "name": "Psalms",
+   "extra": false
+  },
+  "24": {
+   "name": "Proverbs",
+   "extra": false
+  },
+  "25": {
+   "name": "Tegsats",
+   "extra": true
+  },
+  "26": {
+   "name": "Wisdom",
+   "extra": true
+  },
+  "27": {
+   "name": "Ecclesiastes",
+   "extra": false
+  },
+  "28": {
+   "name": "Song of Songs",
+   "extra": false
+  },
+  "29": {
+   "name": "Isaiah",
+   "extra": false
+  },
+  "30": {
+   "name": "Jeremiah and Lamentations",
+   "extra": false
+  },
+  "31": {
+   "name": "Ezekiel",
+   "extra": false
+  },
+  "32": {
+   "name": "Daniel",
+   "extra": false
+  },
+  "33": {
+   "name": "Hosea",
+   "extra": false
+  },
+  "34": {
+   "name": "Amos",
+   "extra": false
+  },
+  "35": {
+   "name": "Micah",
+   "extra": false
+  },
+  "36": {
+   "name": "Joel",
+   "extra": false
+  },
+  "37": {
+   "name": "Obadiah",
+   "extra": false
+  },
+  "38": {
+   "name": "Jonah",
+   "extra": false
+  },
+  "39": {
+   "name": "Nahum",
+   "extra": false
+  },
+  "40": {
+   "name": "Habakkuk",
+   "extra": false
+  },
+  "41": {
+   "name": "Zephaniah",
+   "extra": false
+  },
+  "42": {
+   "name": "Haggai",
+   "extra": false
+  },
+  "43": {
+   "name": "Zechariah",
+   "extra": false
+  },
+  "44": {
+   "name": "Malachi",
+   "extra": false
+  },
+  "45": {
+   "name": "Sirach",
+   "extra": true
+  },
+  "46": {
+   "name": "Josephus son of Gorion",
+   "extra": true
+  },
+  "47": {
+   "name": "Matthew",
+   "extra": false
+  },
+  "48": {
+   "name": "Mark",
+   "extra": false
+  },
+  "49": {
+   "name": "Luke",
+   "extra": false
+  },
+  "50": {
+   "name": "John",
+   "extra": false
+  },
+  "51": {
+   "name": "Acts",
+   "extra": false
+  },
+  "52": {
+   "name": "Romans",
+   "extra": false
+  },
+  "53": {
+   "name": "1 Corinthians",
+   "extra": false
+  },
+  "54": {
+   "name": "2 Corinthians",
+   "extra": false
+  },
+  "55": {
+   "name": "Galatians",
+   "extra": false
+  },
+  "56": {
+   "name": "Ephesians",
+   "extra": false
+  },
+  "57": {
+   "name": "Philippians",
+   "extra": false
+  },
+  "58": {
+   "name": "Colossians",
+   "extra": false
+  },
+  "59": {
+   "name": "1 Thessalonians",
+   "extra": false
+  },
+  "60": {
+   "name": "2 Thessalonians",
+   "extra": false
+  },
+  "61": {
+   "name": "1 Timothy",
+   "extra": false
+  },
+  "62": {
+   "name": "2 Timothy",
+   "extra": false
+  },
+  "63": {
+   "name": "Titus",
+   "extra": false
+  },
+  "64": {
+   "name": "Philemon",
+   "extra": false
+  },
+  "65": {
+   "name": "Hebrews",
+   "extra": false
+  },
+  "66": {
+   "name": "1 Peter",
+   "extra": false
+  },
+  "67": {
+   "name": "2 Peter",
+   "extra": false
+  },
+  "68": {
+   "name": "1 John",
+   "extra": false
+  },
+  "69": {
+   "name": "2 John",
+   "extra": false
+  },
+  "70": {
+   "name": "3 John",
+   "extra": false
+  },
+  "71": {
+   "name": "James",
+   "extra": false
+  },
+  "72": {
+   "name": "Jude",
+   "extra": false
+  },
+  "73": {
+   "name": "Revelation",
+   "extra": false
+  },
+  "74": {
+   "name": "Sirate Tsion",
+   "extra": true
+  },
+  "75": {
+   "name": "Tizaz",
+   "extra": true
+  },
+  "76": {
+   "name": "Gitsew",
+   "extra": true
+  },
+  "77": {
+   "name": "Abtilis",
+   "extra": true
+  },
+  "78": {
+   "name": "1 Dominos",
+   "extra": true
+  },
+  "79": {
+   "name": "2 Dominos",
+   "extra": true
+  },
+  "80": {
+   "name": "Clement",
+   "extra": true
+  },
+  "81": {
+   "name": "Didascalia",
+   "extra": true
+  }
+ },
+ "exclude_piece_ids": {
+  "_note": "Published articles the current page leaves out (not essays, or held back). Quips are excluded by rule.",
+  "ids": [
+   61,
+   62,
+   91,
+   100,
+   116,
+   143,
+   997,
+   1337,
+   1338,
+   1339
+  ]
+ },
+ "series": {
+  "The Enoch Files": [
+   74,
+   78,
+   79,
+   84,
+   92,
+   98,
+   112,
+   115,
+   131,
+   134
+  ]
+ },
+ "guide_urls": {
+  "599": null,
+  "690": "https://www.patreon.com/KingdomCode/posts/spring-season-152465516",
+  "787": "https://kingdomcode.substack.com/p/summer-season-reading-guide",
+  "870": "https://www.patreon.com/posts/170800469"
+ },
+ "guide": [
+  "Free: the 81-Book Canon Reference Guide",
+  "https://www.patreon.com/KingdomCode/posts/81-book-canon-159174012"
+ ],
+ "conv": [
+  79,
+  82,
+  112,
+  84,
+  113,
+  83,
+  139,
+  138
+ ],
+ "paths": [
+  {
+   "id": "canon",
+   "q": "Why does my Bible have 66 books and Ethiopia's 81?",
+   "intro": "The question under everything else. Start with what the Bible in your hand is missing, then follow the canon back.",
+   "p": [
+    102,
+    74,
+    125
+   ]
+  },
+  {
+   "id": "skipped",
+   "q": "What do the passages the pulpit skips actually say?",
+   "intro": "The hard texts, read slowly and in order.",
+   "p": [
+    69,
+    98,
+    131
+   ]
+  },
+  {
+   "id": "ethiopia",
+   "q": "Who preserved the oldest Christian witness?",
+   "intro": "Ethiopia's side of church history, which the West rarely tells.",
+   "p": [
+    37,
+    45,
+    101
+   ]
+  },
+  {
+   "id": "prophecy",
+   "q": "Where did the prophecy charts come from?",
+   "intro": "The rapture timeline is younger than most people assume.",
+   "p": [
+    56,
+    90,
+    117
+   ]
+  },
+  {
+   "id": "collapse",
+   "q": "What is driving the collapse around us?",
+   "intro": "Modern systems, read against the oldest rebellion in Scripture.",
+   "p": [
+    84,
+    113,
+    107
+   ]
+  }
+ ],
+ "words": [
+  {
+   "slug": "virgin",
+   "title": "Almah, betulah, parthenos",
+   "lang": "Hebrew and Greek",
+   "forms": [
+    {
+     "t": "almah",
+     "l": "Hebrew",
+     "g": "A young woman of marriageable age (Masoretic text)."
+    },
+    {
+     "t": "betulah",
+     "l": "Hebrew",
+     "g": "The specific Hebrew word for virgin."
+    },
+    {
+     "t": "parthenos",
+     "l": "Greek",
+     "g": "Virgin. The Septuagint’s rendering of almah."
+    }
+   ],
+   "essay": 102,
+   "excerpt": [
+    "They did the same in Isaiah 7:14. The Masoretic Hebrew word is almah, a young woman of marriageable age. Not betulah, the specific Hebrew word for virgin. The Septuagint translated almah as parthenos, virgin. Matthew 1:23 quotes the Greek. The virgin birth as christological proof rests on the Septuagintal reading, not the Masoretic Hebrew."
+   ],
+   "verses": [
+    [
+     34,
+     7,
+     14,
+     14
+    ],
+    [
+     53,
+     1,
+     23,
+     23
+    ]
+   ],
+   "labels": [],
+   "en": "Young woman, or virgin",
+   "kw": [
+    "virgin",
+    "young woman",
+    "woman"
+   ]
+  },
+  {
+   "slug": "pierced",
+   "title": "Ka’ari and oruxan",
+   "lang": "Hebrew and Greek",
+   "forms": [
+    {
+     "t": "ka’ari",
+     "l": "Hebrew",
+     "g": "Like a lion (Masoretic text)."
+    },
+    {
+     "t": "oruxan",
+     "l": "Greek",
+     "g": "They dug, or they pierced (Septuagint)."
+    }
+   ],
+   "essay": 102,
+   "excerpt": [
+    "The Masoretic Hebrew does not say “they pierced.” It says “like a lion at my hands and my feet,” a construction with no functioning verb, a phrase that breaks grammatically and produces no coherent image. The word is ka’ari, like a lion. The verb “pierced” belongs to the Septuagint, where the Greek oruxan means “they dug” or “they pierced.”"
+   ],
+   "verses": [
+    [
+     28,
+     21,
+     17,
+     17
+    ]
+   ],
+   "labels": [
+    "Psalm 22:16 (21:17 in the Septuagint)"
+   ],
+   "en": "Like a lion, or they pierced",
+   "kw": [
+    "pierced",
+    "pierce",
+    "dug",
+    "lion"
+   ]
+  },
+  {
+   "slug": "strange-flesh",
+   "title": "Heteras",
+   "lang": "Greek",
+   "forms": [
+    {
+     "t": "heteras",
+     "l": "Greek",
+     "g": "Other, different, of another kind."
+    }
+   ],
+   "essay": 78,
+   "excerpt": [
+    "The Greek word heteras means “other, different, of another kind.” What kind? The same categorical difference Genesis 6 describes: human plus non-human."
+   ],
+   "verses": [
+    [
+     78,
+     1,
+     7,
+     7
+    ]
+   ],
+   "labels": [],
+   "en": "Other, of a different kind",
+   "kw": [
+    "strange flesh",
+    "other",
+    "different",
+    "flesh"
+   ]
+  },
+  {
+   "slug": "sorcery",
+   "title": "Pharmakeia",
+   "lang": "Greek",
+   "forms": [
+    {
+     "t": "pharmakeia",
+     "l": "Greek",
+     "g": "Sorcery. Literally the use of drugs or substances for spiritual purposes."
+    }
+   ],
+   "essay": 78,
+   "excerpt": [
+    "Pharmakeia, the Greek word for “sorcery” in Revelation 18, literally “the use of drugs/substances for spiritual purposes,” describes substance-based rewiring of human neurochemistry."
+   ],
+   "verses": [],
+   "labels": [
+    "Revelation 18"
+   ],
+   "en": "Sorcery",
+   "kw": [
+    "sorcery",
+    "drugs"
+   ]
+  },
+  {
+   "slug": "rib",
+   "title": "Tsela",
+   "lang": "Hebrew",
+   "forms": [
+    {
+     "t": "tsela",
+     "s": "צֵלָע",
+     "l": "Hebrew",
+     "g": "Does not always mean “rib.”"
+    }
+   ],
+   "essay": 155,
+   "excerpt": [
+    "The Hebrew word tsela does not always mean “rib.” No one serious disputes that. But words are not translated from dictionaries. They are translated from context."
+   ],
+   "verses": [
+    [
+     1,
+     2,
+     21,
+     22
+    ]
+   ],
+   "labels": [],
+   "en": "Rib, but not always",
+   "kw": [
+    "rib"
+   ]
+  },
+  {
+   "slug": "abomination",
+   "title": "To’evah",
+   "lang": "Hebrew",
+   "forms": [
+    {
+     "t": "to’evah",
+     "l": "Hebrew",
+     "g": "Abomination. A legal term, used in Leviticus 18:22."
+    }
+   ],
+   "essay": 14,
+   "excerpt": [
+    "They committed abominations: The Hebrew word to'evah—the same legal term used in Leviticus 18:22. Not the only charge, but absolutely part of the indictment."
+   ],
+   "verses": [
+    [
+     3,
+     18,
+     22,
+     22
+    ]
+   ],
+   "labels": [],
+   "en": "Abomination",
+   "kw": [
+    "abomination"
+   ]
+  },
+  {
+   "slug": "hell",
+   "title": "Sheol, Hades, Gehenna, Tartarus",
+   "lang": "Hebrew and Greek",
+   "forms": [
+    {
+     "t": "Sheol",
+     "l": "Hebrew",
+     "g": "The land of the dead."
+    },
+    {
+     "t": "Hades",
+     "l": "Greek",
+     "g": "The Septuagint’s word for Sheol."
+    },
+    {
+     "t": "Gehenna",
+     "l": "Greek",
+     "g": "One of four terms English renders with the same word."
+    },
+    {
+     "t": "Tartarus",
+     "l": "Greek",
+     "g": "Appears once, as a verb, in 2 Peter 2:4: a holding cell for the sinning angels."
+    }
+   ],
+   "essay": 189,
+   "excerpt": [
+    "Tartarus shows up exactly once, as a verb, when Peter says God cast the sinning angels down to hold them for judgment (2 Peter 2:4). He borrowed the word from Greek myth to describe a holding cell, not a headquarters.",
+    "Hades, in Greek, is what the Septuagint uses to translate Sheol. Same idea in a new language. The land of the dead, not a torture chamber with a warden.",
+    "English translators then used that single inherited word for Sheol, Hades, Gehenna, and Peter’s verb tartaroō. Four biblical terms entered the English imagination wearing the same name."
+   ],
+   "verses": [
+    [
+     73,
+     2,
+     4,
+     4
+    ]
+   ],
+   "labels": [],
+   "en": "Four words English renders as “hell”",
+   "kw": [
+    "hell",
+    "dead",
+    "land of the dead",
+    "grave"
+   ]
+  },
+  {
+   "slug": "soul",
+   "title": "Nephesh and psyche",
+   "lang": "Hebrew and Greek",
+   "forms": [
+    {
+     "t": "nephesh",
+     "l": "Hebrew",
+     "g": "The whole living creature: breath and blood and ground held together."
+    },
+    {
+     "t": "psyche",
+     "l": "Greek",
+     "g": "In Platonic philosophy, the immortal rational soul housed in corruptible matter."
+    }
+   ],
+   "essay": 119,
+   "excerpt": [
+    "The vocabulary swap was subtle and devastating. The Hebrew nephesh became the Greek psyche. On paper it looks like straightforward translation. In practice it was category replacement. Nephesh in Hebrew is the whole living creature, breath and blood and ground held together. Psyche in Platonic philosophy is the immortal rational soul temporarily housed in corruptible matter. When the Septuagint translated nephesh as psyche, it baptized the Platonic frame into the Hebrew text."
+   ],
+   "verses": [],
+   "labels": [],
+   "en": "Soul: the living creature, or the immortal soul",
+   "kw": [
+    "soul",
+    "living creature",
+    "breath"
+   ]
+  },
+  {
+   "slug": "tyndale",
+   "title": "Ekklesia, presbyteros, metanoia",
+   "lang": "Greek",
+   "forms": [
+    {
+     "t": "ekklesia",
+     "l": "Greek",
+     "g": "Tyndale rendered it “congregation,” not “church.”"
+    },
+    {
+     "t": "presbyteros",
+     "l": "Greek",
+     "g": "Tyndale rendered it “elder,” not “priest.”"
+    },
+    {
+     "t": "metanoia",
+     "l": "Greek",
+     "g": "Tyndale rendered it “repentance,” not “penance.”"
+    }
+   ],
+   "essay": 129,
+   "excerpt": [
+    "The translation itself was not neutral work. It never is. Every translator makes choices, and Tyndale’s choices were arguments. He rendered the Greek ekklesia as “congregation” rather than “church.” He rendered presbyteros as “elder” rather than “priest.” He rendered metanoia as “repentance” rather than “penance.” Each of these choices collapsed a piece of the institutional scaffolding. Penance required a priest. A priest required a hierarchy. A hierarchy required Rome."
+   ],
+   "verses": [],
+   "labels": [],
+   "en": "Congregation, elder, repentance",
+   "kw": [
+    "church",
+    "congregation",
+    "elder",
+    "priest",
+    "repentance",
+    "penance"
+   ]
+  },
+  {
+   "slug": "oath",
+   "title": "Cherem",
+   "lang": "Hebrew",
+   "forms": [
+    {
+     "t": "cherem",
+     "l": "Hebrew",
+     "g": "A binding curse. The oath the Watchers swore on Mount Hermon."
+    }
+   ],
+   "essay": 112,
+   "excerpt": [
+    "The conflict began in the heavens. Two hundred celestial beings assigned to watch humanity abandoned their posts. Not impulsively. Strategically. They assembled on Mount Hermon. They swore a mutual oath, Hebrew: cherem, a binding curse. They knew the cost. They accepted it anyway."
+   ],
+   "verses": [
+    [
+     16,
+     6,
+     4,
+     6
+    ]
+   ],
+   "labels": [],
+   "en": "A binding curse",
+   "kw": [
+    "oath",
+    "curse",
+    "binding curse"
+   ]
+  },
+  {
+   "slug": "porneia",
+   "title": "Porneia",
+   "lang": "Greek",
+   "forms": [
+    {
+     "t": "porneia",
+     "l": "Greek",
+     "g": "Sexual immorality. Paul uses it in 1 Corinthians 5:1 to condemn incest."
+    }
+   ],
+   "essay": 130,
+   "excerpt": [
+    "Progressive Christianity claims porneia only meant temple prostitution or abusive relationships. But Paul uses the same word in 1 Corinthians 5:1 to explicitly condemn incest, a man sleeping with his father’s wife. If you trust the Gospel writers on Jesus’ use of porneia, you are trusting the same transmission stream that preserved Paul’s clarifications."
+   ],
+   "verses": [
+    [
+     59,
+     5,
+     1,
+     1
+    ]
+   ],
+   "labels": [],
+   "en": "Sexual immorality",
+   "kw": [
+    "sexual immorality",
+    "immorality"
+   ]
+  },
+  {
+   "slug": "cush",
+   "title": "Cush",
+   "lang": "Hebrew",
+   "forms": [
+    {
+     "t": "Cush",
+     "l": "Hebrew",
+     "g": "The historical land of Ethiopia, a biblical synecdoche for Africa."
+    }
+   ],
+   "essay": 38,
+   "excerpt": [
+    "While Western prophecy teachers fixate on Tel Aviv, the Bible consistently points to another land as the focus of God’s end-time gathering. The prophetic finger points to the land “beyond the rivers of Cush”—the historical land of Ethiopia, a biblical synecdoche for Africa."
+   ],
+   "verses": [
+    [
+     47,
+     3,
+     10,
+     10
+    ],
+    [
+     34,
+     18,
+     1,
+     2
+    ]
+   ],
+   "labels": [],
+   "en": "Ethiopia",
+   "kw": [
+    "ethiopia",
+    "africa"
+   ]
+  }
+ ],
+ "notes": {
+  "16:1:9": {
+   "text": "Jude quotes this passage.",
+   "to": [
+    78,
+    1,
+    14
+   ],
+   "label": "Jude 1:14"
+  },
+  "1:6:2": {
+   "text": "Brenton’s footnote: Alexandrinus reads “angels of God.”"
+  }
+ },
+ "credits": [
+  {
+   "what": "Old Testament",
+   "text": "Brenton Septuagint (1851), public domain, from eBible.org. Words in grey were supplied by the translator."
+  },
+  {
+   "what": "New Testament",
+   "text": "Berean Literal Bible, public domain (CC0 dedication, April 30, 2023). Text from the publisher’s current draft."
+  },
+  {
+   "what": "1 Enoch",
+   "text": "R. H. Charles translation (1917), public domain. Brackets and parentheses are Charles’s own marks for interpolations and words added for sense."
+  },
+  {
+   "what": "Psalm numbers",
+   "text": "Psalms use the Septuagint numbering, which most English Bibles do not. The English number is shown beside it."
+  }
+ ]
+}
