@@ -15,7 +15,9 @@ itself is never copied into the repo (see .gitignore).
 
 Publication rule: only articles with status 'published' appear. Draft citations never
 reach the page. Citations the database marks resolution='review' (unconfirmed numbering)
-and those with no house reference are left out until they are resolved.
+and those with no house reference are left out until they are resolved. A citation at a
+verse the stored text does not have is still shown as a hit (the verse page lists the
+essay without verse text) and is named in the report.
 
 Hand-kept page content (question paths, word entries, display names, ...) lives in
 tools/curated.json.
@@ -144,7 +146,7 @@ def build(con, cur, warn):
     verses = collections.defaultdict(lambda: collections.defaultdict(lambda: collections.defaultdict(set)))
     skipped = collections.Counter()
     stored = {(b, ch, v) for b, ch, v in q("select book_id, chapter, verse from verses")}
-    phantom = collections.defaultdict(set)      # (essay, citation as written) -> verses with no stored text
+    phantom = collections.defaultdict(set)      # (essay, citation as written) -> verses with no stored text (still shown as hits)
     for pid, bk, hs, he, res, raw in q("""select c.node_id, c.book_id, c.house_start, c.house_end, c.resolution, c.raw
                                       from citations c where c.house_start is not null"""):
         if pid not in pieces:
@@ -162,7 +164,6 @@ def build(con, cur, warn):
             for v in range(first, last + 1):
                 if (bk, ch, v) not in stored:
                     phantom[(pid, raw)].add((bk, ch, v))
-                    continue
                 verses[bk][ch][v].add(pid)
     D["verses"] = {str(b): {str(ch): {str(v): sorted(ps) for v, ps in sorted(vs.items())}
                             for ch, vs in sorted(chs.items())} for b, chs in sorted(verses.items())}
@@ -297,7 +298,7 @@ def main():
     for pid, title, kind in info["left_out_published"]:
         print("      %5d  %s%s" % (pid, title[:60], " [%s]" % kind if kind else ""))
     if info["phantom"]:
-        print("  citations that point at verses missing from the stored text (dropped; fix in the database):")
+        print("  citations at verses missing from the stored text (shown as hits with no verse text; check the database):")
         for pid, raw, n in info["phantom"]:
             print("      %5d  %-32s %d verse%s   %s" % (pid, raw, n, "" if n == 1 else "s", D["pieces"][str(pid)][0][:40]))
     print("Compared with the data currently in index.html:")

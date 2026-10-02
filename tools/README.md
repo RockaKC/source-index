@@ -21,7 +21,7 @@ Running it twice in a row changes nothing the second time.
 - Only articles with status `published` appear. Draft citations never reach the page.
 - Quips are left out. `tools/curated.json` lists a few other published articles the page holds back.
 - Citations the database marks `review` (unconfirmed numbering) are left out until resolved.
-- A citation that points at a verse missing from the stored text is dropped and listed in the report, so it can be fixed in the database.
+- A citation at a verse missing from the stored text (for example Acts 8:37, which the Berean Literal Bible omits) is still shown as a hit. The verse page lists the essay without verse text, and the report names each one so the database can be checked.
 - Raw view counts do not leave the database. The page gets a ranking order only.
 
 ## What stays out of the repo
