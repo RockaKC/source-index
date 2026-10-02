@@ -206,15 +206,38 @@ def build(con, cur, warn):
     D["TR"] = {str(b): labels[trans_of[b]] for b in sorted(text_rows)}
     D["SP"] = {"%d:%d:%d" % (b, ch, v): cb for b, ch, v, cb in q(
         "select book_id, chapter, verse, carried_by from verse_spans order by 1, 2, 3")}
+    # English -> Septuagint verse map, per book: PM[book][engChapter][engVerse] = [lxxChapter, lxxVerse]
+    # and the reverse label table PE[book]["lxxChapter:lxxVerse"] = [engChapter, engVerse].
+    # Books without rows in verse_map are read as "same numbering".
     PM, PE = collections.OrderedDict(), collections.OrderedDict()
     for fr, to in q("select from_ref, to_ref from verse_map where from_system = 'ENG' and to_system = 'LXX' order by id"):
         fb, fch, fv = split_ref(fr)
         tb, tch, tv = split_ref(to)
-        if fb != tb or fb != 28:
-            warn("verse_map row outside Psalms (book %d); the page only maps Psalms" % fb)
+        if fb != tb:
+            warn("verse_map row maps book %d to book %d; skipped" % (fb, tb))
             continue
-        PM.setdefault(str(fch), collections.OrderedDict())[str(fv)] = [tch, tv]
-        PE.setdefault("%d:%d" % (tch, tv), [fch, fv])
+        PM.setdefault(str(fb), collections.OrderedDict()).setdefault(str(fch), collections.OrderedDict())[str(fv)] = [tch, tv]
+        PE.setdefault(str(fb), collections.OrderedDict()).setdefault("%d:%d" % (tch, tv), [fch, fv])
+    # Safeguard: a partial map is worse than none. Typing an unmapped English verse would fall through to
+    # the same number in the Septuagint and land on the wrong verse. So a book's map ships only if its
+    # English side is complete: chapters run 1..N with none missing, and each chapter's verses run 1..M.
+    # (Septuagint verses with no English source, such as superscriptions, are fine: nobody types them.)
+    for bk in list(PM):
+        chs = sorted(int(c) for c in PM[bk])
+        gaps = [] if chs == list(range(1, chs[-1] + 1)) else ["chapters"]
+        for ch in chs:
+            vs = sorted(int(v) for v in PM[bk][str(ch)])
+            if vs != list(range(1, vs[-1] + 1)):
+                gaps.append("%d:?" % ch)
+        if gaps:
+            warn("verse map for %s has gaps (%s%s); not shipped, a partial map would mislead"
+                 % (books[int(bk)][0], ", ".join(gaps[:4]), "..." if len(gaps) > 4 else ""))
+            del PM[bk], PE[bk]
+            continue
+        dangling = sorted(t for t in (tuple(map(int, k.split(":"))) for k in PE[bk]) if (int(bk),) + t not in stored)
+        if dangling:
+            warn("verse map for %s points at %d verse(s) missing from the stored text, e.g. %s"
+                 % (books[int(bk)][0], len(dangling), ", ".join("%d:%d" % t for t in dangling[:3])))
     D["PM"], D["PE"] = PM, PE
     D["credits"] = cur["credits"]
     D["CC"] = {str(b): sorted(int(c) for c in bible[str(b)]) for b in sorted(text_rows)}
