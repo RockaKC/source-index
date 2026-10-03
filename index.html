@@ -343,19 +343,19 @@ const vrefLabel = ([b,ch,vs,ve]) => `${bname(b)} ${ch}:${vs}${ve > vs ? '\u2013'
 // ---------- scripture text ----------
 const T = D.T || {}, TR = D.TR || {}, SP = D.SP || {}, PM = D.PM || {}, PE = D.PE || {}, PD = D.PD || [];
 const PSALMS = +Object.keys(D.books).find(k => D.books[k][0] === 'Psalms');
-let BIBLE = window.__BIBLE__ || null, bibleP = null;
-function ensureBible() {
-  if (BIBLE) return Promise.resolve(BIBLE);
-  if (!bibleP) bibleP = fetch('bible.json').then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-    .then(j => (BIBLE = j)).catch(e => { bibleP = null; throw e; });
-  return bibleP;
+let BIBLE = window.__BIBLE__ || {}, bookP = {};   // BIBLE[book id] = that book's chapters, fetched from bible/<id>.json when first needed
+function ensureBook(b) {
+  if (BIBLE[b]) return Promise.resolve();
+  if (!bookP[b]) bookP[b] = fetch('bible/' + b + '.json').then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(j => { BIBLE[b] = j; }).catch(e => { delete bookP[b]; throw e; });
+  return bookP[b];
 }
-const chapterText = (b, ch) => (BIBLE && BIBLE[b] && BIBLE[b][ch]) || (T[b] || {})[ch] || null;
+const chapterText = (b, ch) => (BIBLE[b] && BIBLE[b][ch]) || (T[b] || {})[ch] || null;
 let deferTrack = false;               // a loading placeholder is not counted as a visit; the page that replaces it is
 function lazyText(b, ch, back, label, what) {   // chapters nobody cites are not inlined: fetch the text, then show the page
   if (!hasChapter(b, ch) || chapterText(b, ch)) return null;
   const want = location.hash; deferTrack = true;
-  ensureBible().then(() => { if (location.hash === want) route(); })
+  ensureBook(b).then(() => { if (location.hash === want) route(); })
     .catch(() => { const m = document.getElementById('loadmsg'); if (m) m.innerHTML = 'The Bible text could not load. Check your connection, then <a href="' + want + '">try again</a>.'; });
   return `${backLink(back)}<h1>${esc(label)}</h1><p class="lede" id="loadmsg" role="status">Loading the ${what}\u2026</p>`;
 }
@@ -914,7 +914,7 @@ function viewRead(b, ch, focus) {
   const chap = chapterText(b, ch);
   if (!chap) {
     const want = location.hash;
-    ensureBible().then(() => { if (location.hash === want) route(); })
+    ensureBook(b).then(() => { if (location.hash === want) route(); })
       .catch(() => { const m = document.getElementById('loadmsg'); if (m) m.innerHTML = 'The Bible text could not load. Check your connection, then <a href="' + want + '">try again</a>.'; });
     return `${backLink(`#/book/${D.bookEntry[b]}`)}<h1>${esc(bname(b))} ${ch}</h1><p class="lede" id="loadmsg" role="status">Loading the chapter\u2026</p>`;
   }

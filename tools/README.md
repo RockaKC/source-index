@@ -4,14 +4,14 @@ Rebuilds the site's data from the Kingdom Code SQLite database.
 
 ```
 python3 tools/export_site.py /path/to/kc_v13.db --check   # show what would change, write nothing
-python3 tools/export_site.py /path/to/kc_v13.db           # rebuild index.html data + bible.json
+python3 tools/export_site.py /path/to/kc_v13.db           # rebuild index.html data + bible/
 ```
 
 Needs Python 3 only. No packages.
 
 ## What it changes
 
-- `bible.json`: every verse of every book that has text.
+- `bible/<book id>.json`: every verse of one book, fetched by the page only when a reader opens a verse or chapter in a book no essay cites. Chapters essays cite are inlined in `index.html`. The old single `bible.json` is removed.
 - `index.html`: the single `const D = {...};` line. Nothing else in the file is touched.
 
 Running it twice in a row changes nothing the second time.
