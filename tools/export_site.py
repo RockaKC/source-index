@@ -71,6 +71,67 @@ def connect(path):
     return con
 
 
+def dictionary_entries(con, cur, books, warn):
+    """Dictionary text for the word entries the page links to a Strong's number (form["n"] in curated.json).
+
+    A key with a letter ("H738A") names one exact entry. A bare number ("H5315") names the main sense (the first
+    entry for that number) and also lists the other senses' glosses. Stops if any link does not resolve."""
+    keys = []
+    for w in cur["words"]:
+        for f in w["forms"]:
+            if f.get("n") and f["n"] not in keys:
+                keys.append(f["n"])
+    if not keys:
+        return {}, []
+    have = con.execute("select count(*) from lexicon").fetchone()[0]
+    if not have:
+        sys.exit("the word entries link to the dictionary, but this database has no lexicon rows; "
+                 "use kc_v16.db or later")
+    fixes = cur.get("lexicon_fixes", {}).get("fixes", [])
+    out, used, missing = collections.OrderedDict(), set(), []
+    for k in keys:
+        exact = con.execute("select id,language,strongs,lemma,transliteration,gloss,definition,dataset_id from lexicon "
+                            "where strongs = ?", (k,)).fetchall()
+        if exact:
+            row, others = exact[0], []
+        else:
+            rows = [r for r in con.execute("select id,language,strongs,lemma,transliteration,gloss,definition,dataset_id "
+                                           "from lexicon where strongs glob ? || '*' order by id", (k,))
+                    if re.fullmatch(re.escape(k) + r"[A-Za-z]?", r[2])]
+            if not rows:
+                missing.append(k)
+                continue
+            row, others = rows[0], rows[1:]
+        _, lang, key, lemma, translit, gloss, definition, ds = row
+        text = re.sub(r"(?m)^(_+|\u00a7)\s*", "", definition or "")   # the source's indent and etymology markers
+        for fk, wrong, right in fixes:
+            if fk == key:
+                if wrong not in text:
+                    warn("lexicon fix for %s no longer applies: %r not found" % (key, wrong))
+                text = text.replace(wrong, right)
+        seen, more = {gloss}, []
+        for r in others:
+            g = (r[5] or "")
+            g = g.split(": ", 1)[1] if ": " in g else g
+            if g and g not in seen:
+                seen.add(g)
+                more.append(g)
+        out[k] = {"k": key, "lang": lang, "l": lemma, "t": (translit or "").replace(".", ""), "g": gloss or "",
+                  "d": text, "m": more[:8]}
+        used.add(ds)
+    if missing:
+        sys.exit("these Strong's links do not resolve in the lexicon: " + ", ".join(missing))
+    credit = []
+    marks = ",".join("?" * len(used))
+    attrs = sorted({r[0] for r in con.execute("select attribution_text from datasets where id in (%s)" % marks, tuple(used))
+                    if r[0]})
+    if attrs:
+        credit = [{"what": "Hebrew and Greek dictionary entries",
+                   "text": " ".join(attrs) + " Entries are shown as supplied, with plain-text formatting and a small "
+                           "number of typographical corrections."}]
+    return out, credit
+
+
 def build(con, cur, warn):
     q = lambda sql, *a: con.execute(sql, a).fetchall()
     D = collections.OrderedDict()
@@ -241,7 +302,8 @@ def build(con, cur, warn):
                  % (books[int(bk)][0], len(dangling), ", ".join("%d:%d" % t for t in dangling[:3])))
     D["PM"], D["PE"] = PM, PE
     D["PD"] = sorted(partial)
-    D["credits"] = cur["credits"]
+    D["LX"], lex_credit = dictionary_entries(con, cur, books, warn)
+    D["credits"] = cur["credits"] + lex_credit
     D["CC"] = {str(b): sorted(int(c) for c in bible[str(b)]) for b in sorted(text_rows)}
     D["order"] = sorted(text_rows)
 
