@@ -28,6 +28,10 @@ Running it twice in a row changes nothing the second time.
 
 The page converts typed English references to the Septuagint numbers the text uses, from `verse_map` in the database. The Psalms have a complete map. Other books have only the verses your published essays cite (dataset `kc_cited_remaps`), so the page marks those books as numbered differently from English Bibles and tells a reader who typed an unmapped number. A book's map is treated as complete only if its English chapters and verses run without gaps.
 
+## Hebrew and Greek lexicon
+
+`tools/import_lexicon.py LEXICON_DIR kc_v15.db kc_v16.db` loads STEPBible's brief Hebrew and Greek lexicons (CC BY 4.0) into a new copy of the database: about 22,700 entries in the `lexicon` table, with the license, credit line and list of changes recorded in `datasets`. The input database is never modified, the output must not already exist, and the source files are not copied into this repository. Each entry is an extended Strong's key such as `H5315G`, so one base number can carry several senses. The site does not use it yet. When it does, "STEP Bible (www.STEPBible.org)" must be credited on the Sources and credits page.
+
 ## What stays out of the repo
 
 The database file is never copied here (`.gitignore` blocks `*.db`). The exporter does not read the patron, pledge, income or identity tables. It stops if an email address or an unpublished item turns up in the output.
