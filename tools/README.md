@@ -47,7 +47,7 @@ The page at `#/translations` shows the New Testament translation tier list from 
 
 ## Biographical pages
 
-`people` in `tools/curated.json` holds short profiles shown at `#/person/<slug>` (the first is `enoch`): a few hand-written sentences, the verses where the figure appears in the stored text, and a curated list of essays. They are not linked from the menu yet. The exporter stops if a verse is not fully in the stored text or an essay is not published on the page. Text is written and approved by the editor.
+`people` in `tools/curated.json` holds short profiles shown at `#/person/<slug>` (the first is `enoch`): a few hand-written sentences, the verses where the figure appears in the stored text, and a curated list of essays. They are listed at `#/people` (linked from the menu and the home page); each needs a one-line `line` for that list. The exporter stops if a verse is not fully in the stored text or an essay is not published on the page. Text is written and approved by the editor.
 
 ## What stays out of the repo
 
