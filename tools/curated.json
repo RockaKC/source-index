@@ -1147,6 +1147,126 @@
     74,
     82
    ]
+  },
+  {
+   "slug": "elijah",
+   "name": "Elijah",
+   "about": [
+    "Elijah is the prophet from Tishbe in Gilead who stood before Ahab and announced a drought. The Septuagint spells his name Eliu in the books of Kings and Elias in Malachi and Sirach, and the New Testament has Elijah. Second Kings ends his story without a death on record: a chariot of fire and a whirlwind take him up, and Elisha takes up his mantle. Malachi promises that he will be sent before the great and glorious day of the Lord. In Matthew 17, Jesus says both that Elijah comes and will restore all things, and that Elijah has already come, and Matthew says the disciples understood him to mean John the Baptist."
+   ],
+   "groups": [
+    {
+     "t": "The books of Kings",
+     "g": "He announces the drought to Ahab, calls fire down on the altar, hears the voice of a gentle breeze on the mountain, and is told to anoint Elisha as his successor.",
+     "refs": [
+      [
+       11,
+       17,
+       1,
+       1
+      ],
+      [
+       11,
+       18,
+       36,
+       38
+      ],
+      [
+       11,
+       19,
+       11,
+       12
+      ],
+      [
+       11,
+       19,
+       16,
+       16
+      ]
+     ]
+    },
+    {
+     "t": "His departure",
+     "g": "A chariot of fire and horses of fire separate the two men, and Elijah is taken up in a whirlwind as it were into heaven.",
+     "refs": [
+      [
+       12,
+       2,
+       1,
+       1
+      ],
+      [
+       12,
+       2,
+       9,
+       13
+      ]
+     ]
+    },
+    {
+     "t": "The promise (Septuagint)",
+     "g": "Malachi says Elias will be sent before the great and glorious day of the Lord. The Septuagint numbers this Malachi 3:22–24, where English Bibles have 4:5–6. Sirach remembers him in the same terms.",
+     "refs": [
+      [
+       50,
+       3,
+       22,
+       24
+      ],
+      [
+       51,
+       48,
+       1,
+       1
+      ],
+      [
+       51,
+       48,
+       9,
+       12
+      ]
+     ]
+    },
+    {
+     "t": "New Testament",
+     "g": "Elijah appears with Moses on the mountain. Jesus says “Elijah indeed comes and will restore all things” and “Elijah did already come” (Matthew 17:11–12), and calls John “Elijah, the one being about to come” (Matthew 11:14). Luke has John going before the Lord in the spirit and power of Elijah. James calls Elijah a man of like nature to us, who prayed.",
+     "refs": [
+      [
+       53,
+       11,
+       14,
+       14
+      ],
+      [
+       53,
+       17,
+       3,
+       3
+      ],
+      [
+       53,
+       17,
+       10,
+       13
+      ],
+      [
+       55,
+       1,
+       17,
+       17
+      ],
+      [
+       77,
+       5,
+       17,
+       18
+      ]
+     ]
+    }
+   ],
+   "essays": [
+    123
+   ]
   }
  ],
  "_people_about": "Biographical pages shown at #/person/<slug>. Every verse reference must exist in the stored text and every essay must be published on the page; the exporter stops otherwise. Text is hand-written and approved by the editor. Nothing private belongs here."
