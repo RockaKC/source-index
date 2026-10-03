@@ -155,7 +155,8 @@ h2{font-size:26px;line-height:34px;letter-spacing:-.005em;margin-top:var(--s6)}
 h3{font-size:22px;line-height:30px}
 .lede{margin:var(--s2) 0 0;max-width:56ch;color:var(--muted)}
 h2 + .lede{margin-top:var(--s1)}
-.back{display:inline-block;margin-top:var(--s3);font:500 15px/20px var(--sans);color:var(--muted);text-decoration:none}
+.back{display:flex;width:fit-content;align-items:center;gap:2px;margin:calc(var(--s3) - 9px) 0 -12px -6px;padding:12px 12px 12px 0;font:500 15px/20px var(--sans);color:var(--muted);text-decoration:none}
+.back svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .back:hover{color:var(--ink)}
 .back + h1{margin-top:var(--s2)}
 .cap{margin:0;font:400 13px/18px var(--sans);color:var(--muted)}
@@ -416,6 +417,19 @@ function keepReading(exclude = [], n = 3) {
 }
 
 // ---------- reads ----------
+const BACK_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>';
+const backLink = href => `<a class="back" href="${href}" data-back>${BACK_ICON}Back</a>`;
+let navIdx = -1;                      // how many pages deep the reader is inside the site (0 = the page they landed on)
+function trackNav() {                 // new visits get the next number; back and forward restore the number saved with the entry
+  const st = history.state;
+  if (st && typeof st.i === 'number') navIdx = st.i;
+  else { navIdx += 1; try { history.replaceState({i: navIdx}, '', location.href); } catch (e) {} }
+}
+document.addEventListener('click', e => {   // Back goes to the previous page; a reader who landed here directly goes to the parent page instead
+  const a = e.target.closest('[data-back]');
+  if (!a || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  if (navIdx > 0) { e.preventDefault(); history.back(); }
+});
 function rangeLabel(r) {
   const [, , b, cs, vs, ce, ve] = r, n = bname(b);
   if (ve === 999) return cs === ce ? `${n} ${cs}` : `${n} ${cs} to ${ce}`;
@@ -627,7 +641,7 @@ function viewBooks(t) {
   t = t || 'OT';
   const es = D.entries.filter(e => e.t === t);
   return `
-  <a class="back" href="#/">Find a verse</a>
+  ${backLink(`#/`)}
   <h1>The 81 books</h1>
   <p class="lede">As the Ethiopian Orthodox Church lists them: 46 in the Old Testament and 35 in the New.</p>
   <div class="tabs" role="tablist" aria-label="Testament">
@@ -640,7 +654,7 @@ function viewPath(id) {
   const p = D.paths.find(x => x.id === id); if (!p) return viewMissing();
   const [first, ...rest] = p.p;
   return `
-  <a class="back" href="#/">Find a verse</a>
+  ${backLink(`#/`)}
   <h1>${esc(p.q)}</h1>
   <p class="lede">${esc(p.intro)}</p>
   <h2>Start here</h2>
@@ -677,7 +691,7 @@ function viewBook(eid) {
     <h2>From the essays</h2><div style="margin-top:16px">${feature(ids[0])}</div>
     ${ids.length > 1 ? pieceList(ids.slice(1, 6)) : ''}` : '';
   return `
-  <a class="back" href="#/books">All books</a>
+  ${backLink(`#/books`)}
   <h1>${esc(e.name)}</h1>
   <p class="lede">${e.extra ? 'Not in a Protestant Bible. ' : ''}${pos}${loaded.length ? ' ' + esc(TR[loaded[0]]) + '.' : ''}</p>
   ${reading}
@@ -704,7 +718,7 @@ function viewVerse(b, ch, v) {
        ${ids.length > 1 ? `<h2>Also quotes this verse</h2>${pieceList(ids.slice(1))}` : ''}`
     : `<h2>Not in the index yet</h2><div class="card" style="margin-top:16px"><p style="margin:0">No essay in this index quotes this verse yet.</p></div>`;
   return `
-  <a class="back" href="#/book/${D.bookEntry[b]}">${esc(bname(b))}</a>
+  ${backLink(`#/book/${D.bookEntry[b]}`)}
   <h1>${esc(label)}</h1>
   ${text}${note}${numNote(b, key, !!eng)}
   ${main}
@@ -729,7 +743,7 @@ function viewRange(b, ch, vs, ve) {
     : `<h2>Not in the index yet</h2><div class="card" style="margin-top:16px"><p style="margin:0">No essay in this index quotes a verse in this passage yet.</p></div>`;
   const chips = cited.length ? `<h2>Cited verses in this passage</h2><ul class="chips">${cited.map(v => `<li><a class="chip" href="#/verse/${b}/${ch}/${v}" aria-label="${esc(bname(b))} ${ch}:${v}, ${plural(D.verses[b][ch][v].length,'essay')}">${ch}:${v}</a></li>`).join('')}</ul>` : '';
   return `
-  <a class="back" href="#/book/${D.bookEntry[b]}">${esc(bname(b))}</a>
+  ${backLink(`#/book/${D.bookEntry[b]}`)}
   <h1>${esc(label)}</h1>
   ${card}${more}${numNote(b, `${b}:${ch}:${vs}`, !!engLabel(b, ch, vs))}
   ${main}
@@ -740,7 +754,7 @@ function viewSearch(q) {
   const words = q.toLowerCase().split(/\s+/).filter(Boolean);
   const hits = Object.keys(P).filter(pid => P[pid] && words.every(w => P[pid][0].toLowerCase().includes(w))).sort((a,b) => P[b][5]-P[a][5]);
   return `
-  <a class="back" href="#/">Find a verse</a>
+  ${backLink(`#/`)}
   <h1>Results for \u201c${esc(q)}\u201d</h1>
   <p class="lede">${hits.length ? plural(hits.length,'essay') + ' with that in the title.' : 'Nothing matched. Try a verse such as Genesis 6:4, or a shorter title.'}</p>
   ${hits.length ? `<div style="margin-top:24px">${pieceList(hits.slice(0,12))}</div>` : ''}`;
@@ -748,7 +762,7 @@ function viewSearch(q) {
 function viewEssay(pid) {
   if (!P[pid]) return viewMissing();
   const [title, url, plat, date] = P[pid];
-  if (!hasRefs(pid)) return `<a class="back" href="#/">Find a verse</a><h1>${esc(title)}</h1>
+  if (!hasRefs(pid)) return `${backLink(`#/`)}<h1>${esc(title)}</h1>
     <p class="lede">No Scripture references from this essay are in the index yet.</p>
     <p style="margin-top:24px"><a class="btn primary" ${link(pid)}>Read the essay</a></p>`;
   const refs = REFS[pid], books = [...new Set(refs.map(r => r[0]))].sort((a,c) => a-c);
@@ -761,7 +775,7 @@ function viewEssay(pid) {
   const relHtml = rel.length ? `<h2>Essays that cite the same verses</h2><div class="card"><ul class="list">${rel.map(([p,n]) => `<li class="piece">${seriesCap(p)}
     <div class="t"><a ${link(p)}>${esc(P[p][0])}</a></div><p class="cap">${plural(n,'shared verse')} \u00b7 ${meta(p)}${srcLink(p)}</p></li>`).join('')}</ul></div>` : '';
   return `
-  <a class="back" href="#/">Find a verse</a>
+  ${backLink(`#/`)}
   <h1>${esc(title)}</h1>
   <p class="lede">${meta(pid)}. Cites ${plural(refs.length,'verse')} across ${plural(books.length,'book')}.</p>
   <p style="margin-top:24px"><a class="btn primary" ${link(pid)} aria-label="Read the essay: ${esc(title)}">Read the essay</a></p>
@@ -782,7 +796,7 @@ function viewCta(q) {
   const ids = Object.keys(P).filter(pid => P[pid] && hasRefs(pid) && (!q || P[pid][0].toLowerCase().includes(q)))
     .sort((a,b) => P[b][3].localeCompare(P[a][3]));
   return `
-  <a class="back" href="#/">Find a verse</a>
+  ${backLink(`#/`)}
   <h1>Essay call-to-action</h1>
   <p class="lede">Add this to the end of an essay. It sends readers to the sources behind it.</p>
   <div class="card" style="margin-top:24px"><p class="cap">Links point to</p><p class="base" style="margin:4px 0 0">${esc(BASE)}</p></div>
@@ -807,7 +821,7 @@ async function copyRich(html, text) {
 }
 function viewWords() {
   return `
-  <a class="back" href="#/">Find a verse</a>
+  ${backLink(`#/`)}
   <h1>Words</h1>
   <p class="lede">Each entry shows the Hebrew or Greek term, its English meaning, and where it appears.</p>
   <div class="card" style="margin-top:24px;padding-top:8px;padding-bottom:8px"><ul class="list">${WORDS.map(w =>
@@ -823,7 +837,7 @@ function viewWord(slug) {
     + (w.labels || []).map(l => `<li><span class="chip static">${esc(l)}</span></li>`).join('');
   const cards = w.verses.slice(0, 3).map(r => textCard(r[0], r[1], r[2], r[3], vrefLabel(r))).join('');
   return `
-  <a class="back" href="#/words">Words</a>
+  ${backLink(`#/words`)}
   <h1>${esc(w.title)}</h1>
   <p class="enline"><span class="cap">In English</span><b>${esc(w.en)}</b></p>
   <p class="lede">${esc(w.lang)}. Explained in a Kingdom Code essay.</p>
@@ -842,7 +856,7 @@ function viewRead(b, ch, focus) {
     const want = location.hash;
     ensureBible().then(() => { if (location.hash === want) route(); })
       .catch(() => { const m = document.getElementById('loadmsg'); if (m) m.innerHTML = 'The Bible text could not load. Check your connection, then <a href="' + want + '">try again</a>.'; });
-    return `<a class="back" href="#/book/${D.bookEntry[b]}">${esc(bname(b))}</a><h1>${esc(bname(b))} ${ch}</h1><p class="lede" id="loadmsg" role="status">Loading the chapter\u2026</p>`;
+    return `${backLink(`#/book/${D.bookEntry[b]}`)}<h1>${esc(bname(b))} ${ch}</h1><p class="lede" id="loadmsg" role="status">Loading the chapter\u2026</p>`;
   }
   store.set('kc-last', `${b}/${ch}`);
   const size = +(store.get('kc-size') || 19);
@@ -857,7 +871,7 @@ function viewRead(b, ch, focus) {
   let eng = null; for (const [v] of chap) { eng = (PE[b] || {})[`${ch}:${v}`]; if (eng) break; }
   const cited = citedIn(b, ch);
   return `
-  <a class="back" href="#/book/${D.bookEntry[b]}">${esc(bname(b))}, all chapters</a>
+  ${backLink(`#/book/${D.bookEntry[b]}`)}
   <div class="rbar" role="navigation" aria-label="Chapters">
     <a class="navbtn" ${prev ? `href="#/read/${prev[0]}/${prev[1]}" aria-label="Previous: ${lbl(prev)}"` : 'aria-disabled="true"'}>\u2039</a>
     <a class="where" href="#/book/${D.bookEntry[b]}" aria-label="${esc(bname(b))} ${ch}. Choose a chapter">${esc(bname(b))} ${ch}</a>
@@ -876,6 +890,7 @@ function viewRead(b, ch, focus) {
 }
 function viewAbout() {
   return `
+  ${navIdx > 0 ? backLink('#/') : ''}
   <h1>About</h1>
   <div class="about">
     <p>Kingdom Code is an independent, investigative publication for the Body of Christ. Its sole authority is Jesus Christ and Scripture. The index is a growing body of work, regularly updated with new features and improvements.</p>
@@ -885,15 +900,16 @@ function viewAbout() {
 }
 function viewCredits() {
   return `
-  <a class="back" href="#/">Look up a verse</a>
+  ${backLink(`#/`)}
   <h1>Sources and credits</h1>
   <p class="lede">Every Scripture text in this index is in the public domain.</p>
   <div class="card" style="margin-top:24px"><ul class="list">${D.credits.map(c => `<li class="piece"><div class="t">${esc(c.what)}</div><p style="margin:2px 0 0">${esc(c.text)}</p></li>`).join('')}</ul></div>`;
 }
-function viewMissing() { return `<a class="back" href="#/">Find a verse</a><h1>Not found</h1><p class="lede">That page is not in the index yet.</p>`; }
+function viewMissing() { return `${backLink(`#/`)}<h1>Not found</h1><p class="lede">That page is not in the index yet.</p>`; }
 
 // ---------- router ----------
 function route() {
+  trackNav();
   const p = location.hash.replace(/^#\/?/, '').split('/');
   let html;
   if (!p[0]) html = viewHome();
