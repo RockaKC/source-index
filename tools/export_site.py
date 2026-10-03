@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Rebuild the Source Index data from the Kingdom Code SQLite database.
 
-    python3 tools/export_site.py /path/to/kc_v13.db            # rebuild index.html data + bible.json
+    python3 tools/export_site.py /path/to/kc_v13.db            # rebuild index.html data + bible/
     python3 tools/export_site.py /path/to/kc_v13.db --check    # report what would change, write nothing
 
 What it writes:
-  * bible.json            every verse of every book that has text
+  * bible/<book id>.json  every verse of one book, fetched on demand (the old single bible.json is removed)
   * index.html            the single `const D = {...};` line (nothing else in the file changes)
 
 What it reads from the database (read-only): scripture, books, canon, citations,
@@ -33,7 +33,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 CURATED = ROOT / "tools" / "curated.json"
 HTML = ROOT / "index.html"
-BIBLE = ROOT / "bible.json"
+BIBLE_DIR = ROOT / "bible"                  # one file per book: bible/<book id>.json
+LEGACY_BIBLE = ROOT / "bible.json"          # the old single file; read once for comparison, then removed
 
 EXPECTED_TABLES = {
     "books", "canon_entries", "nodes", "articles", "citations", "verses", "verse_parts",
@@ -358,6 +359,25 @@ def normal(key, value):
     return value
 
 
+def read_current_bible():
+    if BIBLE_DIR.is_dir():
+        return {f.stem: json.loads(f.read_text(encoding="utf-8")) for f in BIBLE_DIR.glob("*.json")}
+    if LEGACY_BIBLE.exists():
+        return json.loads(LEGACY_BIBLE.read_text(encoding="utf-8"))
+    return {}
+
+
+def write_bible(bible):
+    BIBLE_DIR.mkdir(exist_ok=True)
+    for b, chapters in bible.items():
+        (BIBLE_DIR / ("%s.json" % b)).write_text(dumps(chapters), encoding="utf-8")
+    for f in BIBLE_DIR.glob("*.json"):
+        if f.stem not in bible:
+            f.unlink()
+    if LEGACY_BIBLE.exists():
+        LEGACY_BIBLE.unlink()
+
+
 def summarize(old, new, old_bible, new_bible):
     out = []
     for k in new:
@@ -378,7 +398,7 @@ def summarize(old, new, old_bible, new_bible):
         else:
             out.append("  %-9s changed" % k)
     bc = sum(1 for b in new_bible for ch in new_bible[b] if old_bible.get(b, {}).get(ch) != new_bible[b][ch])
-    out.append("  bible.json: %d of %d chapters differ" % (bc, sum(len(v) for v in new_bible.values())))
+    out.append("  bible/      %d of %d chapters differ" % (bc, sum(len(v) for v in new_bible.values())))
     return "\n".join(out)
 
 
@@ -393,7 +413,7 @@ def main():
     con = connect(args.db)
     D, bible, info = build(con, cur, warnings.append)
     old = read_current()
-    old_bible = json.loads(BIBLE.read_text(encoding="utf-8")) if BIBLE.exists() else {}
+    old_bible = read_current_bible()
 
     print("Source index export from", Path(args.db).name)
     print("  essays on the page: %d (%d cite verses) | verses: %d | chapters: %d"
@@ -421,8 +441,8 @@ def main():
             lines[i] = "const D = " + dumps(D) + ";\n"
             break
     HTML.write_text("".join(lines), encoding="utf-8")
-    BIBLE.write_text(dumps(bible), encoding="utf-8")
-    print("wrote index.html and bible.json")
+    write_bible(bible)
+    print("wrote index.html and bible/ (%d books)" % len(bible))
 
 
 if __name__ == "__main__":
