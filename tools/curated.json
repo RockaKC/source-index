@@ -441,17 +441,20 @@
     {
      "t": "almah",
      "l": "Hebrew",
-     "g": "A young woman of marriageable age (Masoretic text)."
+     "g": "A young woman of marriageable age (Masoretic text).",
+     "n": "H5959"
     },
     {
      "t": "betulah",
      "l": "Hebrew",
-     "g": "The specific Hebrew word for virgin."
+     "g": "The specific Hebrew word for virgin.",
+     "n": "H1330"
     },
     {
      "t": "parthenos",
      "l": "Greek",
-     "g": "Virgin. The Septuagint’s rendering of almah."
+     "g": "Virgin. The Septuagint’s rendering of almah.",
+     "n": "G3933"
     }
    ],
    "essay": 102,
@@ -488,12 +491,14 @@
     {
      "t": "ka’ari",
      "l": "Hebrew",
-     "g": "Like a lion (Masoretic text)."
+     "g": "Like a lion (Masoretic text).",
+     "n": "H738A"
     },
     {
      "t": "oruxan",
      "l": "Greek",
-     "g": "They dug, or they pierced (Septuagint)."
+     "g": "They dug, or they pierced (Septuagint).",
+     "n": "G3736"
     }
    ],
    "essay": 102,
@@ -527,7 +532,8 @@
     {
      "t": "heteras",
      "l": "Greek",
-     "g": "Other, different, of another kind."
+     "g": "Other, different, of another kind.",
+     "n": "G2087"
     }
    ],
    "essay": 78,
@@ -559,7 +565,8 @@
     {
      "t": "pharmakeia",
      "l": "Greek",
-     "g": "Sorcery. Literally the use of drugs or substances for spiritual purposes."
+     "g": "Sorcery. Literally the use of drugs or substances for spiritual purposes.",
+     "n": "G5331"
     }
    ],
    "essay": 78,
@@ -585,7 +592,8 @@
      "t": "tsela",
      "s": "צֵלָע",
      "l": "Hebrew",
-     "g": "Does not always mean “rib.”"
+     "g": "Does not always mean “rib.”",
+     "n": "H6763"
     }
    ],
    "essay": 155,
@@ -614,7 +622,8 @@
     {
      "t": "to’evah",
      "l": "Hebrew",
-     "g": "Abomination. A legal term, used in Leviticus 18:22."
+     "g": "Abomination. A legal term, used in Leviticus 18:22.",
+     "n": "H8441"
     }
    ],
    "essay": 14,
@@ -643,22 +652,26 @@
     {
      "t": "Sheol",
      "l": "Hebrew",
-     "g": "The land of the dead."
+     "g": "The land of the dead.",
+     "n": "H7585"
     },
     {
      "t": "Hades",
      "l": "Greek",
-     "g": "The Septuagint’s word for Sheol."
+     "g": "The Septuagint’s word for Sheol.",
+     "n": "G86"
     },
     {
      "t": "Gehenna",
      "l": "Greek",
-     "g": "One of four terms English renders with the same word."
+     "g": "One of four terms English renders with the same word.",
+     "n": "G1067"
     },
     {
      "t": "Tartarus",
      "l": "Greek",
-     "g": "Appears once, as a verb, in 2 Peter 2:4: a holding cell for the sinning angels."
+     "g": "Appears once, as a verb, in 2 Peter 2:4: a holding cell for the sinning angels.",
+     "n": "G5020"
     }
    ],
    "essay": 189,
@@ -692,12 +705,14 @@
     {
      "t": "nephesh",
      "l": "Hebrew",
-     "g": "The whole living creature: breath and blood and ground held together."
+     "g": "The whole living creature: breath and blood and ground held together.",
+     "n": "H5315"
     },
     {
      "t": "psyche",
      "l": "Greek",
-     "g": "In Platonic philosophy, the immortal rational soul housed in corruptible matter."
+     "g": "In Platonic philosophy, the immortal rational soul housed in corruptible matter.",
+     "n": "G5590"
     }
    ],
    "essay": 119,
@@ -721,17 +736,20 @@
     {
      "t": "ekklesia",
      "l": "Greek",
-     "g": "Tyndale rendered it “congregation,” not “church.”"
+     "g": "Tyndale rendered it “congregation,” not “church.”",
+     "n": "G1577"
     },
     {
      "t": "presbyteros",
      "l": "Greek",
-     "g": "Tyndale rendered it “elder,” not “priest.”"
+     "g": "Tyndale rendered it “elder,” not “priest.”",
+     "n": "G4245"
     },
     {
      "t": "metanoia",
      "l": "Greek",
-     "g": "Tyndale rendered it “repentance,” not “penance.”"
+     "g": "Tyndale rendered it “repentance,” not “penance.”",
+     "n": "G3341"
     }
    ],
    "essay": 129,
@@ -758,7 +776,8 @@
     {
      "t": "cherem",
      "l": "Hebrew",
-     "g": "A binding curse. The oath the Watchers swore on Mount Hermon."
+     "g": "A binding curse. The oath the Watchers swore on Mount Hermon.",
+     "n": "H2764A"
     }
    ],
    "essay": 112,
@@ -789,7 +808,8 @@
     {
      "t": "porneia",
      "l": "Greek",
-     "g": "Sexual immorality. Paul uses it in 1 Corinthians 5:1 to condemn incest."
+     "g": "Sexual immorality. Paul uses it in 1 Corinthians 5:1 to condemn incest.",
+     "n": "G4202"
     }
    ],
    "essay": 130,
@@ -819,7 +839,8 @@
     {
      "t": "Cush",
      "l": "Hebrew",
-     "g": "The historical land of Ethiopia, a biblical synecdoche for Africa."
+     "g": "The historical land of Ethiopia, a biblical synecdoche for Africa.",
+     "n": "H3568A"
     }
    ],
    "essay": 38,
@@ -879,5 +900,20 @@
    "what": "Psalm numbers",
    "text": "Psalms use the Septuagint numbering, which most English Bibles do not. The English number is shown beside it."
   }
- ]
+ ],
+ "lexicon_fixes": {
+  "_note": "Typographical errors in the upstream dictionary text, corrected for display. Each is [Strong's key, wrong text, right text]. Listed in the credit line as 'typographical corrections'.",
+  "fixes": [
+   [
+    "G86",
+    "ehiefly",
+    "chiefly"
+   ],
+   [
+    "G86",
+    "underivorld",
+    "underworld"
+   ]
+  ]
+ }
 }
