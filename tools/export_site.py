@@ -133,6 +133,31 @@ def dictionary_entries(con, cur, books, warn):
     return out, credit
 
 
+def profiles(q, cur):
+    """The Names profiles, from the database (kc_v18 or later), in Names-list order. Only published ones."""
+    if "people" in cur:
+        sys.exit("tools/curated.json still has a 'people' section; profiles now live in the database. Remove it.")
+    if not q("select 1 from sqlite_master where name = 'person_profiles'"):
+        sys.exit("this database has no Names profiles (table person_profiles); use kc_v18 or later")
+    out = []
+    for nid, name, slug, line, body in q("""select n.id, n.title, n.slug, n.summary, n.body_md from person_profiles p
+                                             join nodes n on n.id = p.node_id
+                                             where n.type = 'person' and n.status = 'published' order by p.position"""):
+        groups = []
+        for gid, title, note in q("select id, title, note from profile_groups where node_id = ? order by position", nid):
+            g = {"t": title}
+            if note:
+                g["g"] = note
+            g["refs"] = [list(r) for r in q("""select book_id, chapter, verse_start, verse_end from profile_refs
+                                               where group_id = ? order by position""", gid)]
+            groups.append(g)
+        out.append({"slug": slug, "name": name, "line": line,
+                    "about": [para for para in (body or "").split("\n\n") if para.strip()],
+                    "groups": groups,
+                    "essays": [r[0] for r in q("select article_id from profile_essays where node_id = ? order by position", nid)]})
+    return out
+
+
 def build(con, cur, warn):
     q = lambda sql, *a: con.execute(sql, a).fetchall()
     D = collections.OrderedDict()
@@ -256,7 +281,7 @@ def build(con, cur, warn):
                   "verses": sum(len(vs) for b in verses.values() for vs in b.values()),
                   "chapters": len(cited_chapters)}
     D["notes"] = cur["notes"]
-    people = cur.get("people")
+    people = profiles(q, cur)
     if people:
         for pr in people:
             bad = [e for e in pr["essays"] if str(e) not in D["pieces"]]
