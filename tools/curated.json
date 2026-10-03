@@ -919,5 +919,131 @@
     "underworld"
    ]
   ]
+ },
+ "tiers": {
+  "_about": "The New Testament translation tier list shown on #/translations. It mirrors the published essay (piece id in 'essay'). Wording is shortened from the essay; keep it in step when the essay is updated. Nothing private belongs here.",
+  "essay": 124,
+  "title": "New Testament translation tier list",
+  "lede": "How much does a translation let the Greek speak, and how much does it let the translators speak instead?",
+  "standard": "One question decides every placement: does this translation render what the Greek says, or what the committee thinks the Greek means?",
+  "tiers": [
+   {
+    "id": "S",
+    "items": [
+     {
+      "n": "BLB (Berean Literal Bible)",
+      "t": "Word-for-word, with tense, mood and voice kept. It is open-source, so anyone who reads Greek can test its choices. Primary study tool, and the New Testament text in this index."
+     },
+     {
+      "n": "NASB 1995",
+      "t": "The most literal mainstream English New Testament, from the critical Greek text. Hard to read devotionally, which the list treats as the point. Primary study tool."
+     },
+     {
+      "n": "LSB (Legacy Standard Bible)",
+      "t": "More wooden-literal than the NASB, on the critical text. It comes from John MacArthur’s seminary, and that theology occasionally shows in interpretive choices."
+     }
+    ]
+   },
+   {
+    "id": "A",
+    "sub": "Reliable, know the weaknesses",
+    "items": [
+     {
+      "n": "ESV",
+      "t": "Formal equivalence on the critical text, strong for word-level study. A Reformed committee, and that occasionally shows in passages on grace and works."
+     }
+    ]
+   },
+   {
+    "id": "B",
+    "sub": "Useful, proceed with awareness",
+    "items": [
+     {
+      "n": "NET Bible",
+      "t": "The main text favors readable English over strict literalism. Its 60,000-plus translator footnotes document every textual decision. Use it beside the NASB, not instead of it."
+     },
+     {
+      "n": "RSV",
+      "t": "Readability was a goal alongside literalism, so the committee smoothed the Greek in places. Solid critical text. For cross-reference, not a primary study Bible."
+     }
+    ]
+   },
+   {
+    "id": "C",
+    "sub": "Wrong foundation",
+    "items": [
+     {
+      "n": "KJV",
+      "t": "The English is unmatched, but the base is the Textus Receptus (Erasmus, 1516), built from late manuscripts. It carries 1 John 5:7, Mark 16:9–20 and John 7:53–8:11, which are not in the oldest manuscripts. Use for rhetorical weight."
+     },
+     {
+      "n": "NKJV",
+      "t": "The KJV’s English updated, on the same Textus Receptus base. Its footnotes at least show where manuscripts disagree. Same additions, same tier."
+     }
+    ]
+   },
+   {
+    "id": "D",
+    "sub": "The committee replaced the text",
+    "items": [
+     {
+      "n": "NIV",
+      "t": "The most popular English Bible, and thought-for-thought in method. The committee’s reading of what the text means replaces what it says, and the reader cannot see where."
+     },
+     {
+      "n": "CSB",
+      "t": "Mixes word-for-word and thought-for-thought, and the reader cannot tell where the line falls."
+     },
+     {
+      "n": "NRSVue",
+      "t": "Gender-inclusive language in places the Greek does not call for, a modern preference added to an ancient text."
+     }
+    ]
+   },
+   {
+    "id": "–",
+    "sub": "Not translations",
+    "items": [
+     {
+      "n": "NLT",
+      "t": "A paraphrase. Fine for introducing the story, not for building doctrine."
+     },
+     {
+      "n": "MEV (Modern English Version)",
+      "t": "A Textus Receptus base like the KJV, without the KJV’s English."
+     },
+     {
+      "n": "The Message",
+      "t": "A cultural paraphrase. Some passages work as commentary. It is not a study text."
+     },
+     {
+      "n": "Passion Translation",
+      "t": "Adds words and ideas found in no Greek manuscript. Do not use."
+     }
+    ]
+   }
+  ],
+  "use": [
+   [
+    "Study the New Testament",
+    "BLB, NASB 1995 or LSB."
+   ],
+   [
+    "Cross-reference",
+    "ESV, with the NET footnotes beside your primary."
+   ],
+   [
+    "Rhetorical citation",
+    "KJV, knowing its base."
+   ],
+   [
+    "Everything in D-tier",
+    "You are reading the committee, not the text."
+   ],
+   [
+    "Not translations",
+    "Remove them from your shelf."
+   ]
+  ]
  }
 }
