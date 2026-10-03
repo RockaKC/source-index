@@ -357,6 +357,7 @@ function fmtText(b, t) {
   return s;
 }
 const engLabel = (b, ch, v) => { const e = (PE[b] || {})[`${ch}:${v}`]; return e ? `${b === PSALMS ? 'Psalm' : bname(b)} ${e[0]}:${e[1]} in English Bibles` : null; };
+const pendingEvents = [];            // [name, key] pairs views leave for route() to send after the page is drawn
 let UNMAPPED = null;                  // set by go() when a typed English number in a partly mapped book could not be converted
 const isMapped = (b, ch, v) => !!((PM[b] || {})[ch] || {})[v];
 // A typed English number in a partly mapped book is only trusted as typed if an essay cites that exact verse
@@ -364,6 +365,7 @@ const isMapped = (b, ch, v) => !!((PM[b] || {})[ch] || {})[v];
 const typedUnverified = (b, ch, v) => PD.includes(b) && !isMapped(b, ch, v) && (!hasVerse(b, ch, v) || !!(PE[b] || {})[`${ch}:${v}`]);
 function numNote(b, key, labelled) {  // honest notice for books whose Septuagint numbers differ from English Bibles in places
   if (!PD.includes(b) || (labelled && UNMAPPED !== key)) return '';   // an English label already says it
+  if (UNMAPPED === key) pendingEvents.push(['notice/unconverted', `${bname(b)}/${key.split(':').slice(1).join('/')}`]);
   const msg = UNMAPPED === key
     ? `You searched ${esc(bname(b))} by an English number that has not been converted. In Septuagint ${esc(bname(b))} the numbers can differ from English Bibles, so check the verses on either side.`
     : `Septuagint numbering. Some verses in ${esc(bname(b))} are numbered differently in English Bibles.`;
@@ -404,7 +406,7 @@ const srcLink = pid => hasRefs(pid) ? ` \u00b7 <a href="#/essay/${pid}">Sources<
 // ---------- piece pieces ----------
 const meta = pid => `${PLAT[P[pid][2]] || esc(P[pid][2])}, ${fmtDate(P[pid][3])}`;
 const seriesCap = pid => P[pid][4] ? `<p class="cap">${esc(P[pid][4])}</p>` : '';
-const link = pid => `href="${esc(P[pid][1])}" target="_blank" rel="noopener"`;
+const link = pid => `href="${esc(P[pid][1])}" target="_blank" rel="noopener" data-pid="${pid}"`;
 function feature(pid) {
   return `<div class="card feature">${seriesCap(pid)}
     <h3><a ${link(pid)}>${esc(P[pid][0])}</a></h3>
@@ -486,6 +488,7 @@ function go(q) {
   q = q.trim(); if (!q) return;
   const r = parseRef(q);
   const wd = !r && findWord(q);
+  track(wd ? 'search/word' : r ? 'search/ref' : 'search/title');
   if (wd) { location.hash = '#/word/' + wd.slug; return; }
   if (r) {
     if (r.ch && r.v) {
@@ -723,6 +726,7 @@ function viewVerse(b, ch, v) {
       <a class="btn secondary" href="#/read/${b}/${ch}/${v}">Read ${esc(bname(b))} ${ch}</a>
       ${verseText(b, ch, v + 1) ? `<a class="navbtn" href="#/verse/${b}/${ch}/${v+1}" aria-label="Next verse, ${esc(bname(b))} ${ch}:${v+1}">${ch}:${v+1} ›</a>` : '<span></span>'}</div>` : '';
   const note = nt ? `<p class="lede" style="margin-top:16px">${esc(nt.text)}${nt.to ? ` <a href="#/verse/${nt.to.join('/')}" style="color:var(--accent)">${esc(nt.label)}</a>` : ''}</p>` : '';
+  if (!ids.length) pendingEvents.push(['miss/verse', `${bname(b)}/${ch}/${v}`]);
   const main = ids.length
     ? `<h2>Start here</h2><div style="margin-top:16px">${feature(ids[0])}</div>
        ${ids.length > 1 ? `<h2>Also quotes this verse</h2>${pieceList(ids.slice(1))}` : ''}`
@@ -743,6 +747,7 @@ function viewRange(b, ch, vs, ve) {
   for (let v = vs; v <= ve; v++) { const ps = ((D.verses[b] || {})[ch] || {})[v]; if (!ps) continue; cited.push(v); ps.forEach(p => { score[p] = (score[p] || 0) + 1; }); }
   const ids = rank(Object.keys(score).map(Number)).sort((a,c) => score[c] - score[a]);
   const label = `${bname(b)} ${ch}:${vs}\u2013${ve}`, n = ve - vs + 1;
+  if (!ids.length) pendingEvents.push(['miss/verse', `${bname(b)}/${ch}/${vs}-${ve}`]);
   const card = textCard(b, ch, vs, ve, label);
   const more = n > 4 ? `<p class="cap" style="margin-top:8px">Showing the first 4 of ${n} verses. <a href="#/read/${b}/${ch}/${vs}" style="color:var(--accent)">Read the full passage</a>.</p>` : '';
   const list = ids.length ? `<ul class="list">${ids.slice(1).map(pid => `<li class="piece">${seriesCap(pid)}
@@ -763,6 +768,7 @@ function viewRange(b, ch, vs, ve) {
 function viewSearch(q) {
   const words = q.toLowerCase().split(/\s+/).filter(Boolean);
   const hits = Object.keys(P).filter(pid => P[pid] && words.every(w => P[pid][0].toLowerCase().includes(w))).sort((a,b) => P[b][5]-P[a][5]);
+  if (!hits.length) pendingEvents.push(['search/none', q.toLowerCase().trim().slice(0, 60)]);
   return `
   ${backLink(`#/`)}
   <h1>Results for \u201c${esc(q)}\u201d</h1>
@@ -926,7 +932,7 @@ function viewCredits() {
   ${backLink(`#/`)}
   <h1>Sources and credits</h1>
   <p class="lede">Every Scripture text in this index is in the public domain.</p>
-  <div class="card" style="margin-top:24px"><ul class="list">${D.credits.map(c => `<li class="piece"><div class="t">${esc(c.what)}</div><p style="margin:2px 0 0">${esc(c.text)}</p></li>`).join('')}</ul></div>`;
+  <div class="card" style="margin-top:24px"><ul class="list">${D.credits.map(c => `<li class="piece"><div class="t">${esc(c.what)}</div><p style="margin:2px 0 0">${esc(c.text)}</p></li>`).join('')}${analyticsOn ? `<li class="piece"><div class="t">Visit counts</div><p style="margin:2px 0 0">This site counts visits and clicks without cookies or personal data. Searches that find nothing are logged so the index can grow.</p></li>` : ''}</ul></div>`;
 }
 function viewMissing() { return `${backLink(`#/`)}<h1>Not found</h1><p class="lede">That page is not in the index yet.</p>`; }
 
@@ -952,6 +958,8 @@ function route() {
   else html = viewMissing();
   app.innerHTML = `<div class="fadein">${html}</div>`;
   UNMAPPED = null;
+  if (p[0] !== 'cta') trackView(routePath(p), (document.querySelector('#app h1') || {}).textContent || 'Kingdom Code Source Index');
+  while (pendingEvents.length) { const [n, k] = pendingEvents.shift(); track(n, k); }
   if (document.getElementById('sug')) initSuggest();
   const sf = document.getElementById('sf');
   if (sf) sf.addEventListener('submit', e => { e.preventDefault(); go(document.getElementById('q').value); });
@@ -972,6 +980,67 @@ function route() {
   const fv = p[0] === 'read' && p[3] ? document.getElementById('v' + p[3]) : null;
   if (fv) fv.scrollIntoView({block: 'center'}); else window.scrollTo(0, 0);
 }
+// ---------- analytics: cookieless visit counts, off until a site is set ----------
+// provider 'goatcounter' (site = your GoatCounter code) or 'umami' (site = website id). Blank = off.
+// Counts only on the live domain, and never when the browser sends Do Not Track or Global Privacy Control.
+const ANALYTICS = {provider: '', site: '', hosts: ['sources.kingdomcodearchive.com']};
+let analyticsOn = false;
+const analyticsQueue = [];
+function initAnalytics() {
+  const A = ANALYTICS;
+  if (!A.provider || !A.site || !A.hosts.includes(location.hostname)) return;
+  if (navigator.doNotTrack === '1' || window.doNotTrack === '1' || navigator.globalPrivacyControl) return;
+  const s = document.createElement('script');
+  s.async = true;
+  if (A.provider === 'goatcounter') {
+    s.setAttribute('data-goatcounter', `https://${A.site}.goatcounter.com/count`);
+    s.setAttribute('data-goatcounter-settings', '{"no_onload":true}');
+    s.src = 'https://gc.zgo.at/count.js';
+  } else if (A.provider === 'umami') {
+    s.defer = true; s.src = 'https://cloud.umami.is/script.js';
+    s.setAttribute('data-website-id', A.site); s.setAttribute('data-auto-track', 'false');
+  } else return;
+  s.onload = flushAnalytics;
+  s.onerror = () => { analyticsOn = false; analyticsQueue.length = 0; };
+  analyticsOn = true;
+  document.head.appendChild(s);
+}
+function flushAnalytics() {
+  const gc = ANALYTICS.provider === 'goatcounter' && window.goatcounter && window.goatcounter.count;
+  const um = ANALYTICS.provider === 'umami' && window.umami && window.umami.track;
+  if (!gc && !um) return;
+  while (analyticsQueue.length) {
+    const e = analyticsQueue.shift();
+    if (gc) window.goatcounter.count({path: e.path, title: e.title, event: e.event});
+    else if (e.event) window.umami.track(e.name, {key: e.key, label: e.label});
+    else window.umami.track(p => Object.assign({}, p, {url: e.path, title: e.title}));
+  }
+}
+function queueAnalytics(e) { if (analyticsOn && analyticsQueue.length < 100) { analyticsQueue.push(e); flushAnalytics(); } }
+const trackView = (path, title) => queueAnalytics({path, title, event: false});
+const track = (name, key, label) => queueAnalytics({path: key ? name + '/' + key : name, title: label || key || name, event: true, name, key, label});
+function routePath(p) {               // readable page names for the visit report
+  const nm = b => (D.books[b] ? bname(b) : b);
+  if (p[0] === 'verse') return `/verse/${nm(+p[1])}/${p[2]}/${p[3]}`;
+  if (p[0] === 'range') return `/range/${nm(+p[1])}/${p[2]}/${p[3]}-${p[4]}`;
+  if (p[0] === 'read') return `/read/${nm(+p[1])}/${p[2]}`;
+  if (p[0] === 'book') { const e = entryOf(+p[1]); return '/book/' + (e ? e.name : p[1]); }
+  if (p[0] === 'search') return '/search';   // the words typed are logged only when nothing was found
+  return '/' + p.filter(Boolean).join('/');
+}
+document.addEventListener('click', e => {   // clicks that leave the site: essays, Patreon, Substack, Ko-fi, email
+  if (!analyticsOn) return;
+  const a = e.target.closest('a[href]'); if (!a) return;
+  const href = a.getAttribute('href') || '';
+  if (/^mailto:/i.test(href)) { track('click/contact'); return; }
+  if (!/^https?:/i.test(href)) return;
+  const where = a.closest('#menu') ? 'menu' : 'page';
+  if (a.dataset.pid) track('click/essay', a.dataset.pid, (a.getAttribute('aria-label') || a.textContent || '').replace(/^Read the essay:\s*/, '').trim().slice(0, 80));
+  else if (/patreon\.com$/.test(a.hostname)) track('click/patreon', where);
+  else if (/substack\.com$/.test(a.hostname)) track('click/substack', where);
+  else if (/ko-fi\.com$/.test(a.hostname)) track('click/kofi', where);
+});
+
 // ---------- menu ----------
 const KOFI_URL = 'https://ko-fi.com/kingdomcode/tip';   // linked from the About page
 const KOFI_EMBED_URL = 'https://ko-fi.com/kingdomcode/?hidefeed=true&widget=true&embed=true&preview=true';   // Ko-fi's embeddable tip panel
@@ -996,7 +1065,7 @@ function openSupport() {
     <p class="cap dlgfoot">Trouble loading? <a href="${esc(KOFI_URL)}" target="_blank" rel="noopener">Open on Ko-fi</a></p>`;
   supportDlg.showModal();
 }
-document.addEventListener('click', e => { if (e.target.closest('[data-support]')) openSupport(); });
+document.addEventListener('click', e => { const s = e.target.closest('[data-support]'); if (s) { track('support/open', s.closest('#menu') ? 'menu' : 'about'); openSupport(); } });
 document.getElementById('supportx').addEventListener('click', () => supportDlg.close());
 supportDlg.addEventListener('click', e => { if (e.target === supportDlg) supportDlg.close(); });
 supportDlg.addEventListener('close', () => { supportBody.innerHTML = ''; });
@@ -1021,6 +1090,7 @@ document.addEventListener('keydown', e => {
   const p = location.hash.slice(2).split('/'), n = e.key === 'ArrowRight' ? neighbour(+p[1], +p[2], 1) : e.key === 'ArrowLeft' ? neighbour(+p[1], +p[2], -1) : null;
   if (n) location.hash = `#/read/${n[0]}/${n[1]}`;
 });
+initAnalytics();
 route();
 </script>
 </body>
