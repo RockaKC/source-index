@@ -852,8 +852,7 @@ function dictPanel(w) {               // dictionary entries for the Strong's num
       ${e.m.length ? `<p class="cap" style="margin-top:2px">Other senses: ${esc(e.m.join(', '))}</p>` : ''}
       ${e.d ? `<details><summary>Full entry</summary><div class="dd">${e.d.split('\n').map(x => `<p>${esc(x)}</p>`).join('')}</div></details>` : ''}</li>`;
   return `<h2>In the dictionary</h2>
-  <div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">${items.map(row).join('')}</ul></div>
-  <p class="cap" style="margin-top:12px">Dictionary text from STEP Bible, CC BY 4.0. <a href="#/credits">Sources and credits</a></p>`;
+  <div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">${items.map(row).join('')}</ul></div>`;
 }
 function viewWord(slug) {
   const w = wordBySlug(slug); if (!w) return viewMissing();
