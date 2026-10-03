@@ -41,6 +41,10 @@ Counted: page views under readable names (`/verse/Genesis/6/4`); the kind of sea
 
 Guards: counts only on the hostnames in `ANALYTICS.hosts` (the live domain, so development is never counted), never when the browser sends Do Not Track or Global Privacy Control, and the internal `#/cta` tool is not counted. When counting is on, Sources and credits tells readers.
 
+## Translation tier list
+
+The page at `#/translations` shows the New Testament translation tier list from `tiers` in `tools/curated.json`: tiers, one line per translation, a how-to-use summary and a link to the full essay. It mirrors the published essay (`essay` is its piece id), so edit the file when the essay changes. The exporter stops if that essay is not a published essay on the page.
+
 ## What stays out of the repo
 
 The database file is never copied here (`.gitignore` blocks `*.db`). The exporter does not read the patron, pledge, income or identity tables. It stops if an email address or an unpublished item turns up in the output.

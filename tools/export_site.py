@@ -255,6 +255,11 @@ def build(con, cur, warn):
                   "verses": sum(len(vs) for b in verses.values() for vs in b.values()),
                   "chapters": len(cited_chapters)}
     D["notes"] = cur["notes"]
+    tl = cur.get("tiers")
+    if tl:
+        if str(tl["essay"]) not in D["pieces"]:
+            sys.exit("the tier list points at essay %s, which is not a published essay on the page" % tl["essay"])
+        D["TL"] = {k: v for k, v in tl.items() if not k.startswith("_")}
     D["words"] = cur["words"]
 
     # ---- inlined text for cited chapters (first paint), labels, carried verses, Psalm map ----
