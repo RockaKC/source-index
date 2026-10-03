@@ -657,24 +657,19 @@ function viewHome() {
   <h2>Start with a question</h2>
   <div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">${qs}</ul></div>
 
-  <h2>Words in the original languages</h2>
-  <p class="lede">Hebrew and Greek terms from the essays, side by side.</p>
-  <ul class="chips">${WORDS.slice(0, 6).map(w => `<li><a class="chip" href="#/word/${w.slug}">${esc(w.title)}</a></li>`).join('')}</ul>
-  <p style="margin-top:16px"><a class="btn secondary" href="#/words">See all ${WORDS.length} words</a></p>
+  <h2>Explore</h2>
+  <div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">
+    <li><a class="wl" href="#/words"><b>Words</b><span class="en">Hebrew and Greek terms from the essays, side by side.</span><span class="lang">${WORDS.length} words</span></a></li>
+    ${D.PP && D.PP.length ? `<li><a class="wl" href="#/names"><b>Names</b><span class="en">Short profiles, with the verses where each appears.</span><span class="lang">${plural(D.PP.length, 'name')}</span></a></li>` : ''}
+    ${D.TL ? `<li><a class="wl" href="#/translations"><b>Translations</b><span class="en">Which New Testament translations let the Greek speak.</span><span class="lang">Tier list</span></a></li>` : ''}
+  </ul></div>
 
-  ${D.PP && D.PP.length ? `<h2>Names in Scripture</h2>
-  <p class="lede">Short profiles of the names in Scripture, with the verses where each appears.</p>
-  <ul class="chips">${D.PP.map(x => `<li><a class="chip" href="#/person/${x.slug}">${esc(x.name)}</a></li>`).join('')}</ul>
-  <p style="margin-top:16px"><a class="btn secondary" href="#/names">See all names</a></p>
-` : ''}
-  ${D.TL ? `<h2>Bible translations</h2>
-  <p class="lede">Which New Testament translations let the Greek speak.</p>
-  <p style="margin-top:16px"><a class="btn secondary" href="#/translations">See the tier list</a></p>
-` : ''}
-  <h2>Books outside most Bibles</h2>
-  <p class="lede">${D.entries.length ? extras.length : ''} of the 81 are not in a Protestant Bible.</p>
-  ${shelf(extras)}
-  <p style="margin-top:16px"><a class="btn secondary" href="#/books">Browse all 81 books</a></p>
+  ${(() => { const have = extras.filter(e => piecesForBook(e.books).length || e.books.some(b => D.CC[b])), rest = extras.length - have.length;
+    return `<h2>Books outside most Bibles</h2>
+  <p class="lede">${extras.length} of the 81 are not in a Protestant Bible. ${have.length} have their text here.</p>
+  ${shelf(have)}
+  ${rest ? `<p class="cap" style="margin-top:12px">${rest} more are listed, with their text still to come.</p>` : ''}
+  <p style="margin-top:16px"><a class="btn secondary" href="#/books">Browse all 81 books</a></p>`; })()}
 
   ${keepReading([], 3)}`;
 }
