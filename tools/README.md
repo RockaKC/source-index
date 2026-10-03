@@ -45,6 +45,10 @@ Guards: counts only on the hostnames in `ANALYTICS.hosts` (the live domain, so d
 
 The page at `#/translations` shows the New Testament translation tier list from `tiers` in `tools/curated.json`: tiers, one line per translation, a how-to-use summary and a link to the full essay. It mirrors the published essay (`essay` is its piece id), so edit the file when the essay changes. The exporter stops if that essay is not a published essay on the page.
 
+## Biographical pages
+
+`people` in `tools/curated.json` holds short profiles shown at `#/person/<slug>` (the first is `enoch`): a few hand-written sentences, the verses where the figure appears in the stored text, and a curated list of essays. They are not linked from the menu yet. The exporter stops if a verse is not fully in the stored text or an essay is not published on the page. Text is written and approved by the editor.
+
 ## What stays out of the repo
 
 The database file is never copied here (`.gitignore` blocks `*.db`). The exporter does not read the patron, pledge, income or identity tables. It stops if an email address or an unpublished item turns up in the output.

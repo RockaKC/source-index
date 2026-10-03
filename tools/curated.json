@@ -1045,5 +1045,109 @@
     "Remove them from your shelf."
    ]
   ]
- }
+ },
+ "people": [
+  {
+   "slug": "enoch",
+   "name": "Enoch",
+   "about": [
+    "Enoch is the seventh from Adam, the son of Jared and the father of Methuselah. Genesis gives him a few verses and ends his story without a death: “Enoch was well-pleasing to God, and was not found, because God translated him.” The writers who came after filled in the silence. Hebrews reads it as faith, Sirach and Wisdom make him a pattern of the righteous man, and Jude quotes a prophecy of his by name. Two books that bear his name or tell his story, 1 Enoch and Jubilees, say far more than Genesis does. That is tradition, and the ones below are marked as such."
+   ],
+   "groups": [
+    {
+     "t": "Genesis",
+     "g": "He lives 365 years, is well-pleasing to God, and is not found. Luke 3:37 gives his place in the genealogy.",
+     "refs": [
+      [
+       1,
+       5,
+       21,
+       24
+      ],
+      [
+       55,
+       3,
+       37,
+       37
+      ]
+     ]
+    },
+    {
+     "t": "New Testament",
+     "g": "Hebrews 11:5 reads that Genesis verse as faith: translated so as not to see death. Jude 14–15 says Enoch prophesied, and quotes him. A close parallel is 1 Enoch 1:9.",
+     "refs": [
+      [
+       71,
+       11,
+       5,
+       5
+      ],
+      [
+       78,
+       1,
+       14,
+       15
+      ]
+     ]
+    },
+    {
+     "t": "Wisdom writings (Septuagint)",
+     "refs": [
+      [
+       51,
+       44,
+       16,
+       16
+      ],
+      [
+       51,
+       49,
+       14,
+       14
+      ],
+      [
+       31,
+       4,
+       10,
+       11
+      ]
+     ]
+    },
+    {
+     "t": "Books of the tradition",
+     "g": "Enoch the scribe is sent to the Watchers (1 Enoch 12:4). Jubilees says he was the first to learn writing, was with the angels six jubilees, testified against the Watchers, and was taken into Eden.",
+     "refs": [
+      [
+       16,
+       1,
+       9,
+       9
+      ],
+      [
+       16,
+       12,
+       1,
+       4
+      ],
+      [
+       15,
+       4,
+       16,
+       26
+      ]
+     ]
+    }
+   ],
+   "essays": [
+    81,
+    50,
+    79,
+    115,
+    104,
+    74,
+    82
+   ]
+  }
+ ],
+ "_people_about": "Biographical pages shown at #/person/<slug>. Every verse reference must exist in the stored text and every essay must be published on the page; the exporter stops otherwise. Text is hand-written and approved by the editor. Nothing private belongs here."
 }
