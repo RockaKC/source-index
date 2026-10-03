@@ -286,8 +286,8 @@ dialog.dlg::backdrop{background:rgba(0,0,0,.55)}
     </div>
     <nav class="menu" id="menu" aria-label="More" hidden>
       <ul>
-        <li><a href="#/people">
-          <svg class="line" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>People</a></li>
+        <li><a href="#/names">
+          <svg class="line" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Names</a></li>
         <li><a href="#/translations">
           <svg class="line" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Translations</a></li>
         <li><a href="https://kingdomcode.substack.com" target="_blank" rel="noopener">
@@ -662,10 +662,10 @@ function viewHome() {
   <ul class="chips">${WORDS.slice(0, 6).map(w => `<li><a class="chip" href="#/word/${w.slug}">${esc(w.title)}</a></li>`).join('')}</ul>
   <p style="margin-top:16px"><a class="btn secondary" href="#/words">See all ${WORDS.length} words</a></p>
 
-  ${D.PP && D.PP.length ? `<h2>People in Scripture</h2>
-  <p class="lede">Short profiles, with the verses where each appears.</p>
+  ${D.PP && D.PP.length ? `<h2>Names in Scripture</h2>
+  <p class="lede">Short profiles of the names in Scripture, with the verses where each appears.</p>
   <ul class="chips">${D.PP.map(x => `<li><a class="chip" href="#/person/${x.slug}">${esc(x.name)}</a></li>`).join('')}</ul>
-  <p style="margin-top:16px"><a class="btn secondary" href="#/people">See all people</a></p>
+  <p style="margin-top:16px"><a class="btn secondary" href="#/names">See all names</a></p>
 ` : ''}
   ${D.TL ? `<h2>Bible translations</h2>
   <p class="lede">Which New Testament translations let the Greek speak.</p>
@@ -965,12 +965,12 @@ function personRef([b, ch, vs, ve]) {
   const label = esc(vrefLabel([b, ch, vs, ve]));
   return `<li><a class="chip" href="#/${ve > vs ? 'range' : 'verse'}/${b}/${ch}/${vs}${ve > vs ? '/' + ve : ''}">${label}</a></li>`;
 }
-function viewPeople() {
+function viewNames() {
   const pp = D.PP || []; if (!pp.length) return viewMissing();
   return `
   ${backLink('#/')}
-  <h1>People</h1>
-  <p class="lede">Short profiles of figures in Scripture, with the verses where each appears and the essays that touch them.</p>
+  <h1>Names</h1>
+  <p class="lede">Short profiles of the names in Scripture, with the verses where each appears and the essays that touch them.</p>
   <div class="card" style="margin-top:24px;padding-top:8px;padding-bottom:8px"><ul class="list">${pp.map(x =>
     `<li><a class="wl" href="#/person/${x.slug}"><b>${esc(x.name)}</b><span class="en">${esc(x.line)}</span></a></li>`).join('')}</ul></div>`;
 }
@@ -979,7 +979,7 @@ function viewPerson(slug) {
   const groups = pr.groups.map(g => `<h3 class="pg">${esc(g.t)}</h3>${g.g ? `<p style="margin:4px 0 0">${esc(g.g)}</p>` : ''}
   <ul class="chips" style="margin-top:12px">${g.refs.map(personRef).join('')}</ul>`).join('');
   return `
-  ${backLink('#/people')}
+  ${backLink('#/names')}
   <h1>${esc(pr.name)}</h1>
   <div class="about">${pr.about.map(t => `<p>${esc(t)}</p>`).join('')}</div>
   <h2>Where he appears</h2>
@@ -1018,7 +1018,7 @@ function route() {
   else if (p[0] === 'word') html = viewWord(p[1]);
   else if (p[0] === 'read') html = viewRead(+p[1], +p[2], p[3]);
   else if (p[0] === 'translations') html = viewTranslations();
-  else if (p[0] === 'people') html = viewPeople();
+  else if (p[0] === 'names') html = viewNames();
   else if (p[0] === 'person') html = viewPerson(p[1]);
   else if (p[0] === 'about') html = viewAbout();
   else if (p[0] === 'credits') html = viewCredits();
