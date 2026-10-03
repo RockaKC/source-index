@@ -351,6 +351,14 @@ function ensureBible() {
   return bibleP;
 }
 const chapterText = (b, ch) => (BIBLE && BIBLE[b] && BIBLE[b][ch]) || (T[b] || {})[ch] || null;
+let deferTrack = false;               // a loading placeholder is not counted as a visit; the page that replaces it is
+function lazyText(b, ch, back, label, what) {   // chapters nobody cites are not inlined: fetch the text, then show the page
+  if (!hasChapter(b, ch) || chapterText(b, ch)) return null;
+  const want = location.hash; deferTrack = true;
+  ensureBible().then(() => { if (location.hash === want) route(); })
+    .catch(() => { const m = document.getElementById('loadmsg'); if (m) m.innerHTML = 'The Bible text could not load. Check your connection, then <a href="' + want + '">try again</a>.'; });
+  return `${backLink(back)}<h1>${esc(label)}</h1><p class="lede" id="loadmsg" role="status">Loading the ${what}\u2026</p>`;
+}
 const hasChapter = (b, ch) => !!(D.CC[b] && D.CC[b].includes(+ch));
 let ORD = null;
 function chapterOrder() { if (!ORD) { ORD = []; for (const b of D.order) for (const ch of D.CC[b]) ORD.push([b, ch]); } return ORD; }
@@ -442,9 +450,11 @@ const rank = ids => ids.slice().sort((a,b) => {
   if (ca > -1 && cb > -1) return ca - cb;
   return P[b][5] - P[a][5];
 });
-function keepReading(exclude = [], n = 3) {
-  const ids = D.conv.filter(p => !exclude.includes(p)).slice(0, n);
-  return ids.length ? `<h2>Keep reading</h2>${pieceList(ids)}` : '';
+function elsewhere(b, ch, shown) {      // essays that cite this chapter but are not already on the page
+  const seen = new Set(shown.map(Number)), out = new Set();
+  Object.values((D.verses[b] || {})[ch] || {}).forEach(ps => ps.forEach(p => { if (!seen.has(+p)) out.add(+p); }));
+  const ids = rank([...out]).slice(0, 3);
+  return ids.length ? `<h2>Elsewhere in ${esc(bname(b))} ${ch}</h2>${pieceList(ids)}` : '';
 }
 
 // ---------- reads ----------
@@ -670,8 +680,7 @@ function viewHome() {
   ${shelf(have)}
   ${rest ? `<p class="cap" style="margin-top:12px">${rest} more are listed, with their text still to come.</p>` : ''}
   <p style="margin-top:16px"><a class="btn secondary" href="#/books">Browse all 81 books</a></p>`; })()}
-
-  ${keepReading([], 3)}`;
+`;
 }
 function viewBooks(t) {
   t = t || 'OT';
@@ -696,8 +705,7 @@ function viewPath(id) {
   <h2>Start here</h2>
   <div style="margin-top:16px">${feature(first)}</div>
   <h2>Then read</h2>
-  ${pieceList(rest)}
-  ${keepReading(p.p, 2)}`;
+  ${pieceList(rest)}`;
 }
 function viewBook(eid) {
   const e = entryOf(eid); if (!e) return viewMissing();
@@ -732,11 +740,11 @@ function viewBook(eid) {
   <p class="lede">${e.extra ? 'Not in a Protestant Bible. ' : ''}${pos}${loaded.length ? ' ' + esc(TR[loaded[0]]) + '.' : ''}</p>
   ${reading}
   ${essays}
-  ${reads.length ? `<h2>Read in season</h2>${readList(reads)}` : ''}
-  ${keepReading(ids.slice(0,1), 2)}`;
+  ${reads.length ? `<h2>Read in season</h2>${readList(reads)}` : ''}`;
 }
 function viewVerse(b, ch, v) {
   if (!D.books[b]) return viewMissing();
+  const wait = lazyText(b, ch, `#/book/${D.bookEntry[b]}`, `${bname(b)} ${ch}:${v}`, 'verse'); if (wait) return wait;
   const ids = rank(((D.verses[b] || {})[ch] || {})[v] || []);
   const ref = ch * 1000 + v;
   const reads = D.reads.filter(r => r[2] === b && r[3]*1000 + r[4] <= ref && ref <= r[5]*1000 + r[6]);
@@ -761,11 +769,12 @@ function viewVerse(b, ch, v) {
   ${main}
   ${wordsForVerse(b, ch, v).length ? `<h2>Words in this verse</h2><div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">${wordsForVerse(b, ch, v).map(w => `<li><a class="wl" href="#/word/${w.slug}"><b>${esc(w.title)}</b><span class="en">${esc(w.en)}</span><span class="lang">${esc(w.lang)}</span></a></li>`).join('')}</ul></div>` : ''}
   ${reads.length ? `<h2>Read in season</h2>${readList(reads)}` : ''}
-  ${keepReading(ids.slice(0,3), 2)}
+  ${elsewhere(b, ch, ids)}
   ${sib.length ? `<h2>More from ${esc(bname(b))} ${ch}</h2><ul class="chips">${sib.map(x => `<li><a class="chip" href="#/verse/${b}/${ch}/${x}" aria-label="${esc(bname(b))} ${ch}:${x}">${ch}:${x}</a></li>`).join('')}</ul>` : ''}`;
 }
 function viewRange(b, ch, vs, ve) {
   if (!D.books[b] || !(ve > vs) || ve - vs > 60) return viewMissing();
+  const wait = lazyText(b, ch, `#/book/${D.bookEntry[b]}`, `${bname(b)} ${ch}:${vs}\u2013${ve}`, 'passage'); if (wait) return wait;
   const score = {}, cited = [];
   for (let v = vs; v <= ve; v++) { const ps = ((D.verses[b] || {})[ch] || {})[v]; if (!ps) continue; cited.push(v); ps.forEach(p => { score[p] = (score[p] || 0) + 1; }); }
   const ids = rank(Object.keys(score).map(Number)).sort((a,c) => score[c] - score[a]);
@@ -786,7 +795,7 @@ function viewRange(b, ch, vs, ve) {
   ${card}${more}${numNote(b, `${b}:${ch}:${vs}`, !!engLabel(b, ch, vs))}
   ${main}
   ${chips}
-  ${keepReading(ids.slice(0,3), 2)}`;
+  ${elsewhere(b, ch, ids)}`;
 }
 function viewSearch(q) {
   const words = q.toLowerCase().split(/\s+/).filter(Boolean);
@@ -1003,7 +1012,7 @@ function viewMissing() { return `${backLink(`#/`)}<h1>Not found</h1><p class="le
 
 // ---------- router ----------
 function route() {
-  trackNav();
+  trackNav(); deferTrack = false;
   const p = location.hash.replace(/^#\/?/, '').split('/');
   let html;
   if (!p[0]) html = viewHome();
@@ -1025,8 +1034,8 @@ function route() {
   else if (p[0] === 'search') html = viewSearch(decodeURIComponent(p.slice(1).join('/')));
   else html = viewMissing();
   app.innerHTML = `<div class="fadein">${html}</div>`;
-  UNMAPPED = null;
-  if (p[0] !== 'cta') trackView(routePath(p), (document.querySelector('#app h1') || {}).textContent || 'Kingdom Code Source Index');
+  if (!deferTrack) UNMAPPED = null;     // keep the flag across the loading placeholder
+  if (p[0] !== 'cta' && !deferTrack) trackView(routePath(p), (document.querySelector('#app h1') || {}).textContent || 'Kingdom Code Source Index');
   while (pendingEvents.length) { const [n, k] = pendingEvents.shift(); track(n, k); }
   if (document.getElementById('sug')) initSuggest();
   const sf = document.getElementById('sf');
