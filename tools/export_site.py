@@ -255,6 +255,19 @@ def build(con, cur, warn):
                   "verses": sum(len(vs) for b in verses.values() for vs in b.values()),
                   "chapters": len(cited_chapters)}
     D["notes"] = cur["notes"]
+    people = cur.get("people")
+    if people:
+        for pr in people:
+            bad = [e for e in pr["essays"] if str(e) not in D["pieces"]]
+            if bad:
+                sys.exit("the profile of %s lists essays that are not published on the page: %s" % (pr["name"], bad))
+            for g in pr["groups"]:
+                for b_, ch_, v1, v2 in g["refs"]:
+                    have = {int(re.match(r"\d+", str(r[0])).group()) for r in bible.get(str(b_), {}).get(str(ch_), [])}
+                    if not set(range(v1, v2 + 1)) <= have:
+                        sys.exit("the profile of %s cites %s %d:%d-%d, which is not fully in the stored text"
+                                 % (pr["name"], books[b_][0], ch_, v1, v2))
+        D["PP"] = people
     tl = cur.get("tiers")
     if tl:
         if str(tl["essay"]) not in D["pieces"]:
