@@ -1416,6 +1416,166 @@
     110,
     149
    ]
+  },
+  {
+   "slug": "jeremiah",
+   "name": "Jeremiah",
+   "line": "The prophet appointed over nations and kingdoms, who spoke of a new covenant.",
+   "about": [
+    "Jeremiah is the prophet the Lord says he knew before he formed him, and appointed “a prophet to the nations.” The Septuagint spells his name Jeremias and numbers his book differently from English Bibles, so the new covenant is Jeremiah 38:31–34 here and 31:31–34 in English. He tells the people not to trust in “the temple of the Lord,” writes to those carried away from Jerusalem, speaks of a new covenant, and is lowered into a pit and lifted out by an Ethiopian of the king’s household, Abdemelech. Matthew says Rachel’s weeping was spoken through him, Hebrews quotes the new covenant, and 2 Chronicles, Ezra and Daniel look back to his seventy years."
+   ],
+   "groups": [
+    {
+     "t": "The call",
+     "g": "The word of the Lord comes to him. He says he is a child, the Lord touches his mouth and puts his words in it, and appoints him over nations and kingdoms to root out, to pull down, to destroy, to rebuild and to plant.",
+     "refs": [
+      [
+       35,
+       1,
+       4,
+       10
+      ]
+     ]
+    },
+    {
+     "t": "The temple and the exile",
+     "g": "He tells the people not to trust in “the temple of the Lord, the temple of the Lord,” and points them to what was done to Shiloh. He writes to those carried away from Jerusalem to build houses, plant gardens and seek the peace of the land where they are. Chapter 36 here is chapter 29 in English Bibles.",
+     "refs": [
+      [
+       35,
+       7,
+       4,
+       4
+      ],
+      [
+       35,
+       7,
+       12,
+       14
+      ],
+      [
+       35,
+       36,
+       4,
+       7
+      ],
+      [
+       35,
+       36,
+       11,
+       11
+      ]
+     ]
+    },
+    {
+     "t": "The new covenant",
+     "g": "The Lord promises a new covenant with the house of Israel and the house of Juda, with his laws put in their mind and written on their hearts. This is chapter 38 here and chapter 31 in English Bibles. The saying about the sour grape sits just before it.",
+     "refs": [
+      [
+       35,
+       38,
+       29,
+       30
+      ],
+      [
+       35,
+       38,
+       31,
+       34
+      ]
+     ]
+    },
+    {
+     "t": "Abdemelech the Ethiopian",
+     "g": "When they put Jeremias in the pit, Abdemelech the Ethiopian hears of it, goes to the king, and draws him out with ropes. The Lord then sends Jeremias to tell Abdemelech he will be saved. These are chapters 45 and 46 here and chapters 38 and 39 in English Bibles.",
+     "refs": [
+      [
+       35,
+       45,
+       6,
+       13
+      ],
+      [
+       35,
+       46,
+       15,
+       18
+      ]
+     ]
+    },
+    {
+     "t": "The seventy years",
+     "g": "Jeremias says the land shall serve among the Gentiles seventy years. 2 Chronicles and Ezra say Cyrus was stirred up so that the word of the Lord by the mouth of Jeremias might be fulfilled, and Daniel reads the seventy years in the books.",
+     "refs": [
+      [
+       35,
+       25,
+       11,
+       11
+      ],
+      [
+       14,
+       36,
+       21,
+       22
+      ],
+      [
+       17,
+       1,
+       1,
+       1
+      ],
+      [
+       38,
+       9,
+       2,
+       2
+      ]
+     ]
+    },
+    {
+     "t": "New Testament",
+     "g": "Matthew says Rachel’s weeping in Ramah was spoken through Jeremiah, and lists him among those people thought Jesus might be. Hebrews quotes the new covenant, and at the supper Jesus calls the cup “the new covenant in My blood.”",
+     "refs": [
+      [
+       35,
+       38,
+       15,
+       15
+      ],
+      [
+       53,
+       2,
+       17,
+       18
+      ],
+      [
+       53,
+       16,
+       14,
+       14
+      ],
+      [
+       71,
+       8,
+       8,
+       12
+      ],
+      [
+       55,
+       22,
+       20,
+       20
+      ]
+     ]
+    }
+   ],
+   "essays": [
+    117,
+    37,
+    53,
+    38
+   ]
   }
  ],
  "_people_about": "Biographical pages shown at #/person/<slug>. Every verse reference must exist in the stored text and every essay must be published on the page; the exporter stops otherwise. Text is hand-written and approved by the editor. Nothing private belongs here."
