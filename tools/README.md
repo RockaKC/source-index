@@ -45,9 +45,11 @@ Guards: counts only on the hostnames in `ANALYTICS.hosts` (the live domain, so d
 
 The page at `#/translations` shows the New Testament translation tier list from `tiers` in `tools/curated.json`: tiers, one line per translation, a how-to-use summary and a link to the full essay. It mirrors the published essay (`essay` is its piece id), so edit the file when the essay changes. The exporter stops if that essay is not a published essay on the page.
 
-## Biographical pages
+## Names profiles
 
-`people` in `tools/curated.json` holds short profiles shown at `#/person/<slug>` (the first is `enoch`): a few hand-written sentences, the verses where the figure appears in the stored text, and a curated list of essays. They are listed at `#/names` (linked from the menu and the home page); each needs a one-line `line` for that list. The exporter stops if a verse is not fully in the stored text or an essay is not published on the page. Text is written and approved by the editor.
+The profiles shown at `#/person/<slug>` and listed at `#/names` live in the database (kc_v18 or later): one `nodes` row per profile with type `person` (name, slug, the one-line description in `summary`, the introduction in `body_md`), plus `person_profiles` (order on the Names list), `profile_groups` (the "Where he appears" groups), `profile_refs` (verse links, in the stored text's own numbering) and `profile_essays` (the curated essays, in order). Only profiles with status `published` reach the page, so a profile can be drafted in the database first. The exporter stops if a verse is not fully in the stored text or an essay is not published on the page, and it refuses a database without these tables.
+
+`tools/import_profiles.py PROFILES.json kc_v17.db kc_v18.db` made that move once, from the former `people` section of `curated.json`, into a new copy of the database. Keep one working copy of the database from then on, so profiles are not lost between versions. Text is written and approved by the editor.
 
 ## What stays out of the repo
 
