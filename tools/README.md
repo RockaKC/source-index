@@ -21,6 +21,7 @@ Running it twice in a row changes nothing the second time.
 - Only articles with status `published` appear. Draft citations never reach the page.
 - Quips are left out. `tools/curated.json` lists a few other published articles the page holds back.
 - Citations the database marks `review` (unconfirmed numbering) are left out until resolved.
+- Jubilees (R. H. Charles, 1902, public domain) is in `kc_v17.db` and is exported like 1 Enoch. Verse numbers are Charles's and can differ from other editions, which the credits page says.
 - A citation at a verse missing from the stored text (for example Acts 8:37, which the Berean Literal Bible omits) is still shown as a hit. The verse page lists the essay without verse text, and the report names each one so the database can be checked.
 - Raw view counts do not leave the database. The page gets a ranking order only.
 
