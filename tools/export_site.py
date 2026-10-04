@@ -294,6 +294,15 @@ def build(con, cur, warn):
                         sys.exit("the profile of %s cites %s %d:%d-%d, which is not fully in the stored text"
                                  % (pr["name"], books[b_][0], ch_, v1, v2))
         D["PP"] = people
+    en = cur.get("english")
+    if en:
+        listed = [i[0] for g in en["groups"] for i in g["items"]]
+        extra = sorted(e["id"] for e in D["entries"] if e.get("extra"))
+        if sorted(listed) != extra:
+            sys.exit("the English-translations page must list each book outside the Protestant canon exactly once; "
+                     "missing %s, unexpected or repeated %s" % (sorted(set(extra) - set(listed)),
+                     sorted(x for x in set(listed) if listed.count(x) > 1 or x not in extra)))
+        D["EN"] = {k: v for k, v in en.items() if not k.startswith("_")}
     tl = cur.get("tiers")
     if tl:
         if str(tl["essay"]) not in D["pieces"]:

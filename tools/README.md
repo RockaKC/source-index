@@ -45,6 +45,10 @@ Guards: counts only on the hostnames in `ANALYTICS.hosts` (the live domain, so d
 
 The page at `#/translations` shows the New Testament translation tier list from `tiers` in `tools/curated.json`: tiers, one line per translation, a how-to-use summary and a link to the full essay. It mirrors the published essay (`essay` is its piece id), so edit the file when the essay changes. The exporter stops if that essay is not a published essay on the page.
 
+## Reading the Ethiopian books in English
+
+`english` in `tools/curated.json` drives the page at `#/english`, linked from the 81-books page and the home page: which of the 19 books outside the Protestant canon can be read here, which are in every Bible or in English Apocrypha editions, and which are hard to find in English. Each group lists canon entry ids, and the exporter stops unless every one of the 19 appears exactly once. Keep its claims to what can be checked.
+
 ## Names profiles
 
 The profiles shown at `#/person/<slug>` and listed at `#/names` live in the database (kc_v18 or later): one `nodes` row per profile with type `person` (name, slug, the one-line description in `summary`, the introduction in `body_md`), plus `person_profiles` (order on the Names list), `profile_groups` (the "Where he appears" groups), `profile_refs` (verse links, in the stored text's own numbering) and `profile_essays` (the curated essays, in order). Only profiles with status `published` reach the page, so a profile can be drafted in the database first. The exporter stops if a verse is not fully in the stored text or an essay is not published on the page, and it refuses a database without these tables.
