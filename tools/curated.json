@@ -1045,5 +1045,107 @@
     "Remove them from your shelf."
    ]
   ]
+ },
+ "english": {
+  "_about": "The 'Reading the Ethiopian books in English' page at #/english. Groups list canon entry ids (D.entries); every entry marked extra must appear exactly once. Keep claims to what can be checked.",
+  "title": "Reading the Ethiopian books in English",
+  "lede": "No complete, church-approved English translation of all 81 books exists yet. Most of the books a Protestant Bible leaves out can still be read in English, and six of them are here.",
+  "groups": [
+   {
+    "t": "Read them here",
+    "items": [
+     [
+      14,
+      "R. H. Charles translation (1917)"
+     ],
+     [
+      13,
+      "R. H. Charles translation (1902)"
+     ],
+     [
+      17,
+      "Brenton Septuagint"
+     ],
+     [
+      18,
+      "Brenton Septuagint"
+     ],
+     [
+      26,
+      "Brenton Septuagint"
+     ],
+     [
+      45,
+      "Brenton Septuagint"
+     ]
+    ]
+   },
+   {
+    "t": "Already in your Bible",
+    "items": [
+     [
+      25,
+      "Reproof. Ethiopian Bibles count the closing chapters of Proverbs as their own book, so the text is in every Bible, inside Proverbs."
+     ]
+    ]
+   },
+   {
+    "t": "In English Apocrypha editions",
+    "items": [
+     [
+      16,
+      "Their counterparts are the books of Esdras (1 Esdras, and 2 Esdras, also called 4 Ezra), found in most English Apocrypha."
+     ]
+    ]
+   },
+   {
+    "t": "Harder to find",
+    "items": [
+     [
+      20,
+      "Ethiopian Meqabyan, not the Greek books of Maccabees. Only a few English translations exist, mostly recent."
+     ],
+     [
+      21,
+      "Also Meqabyan. English translations are few."
+     ],
+     [
+      46,
+      "The Ethiopic version of Yosippon, a medieval Hebrew history of the Jews. English versions of the Hebrew exist; the Ethiopic is hard to find."
+     ]
+    ]
+   },
+   {
+    "t": "Church order",
+    "note": "The Sinodos (Sirate Tsion, Tizaz, Gitsew, Abtilis), the Book of the Covenant (1 and 2 Dominos), Clement and the Didascalia. English exists mainly in older scholarly editions and excerpts. Full translations are rare.",
+    "items": [
+     [
+      74
+     ],
+     [
+      75
+     ],
+     [
+      76
+     ],
+     [
+      77
+     ],
+     [
+      78
+     ],
+     [
+      79
+     ],
+     [
+      80
+     ],
+     [
+      81
+     ]
+    ]
+   }
+  ],
+  "foot": "Ethiopian Bibles also carry 4 Baruch (the Paralipomena of Jeremiah) with Jeremiah. English translations exist in collections of early Jewish writings."
  }
 }
