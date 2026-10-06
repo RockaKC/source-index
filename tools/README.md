@@ -55,6 +55,10 @@ The profiles shown at `#/person/<slug>` and listed at `#/names` live in the data
 
 `tools/import_profiles.py PROFILES.json kc_v17.db kc_v18.db` made that move once, from the former `people` section of `curated.json`, into a new copy of the database. Keep one working copy of the database from then on, so profiles are not lost between versions. Text is written and approved by the editor.
 
+## Editing the database
+
+Text changes to database content (a profile's wording, a title) go through `tools/patch_db.py`: write the edit as plain SQL in `tools/patches/<date>-<name>.sql`, with a first comment line giving the reason, then run `python3 tools/patch_db.py tools/patches/<file>.sql kc_vN.db kc_vN+1.db`. It writes a new copy, never touches the input, runs everything in one transaction, stops if any statement changes nothing (so a patch cannot be applied twice or to the wrong database), checks integrity, and logs the patch in `import_log`. Old text of an edited node is kept in `node_revisions` by the database's own trigger. The patch files in this folder are the record of what changed and why.
+
 ## What stays out of the repo
 
 The database file is never copied here (`.gitignore` blocks `*.db`). The exporter does not read the patron, pledge, income or identity tables. It stops if an email address or an unpublished item turns up in the output.
