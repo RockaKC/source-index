@@ -19,6 +19,7 @@ Running it twice in a row changes nothing the second time.
 ## Publication rules
 
 - Only articles with status `published` appear. Draft citations never reach the page.
+- A published article with no link yet (it is logged before its post is live) is held back and listed in the report as "no link yet", so the page never gets a dead link. A profile that lists such an article stops the build.
 - Quips are left out. `tools/curated.json` lists a few other published articles the page holds back.
 - Citations the database marks `review` (unconfirmed numbering) are left out until resolved.
 - Jubilees (R. H. Charles, 1902, public domain) is in `kc_v17.db` and is exported like 1 Enoch. Verse numbers are Charles's and can differ from other editions, which the credits page says.
@@ -44,6 +45,10 @@ Guards: counts only on the hostnames in `ANALYTICS.hosts` (the live domain, so d
 ## Translation tier list
 
 The page at `#/translations` shows the New Testament translation tier list from `tiers` in `tools/curated.json`: tiers, one line per translation, a how-to-use summary and a link to the full essay. It mirrors the published essay (`essay` is its piece id), so edit the file when the essay changes. The exporter stops if that essay is not a published essay on the page.
+
+## Numbering warnings for partly mapped books
+
+A book with only some verses mapped from English to Septuagint numbers warns on every typed number it has not converted. `numbering_scope` in `tools/curated.json` narrows that warning to the chapters named, for books where most chapters are known to match English. Genesis is listed with chapters 31 and 32: 48 of its 50 chapters have the same verse count as English Bibles, and those two differ (English 32:26 is Septuagint 32:27). A book is added only after its chapters are checked (compare verse counts with the standard English counts, and read the versification table). The exporter stops if a listed book has no partial map or a chapter is out of range.
 
 ## Reading the Ethiopian books in English
 
