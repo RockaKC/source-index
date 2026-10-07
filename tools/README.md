@@ -19,6 +19,7 @@ Running it twice in a row changes nothing the second time.
 ## Publication rules
 
 - Only articles with status `published` appear. Draft citations never reach the page.
+- A published article with no link yet (it is logged before its post is live) is held back and listed in the report as "no link yet", so the page never gets a dead link. A profile that lists such an article stops the build.
 - Quips are left out. `tools/curated.json` lists a few other published articles the page holds back.
 - Citations the database marks `review` (unconfirmed numbering) are left out until resolved.
 - Jubilees (R. H. Charles, 1902, public domain) is in `kc_v17.db` and is exported like 1 Enoch. Verse numbers are Charles's and can differ from other editions, which the credits page says.

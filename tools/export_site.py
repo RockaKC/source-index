@@ -204,7 +204,8 @@ def build(con, cur, warn):
                 from nodes n join articles a on a.node_id = n.id
                 where n.type = 'article' and n.status = 'published'
                 order by n.id""")
-    pieces_src = [r for r in rows if r[5] != "quip" and r[0] not in excluded]
+    # A published article with no link yet (logged before its post is live) is held back, not published with a dead link.
+    pieces_src = [r for r in rows if r[5] != "quip" and r[0] not in excluded and (r[2] or "").strip()]
     views = {}
     for nid, v in q("""select node_id, max(coalesce(views, 0)) from content_metrics group by node_id"""):
         views[nid] = v
@@ -370,7 +371,8 @@ def build(con, cur, warn):
         sys.exit("refusing to write: unpublished node ids in the page data: %s" % sorted(leaked)[:10])
     info = {"skipped_review_citations": skipped["review"],
             "phantom": sorted((pid, raw, len(vs)) for (pid, raw), vs in phantom.items()),
-            "left_out_published": [(r[0], r[1], r[5]) for r in rows if r[0] not in pieces and r[5] != "quip"],
+            "left_out_published": [(r[0], r[1], "no link yet" if not (r[2] or "").strip() else r[5])
+                                   for r in rows if r[0] not in pieces and r[5] != "quip"],
             "quips_left_out": sum(1 for r in rows if r[5] == "quip")}
     return D, bible, info
 
