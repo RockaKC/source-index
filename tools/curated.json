@@ -1147,5 +1147,12 @@
    }
   ],
   "foot": "Ethiopian Bibles also carry 4 Baruch (the Paralipomena of Jeremiah) with Jeremiah. English translations exist in collections of early Jewish writings."
+ },
+ "numbering_scope": {
+  "_about": "For a book whose verse map is partial, the page warns about unconverted English numbers on every chapter unless the book is listed here. A listed book warns only on the chapters named, because the rest are known to match English numbering. Genesis: 48 of 50 chapters have the same verse count as English Bibles; chapters 31 (54 verses against 55) and 32 (33 against 32) differ, the boundary shift at Jacob's journey (English 32:26 = Septuagint 32:27). Add a book here only after checking its chapters.",
+  "Genesis": [
+   31,
+   32
+  ]
  }
 }

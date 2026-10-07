@@ -46,6 +46,10 @@ Guards: counts only on the hostnames in `ANALYTICS.hosts` (the live domain, so d
 
 The page at `#/translations` shows the New Testament translation tier list from `tiers` in `tools/curated.json`: tiers, one line per translation, a how-to-use summary and a link to the full essay. It mirrors the published essay (`essay` is its piece id), so edit the file when the essay changes. The exporter stops if that essay is not a published essay on the page.
 
+## Numbering warnings for partly mapped books
+
+A book with only some verses mapped from English to Septuagint numbers warns on every typed number it has not converted. `numbering_scope` in `tools/curated.json` narrows that warning to the chapters named, for books where most chapters are known to match English. Genesis is listed with chapters 31 and 32: 48 of its 50 chapters have the same verse count as English Bibles, and those two differ (English 32:26 is Septuagint 32:27). A book is added only after its chapters are checked (compare verse counts with the standard English counts, and read the versification table). The exporter stops if a listed book has no partial map or a chapter is out of range.
+
 ## Reading the Ethiopian books in English
 
 `english` in `tools/curated.json` drives the page at `#/english`, linked from the 81-books page and the home page: which of the 19 books outside the Protestant canon can be read here, which are in every Bible or in English Apocrypha editions, and which are hard to find in English. Each group lists canon entry ids, and the exporter stops unless every one of the 19 appears exactly once. Keep its claims to what can be checked.

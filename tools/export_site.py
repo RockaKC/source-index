@@ -356,6 +356,17 @@ def build(con, cur, warn):
                  % (books[int(bk)][0], len(dangling), ", ".join("%d:%d" % t for t in dangling[:3])))
     D["PM"], D["PE"] = PM, PE
     D["PD"] = sorted(partial)
+    D["PC"] = {}
+    ids = {v[0]: k for k, v in books.items()}
+    for name, chs in cur.get("numbering_scope", {}).items():
+        if name.startswith("_"):
+            continue
+        if name not in ids or ids[name] not in partial:
+            sys.exit("numbering_scope lists %s, which is not a book with a partial verse map" % name)
+        top = max(int(c) for c in bible[str(ids[name])])
+        if not chs or any(not isinstance(c, int) or c < 1 or c > top for c in chs):
+            sys.exit("numbering_scope for %s must list chapter numbers between 1 and %d" % (name, top))
+        D["PC"][str(ids[name])] = sorted(set(chs))
     D["LX"], lex_credit = dictionary_entries(con, cur, books, warn)
     D["credits"] = cur["credits"] + lex_credit
     D["CC"] = {str(b): sorted(int(c) for c in bible[str(b)]) for b in sorted(text_rows)}
