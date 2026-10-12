@@ -3,13 +3,15 @@
  "translation_labels": {
   "LXX": "Septuagint",
   "BLB": "Berean Literal Bible",
-  "CHARLES": "R. H. Charles"
+  "CHARLES": "R. H. Charles",
+  "PLATT": "Thomas Pell Platt"
  },
  "translation_sources": {
   "_about": "The language each translation was made from, shown on book pages and in the reader. Keys must match translation_labels. Keep to what can be checked.",
   "LXX": "Greek",
   "BLB": "Greek",
-  "CHARLES": "Ethiopic (Ge’ez)"
+  "CHARLES": "Ethiopic (Ge’ez)",
+  "PLATT": "Ethiopic (Ge’ez)"
  },
  "entries": {
   "1": {
@@ -907,6 +909,10 @@
    "text": "R. H. Charles translation (1902), public domain. Parentheses mark words Charles supplied, square brackets his interpolations, and daggers text he judged corrupt. His footnotes and introduction are not included, and his verse numbers can differ from other editions."
   },
   {
+   "what": "Didascalia",
+   "text": "Thomas Pell Platt translation (1834) of one Ethiopic manuscript, public domain. Section numbers are Platt’s. Paragraphs are numbered here as verses. The manuscript is incomplete and ends mid-sentence."
+  },
+  {
    "what": "Psalm numbers",
    "text": "Psalms use the Septuagint numbering, which most English Bibles do not. The English number is shown beside it."
   }
@@ -1055,7 +1061,7 @@
  "english": {
   "_about": "The 'Reading the Ethiopian books in English' page at #/english. Groups list canon entry ids (D.entries); every entry marked extra must appear exactly once. Keep claims to what can be checked.",
   "title": "Reading the Ethiopian books in English",
-  "lede": "No complete, church-approved English translation of all 81 books exists yet. Most of the books a Protestant Bible leaves out can still be read in English, and six of them are here.",
+  "lede": "No complete, church-approved English translation of all 81 books exists yet. Most of the books a Protestant Bible leaves out can still be read in English, and seven of them are here.",
   "groups": [
    {
     "t": "Read them here",
@@ -1083,6 +1089,10 @@
      [
       45,
       "Brenton Septuagint"
+     ],
+     [
+      81,
+      "Platt translation (1834), from an Ethiopic manuscript. The manuscript is incomplete."
      ]
     ]
    },
@@ -1123,7 +1133,7 @@
    },
    {
     "t": "Church order",
-    "note": "The Sinodos (Sirate Tsion, Tizaz, Gitsew, Abtilis), the Book of the Covenant (1 and 2 Dominos), Clement and the Didascalia. English exists mainly in older scholarly editions and excerpts. Full translations are rare.",
+    "note": "The Sinodos (Sirate Tsion, Tizaz, Gitsew, Abtilis), the Book of the Covenant (1 and 2 Dominos), and Clement. English exists mainly in older scholarly editions and excerpts. Full translations are rare.",
     "items": [
      [
       74
@@ -1145,9 +1155,6 @@
      ],
      [
       80
-     ],
-     [
-      81
      ]
     ]
    }
@@ -1160,5 +1167,9 @@
    31,
    32
   ]
+ },
+ "book_notes": {
+  "_about": "A short caution shown under the heading of a book's page and its chapters. Keys are book ids that have text.",
+  "87": "Platt translated one Ethiopic manuscript, and it is incomplete: it ends mid-sentence. Platt himself calls the Ethiopic a loose version of a Greek work. Section numbers are Platt’s; the verse numbers count his paragraphs."
  }
 }
