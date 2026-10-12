@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "Kingdom Code Source Index",
-  "short_name": "Source Index",
+  "name": "KC Tewahedo Bible",
+  "short_name": "KC Tewahedo",
   "description": "Look up a verse to see every Kingdom Code essay that quotes it, read the 81-book canon, and see the Hebrew and Greek words behind the text. Free to read.",
   "start_url": "./",
   "scope": "./",
