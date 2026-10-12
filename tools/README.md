@@ -64,7 +64,7 @@ Two analytics events: `app/open` (once per session, when opened from the home sc
 
 ## Source language of each translation
 
-Book pages and the reader say what language each text was translated from ("Septuagint, translated from Greek"; "R. H. Charles, translated from Ethiopic (Ge’ez)"). The language comes from `translation_sources` in `tools/curated.json`, one entry per translation in `translation_labels`; the exporter refuses a mismatch and writes `D.TS`. Books outside the Protestant canon that are not from Ethiopic also carry a line saying the Ethiopian Church reads them in Ge’ez and the English is not from the Ge’ez. The English page counts the two groups from the data. When a Ge’ez-based translation is added, give it its own key in both blocks.
+Book pages and the reader say what language each text was translated from ("Septuagint, translated from Greek"; "R. H. Charles, translated from Ethiopic (Ge’ez)"). The language comes from `translation_sources` in `tools/curated.json`, one entry per translation in `translation_labels`; the exporter refuses a mismatch and writes `D.TS`. The English page counts the two groups from the data. When a Ge’ez-based translation is added, give it its own key in both blocks.
 
 ## Loading a book of text
 
