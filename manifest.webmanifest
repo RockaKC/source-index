@@ -1,0 +1,18 @@
+{
+  "id": "./",
+  "name": "Kingdom Code Source Index",
+  "short_name": "Source Index",
+  "description": "Look up a verse to see every Kingdom Code essay that quotes it, read the 81-book canon, and see the Hebrew and Greek words behind the text. Free to read.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#1c6944",
+  "categories": ["books", "education", "reference"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

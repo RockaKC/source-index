@@ -50,6 +50,14 @@ The page at `#/translations` shows the New Testament translation tier list from 
 
 A book with only some verses mapped from English to Septuagint numbers warns on every typed number it has not converted. `numbering_scope` in `tools/curated.json` narrows that warning to the chapters named, for books where most chapters are known to match English. Genesis is listed with chapters 31 and 32: 48 of its 50 chapters have the same verse count as English Bibles, and those two differ (English 32:26 is Septuagint 32:27). A book is added only after its chapters are checked (compare verse counts with the standard English counts, and read the versification table). The exporter stops if a listed book has no partial map or a chapter is out of range.
 
+## Installable app and offline reading
+
+The site installs to a phone's home screen and reads offline. Files at the repo root, all hand-kept (the exporter does not touch them): `manifest.webmanifest` (name, colours, icons), `sw.js` (the service worker) and `icons/` (192 and 512 px, a maskable 512 px, and the 180 px Apple icon, a "KC" monogram in the site's green).
+
+`sw.js`: pages are fetched network-first, so a reader online always gets the current site and the last copy is only the offline fallback; Bible text (`bible/<id>.json`) is served from the saved copy and refreshed in the background; anything on another origin (analytics, Ko-fi) is left alone. Two caches: `kc-shell-v1` and `kc-books-v1`. Bump `SHELL` in `sw.js` when its caching rules change. The About page has a "Save for offline reading" button that stores all 72 book files (about 5 MB) into `kc-books-v1`, and, where the browser offers it, an "Install the app" button. iPhone has no install prompt; the About page tells readers to use Share, then Add to Home Screen.
+
+Two analytics events: `app/open` (once per session, when opened from the home screen) and `app/installed`. Test it with a real offline (stop the test server), not Playwright's offline switch, which does not block a service worker's own requests.
+
 ## Reading the Ethiopian books in English
 
 `english` in `tools/curated.json` drives the page at `#/english`, linked from the 81-books page and the home page: which of the 19 books outside the Protestant canon can be read here, which are in every Bible or in English Apocrypha editions, and which are hard to find in English. Each group lists canon entry ids, and the exporter stops unless every one of the 19 appears exactly once. Keep its claims to what can be checked.
