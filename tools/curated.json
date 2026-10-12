@@ -5,6 +5,12 @@
   "BLB": "Berean Literal Bible",
   "CHARLES": "R. H. Charles"
  },
+ "translation_sources": {
+  "_about": "The language each translation was made from, shown on book pages and in the reader. Keys must match translation_labels. Keep to what can be checked.",
+  "LXX": "Greek",
+  "BLB": "Greek",
+  "CHARLES": "Ethiopic (Ge’ez)"
+ },
  "entries": {
   "1": {
    "name": "Genesis",
