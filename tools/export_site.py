@@ -323,6 +323,12 @@ def build(con, cur, warn):
     if sorted(src) != sorted(labels):
         sys.exit("translation_sources must name exactly the translations in translation_labels: %s vs %s" % (sorted(src), sorted(labels)))
     D["TS"] = {str(b): src[trans_of[b]] for b in sorted(text_rows)}
+    bn = {k: v for k, v in cur.get("book_notes", {}).items() if not k.startswith("_")}
+    bad = sorted(k for k in bn if not k.isdigit() or int(k) not in text_rows)
+    if bad:
+        sys.exit("book_notes names books that have no text: %s" % bad)
+    if bn:
+        D["BN"] = bn
     D["SP"] = {"%d:%d:%d" % (b, ch, v): cb for b, ch, v, cb in q(
         "select book_id, chapter, verse, carried_by from verse_spans order by 1, 2, 3")}
     # English -> Septuagint verse map, per book: PM[book][engChapter][engVerse] = [lxxChapter, lxxVerse]
