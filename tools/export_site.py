@@ -323,10 +323,18 @@ def build(con, cur, warn):
     if sorted(src) != sorted(labels):
         sys.exit("translation_sources must name exactly the translations in translation_labels: %s vs %s" % (sorted(src), sorted(labels)))
     D["TS"] = {str(b): src[trans_of[b]] for b in sorted(text_rows)}
-    bn = {k: v for k, v in cur.get("book_notes", {}).items() if not k.startswith("_")}
-    bad = sorted(k for k in bn if not k.isdigit() or int(k) not in text_rows)
-    if bad:
-        sys.exit("book_notes names books that have no text: %s" % bad)
+    bn = {}
+    for k, v in cur.get("book_notes", {}).items():
+        if k.startswith("_"):
+            continue
+        if not k.isdigit() or int(k) not in text_rows:
+            sys.exit("book_notes names a book that has no text: %s" % k)
+        note = {"p": v.get("page", "")}
+        for ch, t in v.get("chapters", {}).items():
+            if not ch.isdigit() or str(ch) not in bible[k]:
+                sys.exit("book_notes for book %s names chapter %s, which has no text" % (k, ch))
+            note.setdefault("c", {})[ch] = t
+        bn[k] = note
     if bn:
         D["BN"] = bn
     D["SP"] = {"%d:%d:%d" % (b, ch, v): cb for b, ch, v, cb in q(
