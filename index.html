@@ -706,10 +706,7 @@ function viewBooks(t) {
   <div id="shelf">${shelf(es)}</div>`;
 }
 const noteFor = b => (D.BN && D.BN[b]) ? `<p class="cap" style="margin-top:8px">${esc(D.BN[b])}</p>` : '';
-function fromLine(b) {
-  const e = entryOf(D.bookEntry[b]), from = D.TS[b];
-  return `${TR[b]}, translated from ${from}${e && e.extra && !/Ethiopic/.test(from) ? '. The Ethiopian Church reads this book in Ge\u2019ez, and this English is not from the Ge\u2019ez' : ''}`;
-}
+function fromLine(b) { return `${TR[b]}, translated from ${D.TS[b]}`; }
 function viewEnglish() {
   const en = D.EN; if (!en) return viewMissing();
   const name = id => (entryOf(id) || {}).name || '';
@@ -769,7 +766,7 @@ function viewBook(eid) {
   return `
   ${backLink(`#/books`)}
   <h1>${esc(e.name)}</h1>
-  <p class="lede">${e.extra ? 'Not in a Protestant Bible. ' : ''}${pos}${loaded.length ? ' ' + esc(fromLine(loaded[0])) + '.' : ''}</p>
+  <p class="lede">${pos}${loaded.length ? ' ' + esc(fromLine(loaded[0])) + '.' : ''}</p>
   ${loaded.map(noteFor).join('')}
   ${reading}
   ${essays}
