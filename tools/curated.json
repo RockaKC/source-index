@@ -1169,7 +1169,12 @@
   ]
  },
  "book_notes": {
-  "_about": "A short caution shown under the heading of a book's page and its chapters. Keys are book ids that have text.",
-  "87": "Platt’s English follows his one Ethiopic manuscript, which is incomplete: it ends mid-sentence. Section numbers are Platt’s; the verse numbers count his paragraphs."
+  "_about": "A short note about a book's text. 'page' shows on the book page; 'chapters' maps a chapter number to a note shown only at the top of that chapter. Keys are book ids that have text.",
+  "87": {
+   "page": "Platt’s English follows his one Ethiopic manuscript, which is incomplete: it ends mid-sentence. Section numbers are Platt’s; the verse numbers count his paragraphs.",
+   "chapters": {
+    "22": "The manuscript ends here, mid-sentence."
+   }
+  }
  }
 }
