@@ -62,6 +62,10 @@ Two analytics events: `app/open` (once per session, when opened from the home sc
 
 `english` in `tools/curated.json` drives the page at `#/english`, linked from the 81-books page and the home page: which of the 19 books outside the Protestant canon can be read here, which are in every Bible or in English Apocrypha editions, and which are hard to find in English. Each group lists canon entry ids, and the exporter stops unless every one of the 19 appears exactly once. Keep its claims to what can be checked.
 
+## Source language of each translation
+
+Book pages and the reader say what language each text was translated from ("Septuagint, translated from Greek"; "R. H. Charles, translated from Ethiopic (Ge’ez)"). The language comes from `translation_sources` in `tools/curated.json`, one entry per translation in `translation_labels`; the exporter refuses a mismatch and writes `D.TS`. Books outside the Protestant canon that are not from Ethiopic also carry a line saying the Ethiopian Church reads them in Ge’ez and the English is not from the Ge’ez. The English page counts the two groups from the data. When a Ge’ez-based translation is added, give it its own key in both blocks.
+
 ## Names profiles
 
 The profiles shown at `#/person/<slug>` and listed at `#/names` live in the database (kc_v18 or later): one `nodes` row per profile with type `person` (name, slug, the one-line description in `summary`, the introduction in `body_md`), plus `person_profiles` (order on the Names list), `profile_groups` (the groups under "In Scripture"), `profile_refs` (verse links, in the stored text's own numbering) and `profile_essays` (the curated essays, in order). Only profiles with status `published` reach the page, so a profile can be drafted in the database first. The exporter stops if a verse is not fully in the stored text or an essay is not published on the page, and it refuses a database without these tables.
