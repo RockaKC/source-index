@@ -49,15 +49,16 @@ function essayCount(b, ch) {
   for (const c in v) if (ch == null || +c === +ch) for (const x in v[c]) v[c][x].forEach(p => s.add(p));
   return s.size;
 }
+const bookRank = b => PROFILE.essaysInBible ? essayCount(b) : 0;   // most-cited books first on the site; canon order in the app
 function suggest(raw) {
   const q = raw.trim().toLowerCase().replace(/\./g, '');
   if (!q) return [];
   const out = [], add = o => { if (out.length < 7 && !out.some(x => x.href === o.href)) out.push(o); };
   const verseOpt = (b, ch, v) => {
     const n = ((D.verses[b] || {})[ch] || {})[v] ? D.verses[b][ch][v].length : 0, e = (PE[b] || {})[`${ch}:${v}`];
-    return {label: `${bname(b)} ${ch}:${v}${e ? ` (English ${e[0]}:${e[1]})` : ''}`, meta: n ? `Verse \u00b7 ${plural(n,'essay')}` : 'Verse', href: `#/verse/${b}/${ch}/${v}`};
+    return {label: `${bname(b)} ${ch}:${v}${e ? ` (English ${e[0]}:${e[1]})` : ''}`, meta: n && PROFILE.essaysInBible ? `Verse \u00b7 ${plural(n,'essay')}` : 'Verse', href: `#/verse/${b}/${ch}/${v}`};
   };
-  const bookOpt = b => { const n = essayCount(b); return {label: bname(b), meta: n ? `Book \u00b7 ${plural(n,'essay')}` : 'Book', href: `#/book/${D.bookEntry[b]}`}; };
+  const bookOpt = b => { const n = essayCount(b); return {label: bname(b), meta: n && PROFILE.essaysInBible ? `Book \u00b7 ${plural(n,'essay')}` : 'Book', href: `#/book/${D.bookEntry[b]}`}; };
   const m = q.match(/^((?:[123]\s*)?[a-z][a-z\s]*?)\s*(?:(\d+)(?:\s*:\s*(\d*)(?:\s*[-–—]\s*(\d*))?)?)?$/);
   let bookHits = [];
   if (m) {
@@ -68,7 +69,14 @@ function suggest(raw) {
     if (target != null && ch !== undefined) {
       const rg = vp && m[4] ? rangeRef(target, +ch, +vp, +m[4]) : null;
       if (rg) add({label: `${bname(target)} ${ch}:${vp}\u2013${m[4]}`, meta: 'Passage \u00b7 range', href: `#/range/${target}/${rg[0]}/${rg[1]}/${rg[2]}`});
-      else if (m[4] !== undefined && vp) { const lc = mapRef(target, +ch, +vp); if (verseText(target, lc[0], lc[1])) add(verseOpt(target, lc[0], lc[1])); }
+      else if (!PROFILE.essaysInBible) {                     // the app: any chapter with text, cited or not
+        const lch = mapRef(target, +ch, null)[0];
+        if (!hasChapter(target, lch)) add({label: `${bname(target)} ${ch}`, meta: 'Book', href: `#/book/${D.bookEntry[target]}`});
+        else {
+          if (vp) { const mv = mapRef(target, +ch, +vp); add(verseOpt(target, mv[0], mv[1])); }
+          add({label: `Read ${bname(target)} ${ch}`, meta: 'Chapter', href: `#/read/${target}/${lch}`});
+        }
+      } else if (m[4] !== undefined && vp) { const lc = mapRef(target, +ch, +vp); if (verseText(target, lc[0], lc[1])) add(verseOpt(target, lc[0], lc[1])); }
       else if (PM[target] && vp && inScope(target, +ch)) {      // typed English verse -> Septuagint verse
         const mm = mapRef(target, +ch, +vp);
         if (verseText(target, mm[0], mm[1])) add(verseOpt(target, mm[0], mm[1]));
@@ -82,19 +90,19 @@ function suggest(raw) {
       }
     } else if (target != null) {
       add(bookOpt(target));
-      const all = []; const dv = D.verses[target] || {};
+      const all = []; const dv = PROFILE.essaysInBible ? D.verses[target] || {} : {};   // the most-cited verses, on the site only
       for (const c in dv) for (const v in dv[c]) all.push([+c, +v, dv[c][v].length]);
       all.sort((a,c) => c[2]-a[2] || a[0]-c[0] || a[1]-c[1]).slice(0, 4).forEach(([c,v]) => add(verseOpt(target, c, v)));
-    } else bookHits.slice().sort((a,c) => essayCount(c)-essayCount(a) || a-c).slice(0, q.length === 1 ? 4 : 6).forEach(b => add(bookOpt(b)));
+    } else bookHits.slice().sort((a,c) => bookRank(c)-bookRank(a) || a-c).slice(0, q.length === 1 ? 4 : 6).forEach(b => add(bookOpt(b)));
   } else if (/^[123]\s*$/.test(q)) {
     const key = q.trim();
     bookIds.filter(b => (aliasKeys[b] || []).some(k => k.startsWith(key)))
-      .sort((a,c) => essayCount(c)-essayCount(a) || a-c).slice(0, 4).forEach(b => add(bookOpt(b)));
+      .sort((a,c) => bookRank(c)-bookRank(a) || a-c).slice(0, 4).forEach(b => add(bookOpt(b)));
   }
   const k = normW(q);
   if (k.length >= 1) WORDS.filter(w => wordMatches(w, k))
     .slice(0, 3).forEach(w => add({label: w.title, meta: w.en, href: `#/word/${w.slug}`, kind: 'word'}));
-  if (q.length >= 3 && !(m && m[2] !== undefined) && !(bookHits.length && q.length <= 5)) {
+  if (PROFILE.essaysInBible && q.length >= 3 && !(m && m[2] !== undefined) && !(bookHits.length && q.length <= 5)) {
     const ws = q.split(/\s+/).filter(Boolean);
     Object.keys(P).filter(pid => P[pid] && hasRefs(pid) && ws.every(w => P[pid][0].toLowerCase().includes(w)))
       .sort((a,c) => P[c][5]-P[a][5]).slice(0, 3).forEach(pid => add({label: P[pid][0], meta: 'Essay \u00b7 Sources', href: `#/essay/${pid}`}));
@@ -135,12 +143,12 @@ function initSuggest() {
 }
 function viewSearch(q) {
   const words = q.toLowerCase().split(/\s+/).filter(Boolean);
-  const hits = Object.keys(P).filter(pid => P[pid] && words.every(w => P[pid][0].toLowerCase().includes(w))).sort((a,b) => P[b][5]-P[a][5]);
+  const hits = !PROFILE.essaysInBible ? [] : Object.keys(P).filter(pid => P[pid] && words.every(w => P[pid][0].toLowerCase().includes(w))).sort((a,b) => P[b][5]-P[a][5]);
   if (!hits.length) pendingEvents.push(['search/none', q.toLowerCase().trim().slice(0, 60)]);
   return `
   ${backLink(`#/`)}
   <h1>Results for \u201c${esc(q)}\u201d</h1>
-  <p class="lede">${hits.length ? plural(hits.length,'essay') + ' with that in the title.' : 'Nothing matched. Try a verse such as Genesis 6:4, or a shorter title.'}</p>
+  <p class="lede">${hits.length ? plural(hits.length,'essay') + ' with that in the title.' : (PROFILE.essaysInBible ? 'Nothing matched. Try a verse such as Genesis 6:4, or a shorter title.' : 'Nothing matched. Try a verse such as Genesis 6:4, a book, or a word.')}</p>
   ${hits.length ? `<div style="margin-top:24px">${pieceList(hits.slice(0,12))}</div>` : ''}`;
 }
 

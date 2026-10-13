@@ -45,6 +45,23 @@ function viewPerson(slug) {
   <div class="pp" style="margin-top:16px">${pieceList(pr.essays)}</div>`;
 }
 
+function guideList() {              // the Guide's sections, for the Guide page and the app's home
+  const items = [];
+  if (D.PP && D.PP.length) items.push(`<li><a class="wl" href="#/names"><b>Names</b><span class="en">Short profiles, with the verses where each appears.</span><span class="lang">${plural(D.PP.length, 'name')}</span></a></li>`);
+  items.push(`<li><a class="wl" href="#/words"><b>Words</b><span class="en">Hebrew and Greek terms, side by side.</span><span class="lang">${WORDS.length} words</span></a></li>`);
+  if (D.TL) items.push(`<li><a class="wl" href="#/translations"><b>Translations</b><span class="en">Which New Testament translations let the Greek speak, judged by accuracy and closeness to the apostles.</span><span class="lang">Tier list</span></a></li>`);
+  if (D.EN) items.push(`<li><a class="wl" href="#/english"><b>The Ethiopian books in English</b><span class="en">Which of the 81 books you can read in English, and where.</span></a></li>`);
+  return `<div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">${items.join('')}</ul></div>`;
+}
+function viewGuide() {
+  return `
+  ${backLink('#/')}
+  <h1>Guide</h1>
+  <p class="lede">Help for reading: names, words, and which translations to trust.</p>
+  ${guideList()}`;
+}
+
+addRoute('guide', () => viewGuide());
 addRoute('translations', () => viewTranslations());
 addRoute('names', () => viewNames());
 addRoute('person', p => viewPerson(p[1]));

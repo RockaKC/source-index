@@ -33,24 +33,34 @@ const precacheList = () => {
   const sw = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
   return JSON.parse(sw.match(/const PRECACHE = (\[[\s\S]*?\]);/)[1].replace(/'/g, '"'));
 };
-const pageAssets = () => {
-  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const pageAssets = (name = 'index.html') => {
+  const html = fs.readFileSync(path.join(ROOT, name), 'utf8');
   return [...html.matchAll(/(?:src|href)="([\w./-]+\.(?:js|css))\?v=([0-9a-f]+)"/g)].map(m => ({ file: m[1], v: m[2] }));
 };
 
-test('index.html loads each of its files under a current version stamp', () => {
-  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-  expect(html, 'no page data left inline').not.toMatch(/^const D = /m);
-  expect(html, 'no styles left inline').not.toMatch(/<style>/);
-  const assets = pageAssets();
-  expect(assets.map(a => a.file)).toContain('data/site.js');
-  expect(assets.map(a => a.file)).toContain('js/router.js');
-  for (const { file, v } of assets) {
-    const want = require('crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT, file))).digest('hex').slice(0, 10);
-    expect(v, `${file} stamp (run python3 tools/stamp_assets.py after editing it)`).toBe(want);
-  }
-  const local = [...html.matchAll(/<script src="([^"?]+)/g)].map(m => m[1]);
-  expect(local.length, 'every script tag carries a stamp').toBe(assets.filter(a => a.file.endsWith('.js')).length);
+for (const name of ['index.html', 'app.html']) {
+  test(`${name} loads each of its files under a current version stamp`, () => {
+    const html = fs.readFileSync(path.join(ROOT, name), 'utf8');
+    expect(html, 'no page data left inline').not.toMatch(/^const D = /m);
+    expect(html, 'no styles left inline').not.toMatch(/<style>/);
+    const assets = pageAssets(name);
+    expect(assets.map(a => a.file)).toContain('data/site.js');
+    expect(assets.map(a => a.file)).toContain('js/router.js');
+    for (const { file, v } of assets) {
+      const want = require('crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT, file))).digest('hex').slice(0, 10);
+      expect(v, `${file} stamp (run python3 tools/stamp_assets.py after editing it)`).toBe(want);
+    }
+    const local = [...html.matchAll(/<script src="([^"?]+)/g)].map(m => m[1]);
+    expect(local.length, 'every script tag carries a stamp').toBe(assets.filter(a => a.file.endsWith('.js')).length);
+  });
+}
+
+test('each page loads one profile first, then the same files in the same order', () => {
+  const files = name => pageAssets(name).map(a => a.file).filter(f => f.endsWith('.js'));
+  const site = files('index.html'), app = files('app.html');
+  expect(site[0]).toBe('profiles/site.js');
+  expect(app[0]).toBe('profiles/app.js');
+  expect(app.slice(1), 'app.html loads what index.html loads').toEqual(site.slice(1));
 });
 
 test('every file the page loads is saved for offline use', () => {

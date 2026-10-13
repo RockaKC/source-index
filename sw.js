@@ -1,14 +1,15 @@
 /* Service worker for the Kingdom Code Source Index.
    Lets the site open without a connection and keeps Bible text a reader has opened.
-   Pages: network first, so a reader online always gets the current site; the last copy is the offline fallback.
-   The page's own files (data/site.js, js/*.js, css/*.css): network first, like pages; one saved copy of each,
+   Pages: network first, so a reader online always gets the current site; the last copy of each page (index.html
+   under ./, app.html under its own address) is the offline fallback.
+   The page's own files (profiles/*.js, data/site.js, js/*.js, css/*.css): network first, like pages; one saved copy of each,
    kept under its plain address whatever its ?v= stamp.
    Bible text (bible/<translation>/<book id>.json): served from the saved copy at once, refreshed in the background.
    Everything on another origin (analytics, Ko-fi) is left alone.
    Bump SHELL when the caching rules below change. BOOKS is also used by the page's "Save for offline" button. */
-const SHELL = 'kc-shell-v5';
+const SHELL = 'kc-shell-v6';
 const BOOKS = 'kc-books-v2';
-const PRECACHE = ['./', 'data/site.js', 'css/site.css',
+const PRECACHE = ['./', 'profiles/site.js', 'data/site.js', 'css/site.css',
   'js/core.js', 'js/text.js', 'js/words.js', 'js/essays.js', 'js/search.js', 'js/reader.js', 'js/guide.js',
   'js/pages.js', 'js/analytics.js', 'js/chrome.js', 'js/offline.js', 'js/router.js',
   'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png'];
@@ -26,14 +27,20 @@ self.addEventListener('activate', e => {
 
 const root = () => new URL('./', self.registration.scope).href;
 
+function pageKey(request) {                          // each page under its own address, without ?query or #hash
+  const url = new URL(request.url);
+  url.search = ''; url.hash = '';
+  return /\/index\.html$/.test(url.pathname) ? root() : url.href;
+}
+
 async function page(request) {                       // network first; the saved copy only when offline
-  const cache = await caches.open(SHELL);
+  const cache = await caches.open(SHELL), key = pageKey(request);
   try {
     const res = await fetch(request);
-    if (res.ok) cache.put(root(), res.clone());
+    if (res.ok) cache.put(key, res.clone());
     return res;
   } catch (err) {
-    return (await cache.match(root())) || Response.error();
+    return (await cache.match(key)) || (await cache.match(root())) || Response.error();
   }
 }
 
@@ -61,7 +68,7 @@ self.addEventListener('fetch', e => {
   const req = e.request, url = new URL(req.url);
   if (req.method !== 'GET' || url.origin !== self.location.origin) return;
   if (req.mode === 'navigate') { e.respondWith(page(req)); return; }
-  if (/\/(data\/site\.js|js\/[\w-]+\.js|css\/[\w-]+\.css)$/.test(url.pathname)) { e.respondWith(asset(req)); return; }
+  if (/\/(data\/site\.js|(js|profiles)\/[\w-]+\.js|css\/[\w-]+\.css)$/.test(url.pathname)) { e.respondWith(asset(req)); return; }
   if (/\/bible\/[a-z]+\/\d+\.json$/.test(url.pathname)) { e.respondWith(saved(req, BOOKS)); return; }
   if (/\/(icons\/|manifest\.webmanifest$)/.test(url.pathname)) e.respondWith(saved(req, SHELL));
 });
