@@ -152,13 +152,14 @@ function viewRead(b, ch, focus) {
   const lbl = x => `${esc(bname(x[0]))} ${x[1]}`;
   let eng = null; for (const [v] of chap) { eng = (PE[b] || {})[`${ch}:${v}`]; if (eng) break; }
   const cited = PROFILE.essaysInBible ? citedIn(b, ch) : 0;
+  const bar = PROFILE.readerTools;       // the app's header already holds the chapter bar (js/readerbar.js)
   return `
-  ${backLink(`#/book/${D.bookEntry[b]}`)}
-  <div class="rbar" role="navigation" aria-label="Chapters">
+  ${bar ? '' : backLink(`#/book/${D.bookEntry[b]}`)}
+  ${bar ? '' : `<div class="rbar" role="navigation" aria-label="Chapters">
     <a class="navbtn" ${prev ? `href="#/read/${prev[0]}/${prev[1]}" aria-label="Previous: ${lbl(prev)}"` : 'aria-disabled="true"'}>\u2039</a>
     <a class="where" href="#/book/${D.bookEntry[b]}" aria-label="${esc(bname(b))} ${ch}. Choose a chapter">${esc(bname(b))} ${ch}</a>
     <a class="navbtn" ${next ? `href="#/read/${next[0]}/${next[1]}" aria-label="Next: ${lbl(next)}"` : 'aria-disabled="true"'}>\u203a</a>
-  </div>
+  </div>`}
   <h1 style="margin-top:24px">${esc(bname(b))} ${ch}</h1>
   <p class="lede">${esc(fromLine(b))}.${b === PSALMS && eng ? ` This is Psalm ${eng[0]} in English Bibles.` : ''}${PD.includes(b) ? ` Some verses in this book are numbered differently in English Bibles.` : ''}${cited ? ` Highlighted verses are cited in Kingdom Code essays. Tap one to see them.` : ''}</p>
   ${noteFor(b, ch)}
