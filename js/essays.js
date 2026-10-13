@@ -146,6 +146,18 @@ async function copyRich(html, text) {
   try { await navigator.clipboard.writeText(text); return true; } catch (e) { return false; }
 }
 
+function viewKC() {                 // From Kingdom Code: the essays in their own section
+  const qs = D.paths.map(p => `<li><a class="q" href="#/path/${p.id}"><span>${esc(p.q)}</span><i aria-hidden="true">Read</i></a></li>`).join('');
+  return `
+  ${backLink('#/')}
+  <h1>From Kingdom Code</h1>
+  <p class="lede">Kingdom Code is an independent, investigative publication for the Body of Christ. Its essays are gathered here, apart from the Bible text.</p>
+  <h2>Start with a question</h2>
+  <div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">${qs}</ul></div>
+  <p style="margin-top:24px"><a class="btn secondary" href="https://kingdomcode.substack.com" target="_blank" rel="noopener">Read the publication</a></p>`;
+}
+
+addRoute('kc', () => viewKC());
 addRoute('path', p => viewPath(p[1]));
 addRoute('essay', p => viewEssay(+p[1]));
 addRoute('cta', p => viewCta(decodeURIComponent(p.slice(1).join('/'))));

@@ -3,7 +3,7 @@
 
 function shelf(es) {
   return `<ul class="grid">${es.map(e => {
-    const n = piecesForBook(e.books).length, txt = e.books.some(b => D.CC[b]);
+    const n = PROFILE.essaysInBible ? piecesForBook(e.books).length : 0, txt = e.books.some(b => D.CC[b]);
     const meta = n ? plural(n,'essay') : (txt ? '' : 'Text not in the index yet');
     return `<li><a class="bk" href="#/book/${e.id}"><span class="n">${esc(e.name)}</span>${meta ? `<span class="m">${meta}</span>` : ''}</a></li>`;
   }).join('')}</ul>`;
@@ -41,16 +41,16 @@ function viewEnglish() {
 }
 function viewBook(eid) {
   const e = entryOf(eid); if (!e) return viewMissing();
-  const ids = rank(piecesForBook(e.books));
-  const reads = D.reads.filter(r => e.books.includes(r[2]));
+  const ids = PROFILE.essaysInBible ? rank(piecesForBook(e.books)) : [];
+  const reads = PROFILE.seasonal ? D.reads.filter(r => e.books.includes(r[2])) : [];
   const same = D.entries.filter(x => x.t === e.t);
   const pos = `Number ${same.findIndex(x => x.id === e.id) + 1} of ${same.length} in the ${e.t === 'OT' ? 'Old' : 'New'} Testament list.`;
   const loaded = e.books.filter(b => D.CC[b]);
   const grids = loaded.map(b => `${e.books.length > 1 ? `<h3 style="margin-top:16px">${esc(bname(b))}</h3>` : ''}<ul class="chgrid">${D.CC[b].map(ch => {
-      const n = citedIn(b, ch);
+      const n = PROFILE.essaysInBible ? citedIn(b, ch) : 0;
       return `<li><a class="cht" href="#/read/${b}/${ch}" aria-label="${esc(bname(b))} chapter ${ch}${n ? `, ${plural(n,'cited verse')}` : ''}">${ch}${n ? '<span class="dot" aria-hidden="true"></span>' : ''}</a></li>`;
     }).join('')}</ul>`).join('');
-  const anyCited = loaded.some(b => D.verses[b]);
+  const anyCited = PROFILE.essaysInBible && loaded.some(b => D.verses[b]);
   const top = [];
   for (const b of e.books) { const dv = D.verses[b] || {}; for (const c in dv) for (const v in dv[c]) top.push([b, +c, +v, dv[c][v].length]); }
   top.sort((a,c) => c[3]-a[3] || a[1]-c[1] || a[2]-c[2]);
@@ -80,10 +80,10 @@ function viewVerse(b, ch, v) {
   const wait = lazyText(b, ch, `#/book/${D.bookEntry[b]}`, `${bname(b)} ${ch}:${v}`, 'verse'); if (wait) return wait;
   const ids = rank(((D.verses[b] || {})[ch] || {})[v] || []);
   const ref = ch * 1000 + v;
-  const reads = D.reads.filter(r => r[2] === b && r[3]*1000 + r[4] <= ref && ref <= r[5]*1000 + r[6]);
+  const reads = !PROFILE.seasonal ? [] : D.reads.filter(r => r[2] === b && r[3]*1000 + r[4] <= ref && ref <= r[5]*1000 + r[6]);
   const key = `${b}:${ch}:${v}`, nt = D.notes && D.notes[key];
   const label = `${bname(b)} ${ch}:${v}`;
-  const sib = Object.keys(((D.verses[b] || {})[ch]) || {}).map(Number).sort((a,c) => a-c).filter(x => x !== v);
+  const sib = !PROFILE.essaysInBible ? [] : Object.keys(((D.verses[b] || {})[ch]) || {}).map(Number).sort((a,c) => a-c).filter(x => x !== v);
   const vt = verseText(b, ch, v), eng = engLabel(b, ch, v), cs = 'font:400 13px/18px var(--sans)';
   const text = vt ? `<figure class="verse" style="margin:24px 0 0"><p>${fmtText(b, vt.text)}</p><p class="cap" style="${cs}">${esc(label)}, ${esc(vt.label)}</p>${eng ? `<p class="cap" style="${cs}">${esc(eng)}</p>` : ''}${vt.carried ? `<p class="cap" style="${cs}">Printed together with verse ${vt.carried}.</p>` : ''}</figure>
     <div class="vnav">${verseText(b, ch, v - 1) ? `<a class="navbtn" href="#/verse/${b}/${ch}/${v-1}" aria-label="Previous verse, ${esc(bname(b))} ${ch}:${v-1}">‹ ${ch}:${v-1}</a>` : '<span></span>'}
@@ -91,7 +91,7 @@ function viewVerse(b, ch, v) {
       ${verseText(b, ch, v + 1) ? `<a class="navbtn" href="#/verse/${b}/${ch}/${v+1}" aria-label="Next verse, ${esc(bname(b))} ${ch}:${v+1}">${ch}:${v+1} ›</a>` : '<span></span>'}</div>` : '';
   const note = nt ? `<p class="lede" style="margin-top:16px">${esc(nt.text)}${nt.to ? ` <a href="#/verse/${nt.to.join('/')}" style="color:var(--accent)">${esc(nt.label)}</a>` : ''}</p>` : '';
   if (!ids.length) pendingEvents.push(['miss/verse', `${bname(b)}/${ch}/${v}`]);
-  const main = ids.length
+  const main = !PROFILE.essaysInBible ? '' : ids.length
     ? `<h2>Start here</h2><div style="margin-top:16px">${feature(ids[0])}</div>
        ${ids.length > 1 ? `<h2>Also quotes this verse</h2>${pieceList(ids.slice(1))}` : ''}`
     : `<h2>Not in the index yet</h2><div class="card" style="margin-top:16px"><p style="margin:0">No essay in this index quotes this verse yet.</p></div>`;
@@ -102,7 +102,7 @@ function viewVerse(b, ch, v) {
   ${main}
   ${wordsForVerse(b, ch, v).length ? `<h2>Words in this verse</h2><div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">${wordsForVerse(b, ch, v).map(w => `<li><a class="wl" href="#/word/${w.slug}"><b>${esc(w.title)}</b><span class="en">${esc(w.en)}</span><span class="lang">${esc(w.lang)}</span></a></li>`).join('')}</ul></div>` : ''}
   ${reads.length ? `<h2>Read in season</h2>${readList(reads)}` : ''}
-  ${elsewhere(b, ch, ids)}
+  ${PROFILE.essaysInBible ? elsewhere(b, ch, ids) : ''}
   ${sib.length ? `<h2>More from ${esc(bname(b))} ${ch}</h2><ul class="chips">${sib.map(x => `<li><a class="chip" href="#/verse/${b}/${ch}/${x}" aria-label="${esc(bname(b))} ${ch}:${x}">${ch}:${x}</a></li>`).join('')}</ul>` : ''}`;
 }
 function viewRange(b, ch, vs, ve) {
@@ -113,22 +113,23 @@ function viewRange(b, ch, vs, ve) {
   const ids = rank(Object.keys(score).map(Number)).sort((a,c) => score[c] - score[a]);
   const label = `${bname(b)} ${ch}:${vs}\u2013${ve}`, n = ve - vs + 1;
   if (!ids.length) pendingEvents.push(['miss/verse', `${bname(b)}/${ch}/${vs}-${ve}`]);
+  const withEssays = PROFILE.essaysInBible;
   const card = textCard(b, ch, vs, ve, label);
   const more = n > 4 ? `<p class="cap" style="margin-top:8px">Showing the first 4 of ${n} verses. <a href="#/read/${b}/${ch}/${vs}" style="color:var(--accent)">Read the full passage</a>.</p>` : '';
   const list = ids.length ? `<ul class="list">${ids.slice(1).map(pid => `<li class="piece">${seriesCap(pid)}
     <div class="t"><a ${link(pid)}>${esc(P[pid][0])}</a></div><p class="cap">${plural(score[pid],'verse')} in this passage \u00b7 ${meta(pid)}${srcLink(pid)}</p></li>`).join('')}</ul>` : '';
-  const main = ids.length
+  const main = !withEssays ? '' : ids.length
     ? `<h2>Start here</h2><div style="margin-top:16px">${feature(ids[0])}</div><p class="cap" style="margin-top:8px">Cites ${plural(score[ids[0]],'verse')} in this passage.</p>
        ${ids.length > 1 ? `<h2>Also quote this passage</h2><div class="card">${list}</div>` : ''}`
     : `<h2>Not in the index yet</h2><div class="card" style="margin-top:16px"><p style="margin:0">No essay in this index quotes a verse in this passage yet.</p></div>`;
-  const chips = cited.length ? `<h2>Cited verses in this passage</h2><ul class="chips">${cited.map(v => `<li><a class="chip" href="#/verse/${b}/${ch}/${v}" aria-label="${esc(bname(b))} ${ch}:${v}, ${plural(D.verses[b][ch][v].length,'essay')}">${ch}:${v}</a></li>`).join('')}</ul>` : '';
+  const chips = withEssays && cited.length ? `<h2>Cited verses in this passage</h2><ul class="chips">${cited.map(v => `<li><a class="chip" href="#/verse/${b}/${ch}/${v}" aria-label="${esc(bname(b))} ${ch}:${v}, ${plural(D.verses[b][ch][v].length,'essay')}">${ch}:${v}</a></li>`).join('')}</ul>` : '';
   return `
   ${backLink(`#/book/${D.bookEntry[b]}`)}
   <h1>${esc(label)}</h1>
   ${card}${more}${numNote(b, `${b}:${ch}:${vs}`, !!engLabel(b, ch, vs))}
   ${main}
   ${chips}
-  ${elsewhere(b, ch, ids)}`;
+  ${withEssays ? elsewhere(b, ch, ids) : ''}`;
 }
 function viewRead(b, ch, focus) {
   if (!hasChapter(b, ch)) return viewMissing();
@@ -142,7 +143,7 @@ function viewRead(b, ch, focus) {
   store.set('kc-last', `${b}/${ch}`);
   const size = +(store.get('kc-size') || 19);
   const verses = chap.map(([v, tx]) => {
-    const num = typeof v === 'number', n = num && hasVerse(b, ch, v) ? D.verses[b][ch][v].length : 0;
+    const num = typeof v === 'number', n = PROFILE.essaysInBible && num && hasVerse(b, ch, v) ? D.verses[b][ch][v].length : 0;
     const f = focus && String(focus) === String(v) ? ' f' : '';
     if (n) return `<p id="v${v}"><a class="vv${f}" href="#/verse/${b}/${ch}/${v}" aria-label="${esc(bname(b))} ${ch}:${v}, cited in ${plural(n,'essay')}. Open the verse."><sup>${v}</sup>${fmtText(b, tx)}</a></p>`;
     return `<p id="v${v}"${f ? ' class="f"' : ''}><sup>${esc(String(v))}</sup>${fmtText(b, tx)}</p>`;
@@ -150,7 +151,7 @@ function viewRead(b, ch, focus) {
   const prev = neighbour(b, ch, -1), next = neighbour(b, ch, 1);
   const lbl = x => `${esc(bname(x[0]))} ${x[1]}`;
   let eng = null; for (const [v] of chap) { eng = (PE[b] || {})[`${ch}:${v}`]; if (eng) break; }
-  const cited = citedIn(b, ch);
+  const cited = PROFILE.essaysInBible ? citedIn(b, ch) : 0;
   return `
   ${backLink(`#/book/${D.bookEntry[b]}`)}
   <div class="rbar" role="navigation" aria-label="Chapters">

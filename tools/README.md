@@ -14,6 +14,7 @@ Needs Python 3 only. No packages.
 The site is static: no build step. `index.html` is the page frame (header, menu, footer, support window) and loads, in order:
 
 - `css/site.css`: all styles.
+- `profiles/site.js`: the product profile (see "Product profiles" below).
 - `data/site.js`: the page data, `const D = {...}` (written by the exporter; never edit by hand).
 - `js/*.js`, plain scripts that share the page's global scope, one per feature:
   - `core.js`: shared helpers, local storage, the Back link, and the **route registry**.
@@ -27,9 +28,22 @@ The site is static: no build step. `index.html` is the page frame (header, menu,
   - `analytics.js`, `chrome.js` (menu, support window, theme), `offline.js` (install and offline reading).
   - `router.js`: draws the page for the current address. Loaded last, it starts the app.
 
-**Adding a page or a section.** In the feature's file (or a new `js/<feature>.js`), write a view function that returns the page HTML and register it: `addRoute('name', p => viewName(p[1]))` answers `#/name/...` (`p` is the address split on `/`). Wiring a page needs after it is drawn (forms, buttons) goes in `onPage(p => { ... })`. A new file also needs a `<script src="js/<feature>.js?v=0">` tag in `index.html` before `router.js`, and an entry in `PRECACHE` in `sw.js`; a file's top-level code may only use names from files loaded before it.
+**Adding a page or a section.** In the feature's file (or a new `js/<feature>.js`), write a view function that returns the page HTML and register it: `addRoute('name', p => viewName(p[1]))` answers `#/name/...` (`p` is the address split on `/`). Wiring a page needs after it is drawn (forms, buttons) goes in `onPage(p => { ... })`. A new file also needs a `<script src="js/<feature>.js?v=0">` tag in `index.html` and `app.html`, at the same place, before `router.js`, and an entry in `PRECACHE` in `sw.js`; a file's top-level code may only use names from files loaded before it.
 
 **After editing anything in `css/` or `js/`**, run `python3 tools/stamp_assets.py`: it refreshes the `?v=` content stamp on each tag so a browser never mixes a new page with an old file. The exporter runs it too. The tests fail on a stale stamp or a file missing from `PRECACHE`.
+
+### Product profiles
+
+One code base serves two products. Each page at the root loads one profile before anything else, and the shared code asks the profile instead of the page:
+
+| Page | Profile | Product |
+| --- | --- | --- |
+| `index.html` | `profiles/site.js` | Kingdom Code Source Index: the essays sit beside the Bible text. |
+| `app.html` | `profiles/app.js` | KC Tewahedo Bible (and the Android app): the Bible first; the essays live in their own section, From Kingdom Code (`#/kc`), and never inside the Bible text. |
+
+The switches: `home` (`'site'` or `'reader'`: which home page), `essaysInBible` (cited-verse highlights, essay lists and essay counts on book, chapter, verse and passage pages, and essay suggestions in search), `seasonal` (seasonal reading guides on book and verse pages) and `analytics` (visit counts). Every route works in both products; the app adds `#/guide` and `#/kc` to its header and menu. To change what a product shows, add a switch to both profile files, read it as `PROFILE.<name>` where the feature is drawn, and add a test to `tests/app.spec.js` for the app side. A third product is a new `profiles/<id>.js` and a new page copied from `app.html`; add the page to `PAGES` in `tools/stamp_assets.py`.
+
+The two pages must load the same files in the same order after their profile; the tests check it. `app.html` is not linked from the site and asks search engines not to index it: it is the preview of the app until the Android build ships.
 
 ## Tests
 
@@ -37,6 +51,7 @@ Every pull request runs the tests on GitHub (`.github/workflows/tests.yml`); a r
 
 - `tests/data.spec.js` checks the exported data without a browser: every book with text has its file and chapters, a translation label and source language; every essay has a link; every cited verse points at a real book and essay; the manifest icons and offline files exist.
 - `tests/routes.spec.js` opens every kind of page (every book page, the first and last chapter of every book with text, a cited verse in every cited book, every path, word and name, sample essays, deep links) and fails on a missing heading, an empty chapter or any page error.
+- `tests/app.spec.js` opens `app.html` and checks the app's side of the profiles: the reader home, no essays on book, chapter or verse pages, any chapter reachable from the search box, From Kingdom Code and the Guide, and no analytics.
 - `tests/search.spec.js` runs 61 searches and compares the suggestions, the page opened, its heading and notes, and the reading links with `tests/golden/search.json`. When a change is meant to alter them (a database rebuild, new essays, new wording), run `npm run test:update` and read the difference in `tests/golden/search.json` before committing it: that diff is the record of what changed for readers.
 - `tests/offline.spec.js` reads a chapter online, stops the server, and checks the page and chapter still open from the saved copy.
 

@@ -9,7 +9,38 @@ function topVerses() {
   for (const x of all) { per[x[0]] = (per[x[0]]||0) + 1; if (per[x[0]] > 1) continue; out.push(x); if (out.length === 4) break; }
   return out;
 }
+function continueCard() {           // the last chapter read, or the first chapter of the Bible
+  const last = (store.get('kc-last') || '').split('/').map(Number); const ok = last.length === 2 && hasChapter(last[0], last[1]);
+  const b = ok ? last[0] : D.order[0], ch = ok ? last[1] : D.CC[D.order[0]][0];
+  return `<div class="contcard"><div><span class="cap">${ok ? 'Continue reading' : 'Read the Bible'}</span><b>${esc(bname(b))} ${ch}</b></div><a class="btn secondary" href="#/read/${b}/${ch}">${ok ? 'Continue' : 'Start'}</a></div>`;
+}
+function viewReaderHome() {         // the app's home: the Bible first, the Guide and the essays after
+  const withText = D.entries.filter(e => e.books.some(b => D.CC[b])).length;
+  return `
+  <h1>Read the Bible.</h1>
+  <p class="lede">All 81 books of the Ethiopian canon, as the Ethiopian and Eritrean Orthodox Tewahedo Churches list them. ${withText} have their text here so far.</p>
+  ${continueCard()}
+  <form class="search" role="search" id="sf">
+    <label class="sr" for="q">Search by verse or word</label>
+    <input id="q" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug" aria-haspopup="listbox" placeholder="A verse or a word" autocomplete="off" autocapitalize="none" spellcheck="false" enterkeyhint="search">
+    <button class="btn primary" type="submit">Search</button>
+    <ul class="sug" id="sug" role="listbox" aria-label="Suggestions" hidden></ul>
+    <div class="sr" id="sugstat" role="status" aria-live="polite"></div>
+  </form>
+  <h2>The 81 books</h2>
+  <div class="tabs" role="tablist" aria-label="Testament">
+    <button class="tab" role="tab" aria-selected="true" data-t="OT">Old Testament</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="NT">New Testament</button>
+  </div>
+  <div id="shelf">${shelf(D.entries.filter(e => e.t === 'OT'))}</div>
+  <h2>Guide</h2>
+  ${guideList()}
+  <h2>From Kingdom Code</h2>
+  <p class="lede" style="margin-top:8px">Essays from the publication behind this app, kept in their own section, apart from the Bible text.</p>
+  <p style="margin-top:16px"><a class="btn secondary" href="#/kc">Open From Kingdom Code</a></p>`;
+}
 function viewHome() {
+  if (PROFILE.home === 'reader') return viewReaderHome();
   const chips = topVerses().map(([b,ch,v]) => `<li><a class="chip" href="#/verse/${b}/${ch}/${v}">${esc(bname(b))} ${ch}:${v}</a></li>`).join('');
   const qs = D.paths.map(p => `<li><a class="q" href="#/path/${p.id}"><span>${esc(p.q)}</span><i aria-hidden="true">Read</i></a></li>`).join('');
   const extras = D.entries.filter(e => e.extra);
@@ -24,9 +55,7 @@ function viewHome() {
     <div class="sr" id="sugstat" role="status" aria-live="polite"></div>
   </form>
   <ul class="chips" aria-label="Popular verses">${chips}</ul>
-  ${(() => { const last = (store.get('kc-last') || '').split('/').map(Number); const ok = last.length === 2 && hasChapter(last[0], last[1]);
-     const b = ok ? last[0] : D.order[0], ch = ok ? last[1] : D.CC[D.order[0]][0];
-     return `<div class="contcard"><div><span class="cap">${ok ? 'Continue reading' : 'Read the Bible'}</span><b>${esc(bname(b))} ${ch}</b></div><a class="btn secondary" href="#/read/${b}/${ch}">${ok ? 'Continue' : 'Start'}</a></div>`; })()}
+  ${continueCard()}
 
   <h2>Start with a question</h2>
   <div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">${qs}</ul></div>

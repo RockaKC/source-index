@@ -9,6 +9,7 @@ let analyticsOn = false;
 const analyticsQueue = [];
 function initAnalytics() {
   const A = ANALYTICS;
+  if (!PROFILE.analytics) return;
   if (!A.provider || !A.site || !A.hosts.includes(location.hostname)) return;
   if (navigator.doNotTrack === '1' || window.doNotTrack === '1' || navigator.globalPrivacyControl) return;
   const s = document.createElement('script');
