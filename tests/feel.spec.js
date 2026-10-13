@@ -8,19 +8,60 @@ const transform = (page, sel) => page.locator(sel).first().evaluate(e => getComp
 const background = (page, sel) => page.locator(sel).first().evaluate(e => getComputedStyle(e).backgroundColor);
 const openDrawer = async page => { await page.click('#menubtn'); await expect(page.locator('#drawer')).toBeVisible(); await page.waitForTimeout(400); };
 
-test('in the app, a pressed button, row and icon shrink at once and come back on release', async ({ page }) => {
+const press = async (page, sel, hold) => {                       // finger down on the first match; `hold` runs while it is down
+  const el = page.locator(sel).first();
+  await el.scrollIntoViewIfNeeded();
+  const box = await el.boundingBox();
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  try { await hold(el); } finally { await page.mouse.move(0, 0); await page.mouse.up(); }   // let go off the target, so nothing is tapped
+};
+const shadow = (el) => el.evaluate(e => getComputedStyle(e).boxShadow);
+const scaleOf = async el => +(/matrix\(([\d.]+)/.exec(await el.evaluate(e => getComputedStyle(e).transform)) || [, 1])[1];
+
+test('in the app, a pressed icon shrinks at once, a pressed row takes the green, and both let go on release', async ({ page }) => {
   await page.goto('/app.html');
   await settle(page);
   await openDrawer(page);
-  for (const [sel, scale] of [['#drawer .menu a', .985], ['#drawer .drawerbar .ibtn', .88]]) {
-    const el = page.locator(sel).first(), box = await el.boundingBox();
-    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-    await page.mouse.down();
-    await expect.poll(async () => +(/matrix\(([\d.]+)/.exec(await transform(page, sel)) || [])[1]).toBeCloseTo(scale, 2);
-    await page.mouse.move(0, 0);                              // let go off the target, so nothing is tapped
-    await page.mouse.up();
-    await expect.poll(() => transform(page, sel)).toBe('none');
-  }
+  await press(page, '#drawer .drawerbar .ibtn', async el => { await expect.poll(() => scaleOf(el)).toBeCloseTo(.88, 2); });
+  await press(page, '#drawer .menu a', async el => { await expect.poll(() => shadow(el)).not.toBe('none'); });
+  await expect.poll(() => page.locator('#drawer .menu a').first().evaluate(e => getComputedStyle(e).boxShadow)).toBe('none');
+});
+
+test('in the app, home tiles and buttons, list rows and verses all take the green when pressed', async ({ page }) => {
+  await page.goto('/app.html');
+  await settle(page);
+  for (const sel of ['#shelf .bk, #shelf a', '#app .btn.secondary', '#app .tab']) await press(page, sel, async el => { await expect.poll(() => shadow(el)).not.toBe('none'); });
+  await page.evaluate(() => { location.hash = '#/names'; });
+  await settle(page);
+  await press(page, '#app .wl', async el => {                      // a flush row: the green reaches past the words, rounded
+    await expect.poll(() => shadow(el)).not.toBe('none');
+    expect(await el.evaluate(e => getComputedStyle(e).borderRadius)).toBe('10px');
+    expect(await scaleOf(el)).toBe(1);                              // and nothing moves
+  });
+  await page.goto(`/app.html#/read/${b1}/${ch}`);
+  await settle(page);
+  await press(page, '#rtext p#v3', async el => { await expect.poll(() => shadow(el)).not.toBe('none'); });
+});
+
+test('a long press on a button or link raises no menu; the Bible text keeps its own', async ({ page }) => {
+  await page.goto(`/app.html#/read/${b1}/${ch}`);
+  await settle(page);
+  const prevented = sel => page.locator(sel).first().evaluate(e => { const ev = new MouseEvent('contextmenu', { bubbles: true, cancelable: true }); e.dispatchEvent(ev); return ev.defaultPrevented; });
+  expect(await prevented('#menubtn')).toBe(true);
+  expect(await prevented('#rtext p#v3')).toBe(false);
+});
+
+test('a new page arrives with a rise in the app, and the website keeps its plain fade', async ({ page }) => {
+  const arriving = () => page.evaluate(() => document.getAnimations().map(a => a.animationName).filter(Boolean));
+  await page.goto('/app.html');
+  await settle(page);
+  await page.evaluate(() => { location.hash = '#/about'; });
+  expect(await arriving()).toContain('page-in');
+  await page.goto('/');
+  await settle(page);
+  await page.evaluate(() => { location.hash = '#/about'; });
+  expect(await arriving()).toContain('fade');
 });
 
 test('in the app, a pressed secondary button shrinks too', async ({ page }) => {
@@ -90,11 +131,19 @@ test('the drawer and the verse panel enter by keyframes, with a fading scrim', a
 // Swiping the drawer shut (js/chrome.js). Real touch, through the browser's own input: start, move, wait, end.
 test.describe('swiping the drawer', () => {
   test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 800 } });
+  // Events carry their own timestamps, so a flick is as fast as written however busy the machine is.
   async function swipe(page, { from = 250, dx = 0, dy = 0, steps = 6, pause = 0, gap = 8, sample = false }) {
-    const c = await page.context().newCDPSession(page), send = (type, x, y) => c.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y, id: 1 }] });
+    const c = await page.context().newCDPSession(page), t0 = Date.now() / 1000; let clock = 0;
+    const send = (type, x, y) => c.send('Input.dispatchTouchEvent', { type, timestamp: t0 + clock / 1000, touchPoints: type === 'touchEnd' ? [] : [{ x, y, id: 1 }] });
     await send('touchStart', from, 400);
     const seen = [];
-    for (let i = 1; i <= steps; i++) { await send('touchMove', from + dx * i / steps, 400 + dy * i / steps); await page.waitForTimeout(gap); if (sample) seen.push(await page.evaluate(() => getComputedStyle(document.getElementById('drawer')).transform)); }
+    for (let i = 1; i <= steps; i++) {
+      clock += gap;
+      await send('touchMove', from + dx * i / steps, 400 + dy * i / steps);
+      await page.waitForTimeout(gap);
+      if (sample) seen.push(await page.evaluate(() => getComputedStyle(document.getElementById('drawer')).transform));
+    }
+    clock += pause;
     if (pause) await page.waitForTimeout(pause);
     await send('touchEnd');
     return seen;
@@ -155,5 +204,60 @@ test.describe('swiping the drawer', () => {
     await page.waitForTimeout(400);
     expect(await page.evaluate(() => location.hash)).toBe(hash);
     expect(await isOpen(page)).toBe(true);
+  });
+
+  test('closing by swipe glides on from where the finger let go, easing out, and the dimmed page keeps pace', async ({ page }) => {
+    await opened(page);
+    await swipe(page, { dx: -200, pause: 0, gap: 6 });
+    await expect.poll(() => isOpen(page)).toBe(false);
+    const st = await page.locator('#drawer').evaluate(e => ({ d: parseFloat(e.style.transitionDuration) / (e.style.transitionDuration.endsWith('ms') ? 1000 : 1), f: e.style.transitionTimingFunction, g: e.style.getPropertyValue('--glide') }));
+    expect(st.d).toBeGreaterThanOrEqual(.15);                       // never a snap
+    expect(st.f).toContain('cubic-bezier(0.2, 0.8, 0.2, 1)');       // decelerating
+    expect(st.g).toBe(Math.round(st.d * 1000) + 'ms');              // the scrim takes as long as the drawer
+  });
+
+  // From the screen's left edge, a drag to the right pulls the drawer out under the finger.
+  const drawerX = page => page.evaluate(() => { const m = /matrix\([^,]+,[^,]+,[^,]+,[^,]+,\s*([-\d.]+)/.exec(getComputedStyle(document.getElementById('drawer')).transform); return m ? +m[1] : 0; });
+  test('a drag from the left edge opens the drawer, following the finger', async ({ page }) => {
+    await page.goto('/app.html'); await settle(page);
+    const before = await entries(page);
+    const c = await page.context().newCDPSession(page), send = (type, x) => c.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y: 400, id: 1 }] });
+    await send('touchStart', 4);
+    for (const x of [30, 70, 110]) { await send('touchMove', x); await page.waitForTimeout(30); }
+    expect(await isOpen(page)).toBe(true);
+    const mid = await drawerX(page);                                // part-way out, not jumped to full width
+    expect(mid).toBeLessThan(-100); expect(mid).toBeGreaterThan(-320);
+    for (const x of [200, 300]) { await send('touchMove', x); await page.waitForTimeout(30); }
+    await send('touchEnd');
+    await page.waitForTimeout(600);
+    expect(await isOpen(page)).toBe(true);
+    expect(await drawerX(page)).toBe(0);
+    expect(await page.locator('#drawer').evaluate(e => e.style.transform)).toBe('');           // it settles, nothing left behind
+    expect(await entries(page)).toBe(before + 1);                    // and Back closes it, as with a tap
+    await page.goBack();
+    await expect.poll(() => isOpen(page)).toBe(false);
+  });
+
+  test('a short pull from the edge goes back; a flick opens; a drag that starts elsewhere does nothing', async ({ page }) => {
+    await page.goto('/app.html'); await settle(page);
+    const before = await entries(page);
+    await swipe(page, { from: 4, dx: 60, pause: 250, gap: 20 });
+    await page.waitForTimeout(500);
+    expect(await isOpen(page)).toBe(false);
+    await expect.poll(() => page.evaluate(() => !!(history.state && history.state.kcDrawer))).toBe(false);   // no stray history entry left
+    expect(await page.evaluate(() => location.hash)).toBe('');
+    await swipe(page, { from: 120, dx: 150 });                       // not the edge
+    await page.waitForTimeout(300);
+    expect(await isOpen(page)).toBe(false);
+    await swipe(page, { from: 4, dx: 90, steps: 4, gap: 4 });         // quick
+    await expect.poll(() => isOpen(page)).toBe(true);
+    await page.waitForTimeout(500);
+    expect(await drawerX(page)).toBe(0);
+    await page.click('#drawerx');
+    await expect.poll(() => isOpen(page)).toBe(false);
+    await page.click('#menubtn');                                    // a plain tap opening is clean after all that
+    await page.waitForTimeout(500);
+    expect(await isOpen(page)).toBe(true);
+    expect(await page.locator('#drawer').evaluate(e => e.getAttribute('style') || '')).toBe('');
   });
 });

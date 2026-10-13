@@ -243,7 +243,7 @@ dialog.dlg::backdrop{background:rgba(0,0,0,.55)}
 .menubtn.lead ~ .wordmark{margin-right:auto}
 dialog.drawer{position:fixed;inset:0 auto 0 0;width:min(320px,85vw);max-width:none;height:100%;max-height:none;margin:0;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);border:0;border-right:1px solid var(--hairline);background:var(--bg);color:var(--ink);box-shadow:4px 0 24px rgba(0,0,0,.2);overflow-y:auto;transform:translateX(-100%);transition:transform 180ms cubic-bezier(.4,0,1,1),overlay 180ms allow-discrete,display 180ms allow-discrete}
 dialog.drawer[open]{transform:none;animation:drawer-in 260ms cubic-bezier(.2,.8,.2,1)}
-dialog.drawer::backdrop{background:rgba(0,0,0,0);transition:background 180ms ease-in,opacity 180ms ease-out,overlay 180ms allow-discrete,display 180ms allow-discrete}
+dialog.drawer::backdrop{background:rgba(0,0,0,0);transition:background var(--glide,180ms) ease-in,opacity var(--glide,180ms) ease-out,overlay 180ms allow-discrete,display 180ms allow-discrete}
 dialog.drawer[open]::backdrop{background:rgba(0,0,0,.5);animation:scrim-in 260ms ease-out}
 .drawerin:focus{outline:none}
 .drawerin{display:flex;flex-direction:column;min-height:100%;padding:0 var(--s1)}
@@ -343,6 +343,8 @@ body[data-view=read] main{padding-bottom:72px}
 .hrow .t{font:600 19px/26px var(--serif)}
 @media (hover:hover){.hrow:hover .t{color:var(--accent)}}
 dialog.drawer{overscroll-behavior:contain;touch-action:pan-y}
+.edge{position:fixed;left:0;top:0;bottom:0;z-index:4;width:14px;touch-action:pan-y}
+html.drawer-open .edge,html.sheet-open .edge{display:none}
 dialog.drawer::backdrop{opacity:var(--scrim,1)}
 [data-product=app] body::before,[data-product=app] body::after{content:"";position:fixed;left:0;right:0;z-index:5;background:var(--bg);pointer-events:none}
 [data-product=app] body::before{top:0;height:env(safe-area-inset-top,0px)}
@@ -351,13 +353,29 @@ dialog.drawer::backdrop{opacity:var(--scrim,1)}
 @keyframes drawer-in{from{transform:translateX(-100%)}}
 @keyframes sheet-in{from{transform:translateY(100%)}}
 @keyframes scrim-in{from{opacity:0}}
+/* The press colour is the accent, translucent, so it reads on every surface, over a highlighted verse too */
+:root{--press:var(--tint)}
+@supports (color:color-mix(in srgb,red,blue)){:root{--press:color-mix(in srgb,var(--accent) 24%,transparent)}}
 [data-product=app]{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-[data-product=app] :is(.btn,.chip,.navbtn,.tab,.cht,.bk,.sbtn,.notebtn,.sw,.rbtn,.readtools button,.theme,.menubtn,.ibtn,.drawer .menu a,.drawer .menu button,.hrow,.mrow,.wl,.q,.rv.c,.opt){transition:transform 180ms cubic-bezier(.2,.8,.2,1),background-color 150ms ease-out,border-color 150ms ease-out,color 150ms ease-out}
-[data-product=app] :is(.btn,.chip,.navbtn,.tab,.cht,.bk,.sbtn,.notebtn,.sw):active{transform:scale(.97);transition-duration:60ms,60ms,60ms,60ms}
-[data-product=app] :is(.rbtn,.readtools button,.theme,.menubtn,.ibtn):active{transform:scale(.88);background-color:var(--surface);transition-duration:60ms,60ms,60ms,60ms}
-[data-product=app] :is(.drawer .menu a,.drawer .menu button,.hrow,.mrow,.wl,.q,.rv.c,.opt):active{transform:scale(.985);background-color:var(--tint);transition-duration:60ms,60ms,60ms,60ms}
-[data-product=app] :is(.btn.secondary,.chip,.navbtn,.tab,.cht,.bk,.sbtn,.notebtn):active{background-color:var(--tint)}
-[data-product=app] .btn.primary:active{background-color:var(--accent-hover)}
+[data-product=app] :is(.btn,.chip,.navbtn,.tab,.cht,.bk,.sbtn,.notebtn,.sw,.rbtn,.readtools button,.theme,.menubtn,.ibtn,.drawer .menu a,.drawer .menu button,.hrow,.mrow,.wl,.q,.rv,.opt),
+[data-product=app] .text p[id^=v]{transition:transform 180ms cubic-bezier(.2,.8,.2,1),background-color 150ms ease-out,border-color 150ms ease-out,color 150ms ease-out,box-shadow 180ms ease-out}
+/* a button or tile: the colour fills it, and it shrinks a little */
+[data-product=app] :is(.btn.secondary,.chip,.navbtn,.tab,.cht,.bk,.sbtn,.notebtn):active{transform:scale(.97);box-shadow:inset 0 0 0 999px var(--press);transition-duration:60ms}
+[data-product=app] .btn.primary:active{transform:scale(.97);background-color:var(--accent-hover);transition-duration:60ms}
+[data-product=app] .sw:active{transform:scale(.92);transition-duration:60ms}
+/* an icon: a soft round patch behind it */
+[data-product=app] :is(.rbtn,.readtools button,.theme,.menubtn,.ibtn):active{transform:scale(.88);background-color:var(--surface);box-shadow:inset 0 0 0 999px var(--press);transition-duration:60ms}
+/* a row with its own padding, a verse: the colour fills it */
+[data-product=app] :is(.drawer .menu a,.drawer .menu button,.rv,.opt):active,
+[data-product=app] .text p[id^=v]:active{box-shadow:inset 0 0 0 999px var(--press);transition-duration:60ms}
+/* a row that runs flush with the text: the colour reaches past the words, rounded, and nothing moves */
+[data-product=app] :is(.hrow,.mrow,.wl,.q):active{border-radius:10px;box-shadow:0 0 0 10px var(--press);transition-duration:60ms}
+[data-product=app] :is(.wl,.q,.hrow,.mrow,.bk,.btn,.chip,.tab,.cht,.sbtn,.notebtn,.drawer a,.drawer button,.rbtn,.readtools button){-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+/* a page arrives with a short rise, so the change reads as one movement */
+[data-product=app] .fadein{animation:page-in 240ms cubic-bezier(.2,.8,.2,1)}
+@keyframes page-in{from{opacity:.3;transform:translateY(10px)}}
+/* a drawer being dragged by a finger takes no entrance of its own, and its scrim keeps pace with the glide */
+dialog.drawer.swiped::backdrop{animation:none}
 .fadein{animation:fade var(--fade)}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @media (max-width:479px){
