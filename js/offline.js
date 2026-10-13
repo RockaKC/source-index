@@ -2,7 +2,8 @@
 // Loaded as a plain script after data/site.js; see index.html for the order. Shared names live in the page's global scope.
 
 // ---------- installable app and offline reading ----------
-const swOK = 'serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname));
+const native = !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform());   // inside the Android app: every file is already on the phone
+const swOK = !native && 'serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname));
 const standalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
 const OFFLINE_CACHE = 'kc-books-v2';           // the same cache sw.js keeps Bible text in
 let installPrompt = null;

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The launch screen on Android 11 and older: the page colour with the KC monogram in the middle.
+     Android 12 and newer draw their own launch screen from the app icon (values/styles.xml). -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/splash_background" />
+    <item android:width="96dp" android:height="96dp" android:gravity="center" android:drawable="@drawable/splash_mark" />
+</layer-list>
