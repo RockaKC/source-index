@@ -9,11 +9,14 @@ What goes in, all copied as they are from the repo:
   * every script and stylesheet it loads  read from its <script src> and <link href> tags
   * bible/                               every book's text, so the whole Bible reads without a connection
   * img/                                 the pictures the pages show (the translation tier list)
+  * app-version.json                     the version this build is (env KC_APP_VERSION, 0.0.0 when unset), which the app shows on its Updates page
 
 What stays out: index.html, sw.js and manifest.webmanifest (the site's own page, offline worker
 and install file), the tests, the tools and the database. www/ is rebuilt from scratch on every
 run and is never committed (see .gitignore). See tools/README.md, "Android app".
 """
+import json
+import os
 import re
 import shutil
 import sys
@@ -48,9 +51,13 @@ def build():
         shutil.copy2(ROOT / f, OUT / f)
     shutil.copytree(ROOT / "bible", OUT / "bible")
     shutil.copytree(ROOT / "img", OUT / "img")
+    version = os.environ.get("KC_APP_VERSION", "0.0.0")      # the release workflow passes the version it is publishing; 0.0.0 marks a preview build
+    if not re.fullmatch(r"\d{1,2}\.\d{1,2}\.\d{1,2}", version):
+        sys.exit("KC_APP_VERSION must look like 1.2.3, not %r" % version)
+    (OUT / "app-version.json").write_text(json.dumps({"version": version}) + "\n", encoding="utf-8")
     books = sum(1 for _ in (OUT / "bible").rglob("*.json"))
     size = sum(p.stat().st_size for p in OUT.rglob("*") if p.is_file())
-    print("www/: index.html, %d files it loads, %d book files, %.1f MB" % (len(files), books, size / 1e6))
+    print("www/: index.html, %d files it loads, %d book files, %.1f MB, version %s" % (len(files), books, size / 1e6, version))
 
 
 if __name__ == "__main__":

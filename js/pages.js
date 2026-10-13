@@ -85,7 +85,8 @@ function viewAbout() {
   <div class="about">
     <p>Kingdom Code is an independent, investigative publication for the Body of Christ. Its sole authority is Jesus Christ and Scripture. The index is a growing body of work, regularly updated with new features and improvements.</p>
     ${PROFILE.id === 'app' ? `<p>This app is called ${esc(PROFILE.name)}. It is an independent Kingdom Code publication, not an official edition of any Church. It follows the 81-book canon of the Ethiopian and Eritrean Orthodox Tewahedo Churches.</p>
-    <p>The app is built with Capacitor and its Share and Filesystem plugins, open-source software under the MIT license.</p>` : ''}
+    <p>The app is built with Capacitor and its Share and Filesystem plugins, open-source software under the MIT license.</p>
+    ${PROFILE.appUpdates ? `<p><span id="about-version"></span><a href="#/updates" style="color:var(--accent)">Check for updates</a></p>` : ''}` : ''}
   </div>
   ${PROFILE.id === 'site' ? `<h2>Get the app</h2>
   <p class="lede" style="margin-top:8px">KC Tewahedo Bible puts the books of the Ethiopian canon on your Android phone, every one readable without a connection. Free, with no account and no ads.</p>
@@ -112,9 +113,9 @@ function viewApp() {
     </ol>
     <h2>Why Android warns you</h2>
     <p>Android shows that warning for every app that does not come through the Google Play Store. It says nothing about this app. Kingdom Code publishes the app itself, outside Google's store and its approval process, so no gatekeeper stands between this work and its readers. The warning is the cost of that independence.</p>
-    <p>The app is safe and free, and it collects nothing: no account, no ads, no analytics, no tracking. It asks Android for one permission, internet access, and uses it only when you open a link out of the app, such as Patreon or Ko-fi. The whole Bible is stored inside the app, so it reads without a connection.</p>
+    <p>The app is safe and free, and it collects nothing: no account, no ads, no analytics, no tracking. It asks Android for one permission, internet access, and uses it only when you open a link out of the app, such as Patreon or Ko-fi, or when you tap Check for updates. The whole Bible is stored inside the app, so it reads without a connection.</p>
     <h2>Updates</h2>
-    <p>When a new version is out, download it again from this page and install it over the old one. Your place and your settings stay.</p>
+    <p>When a new version is out, download it again from this page and install it over the old one. Your place and your settings stay. Once the app is installed, you can also check from inside it: open the menu, tap Updates, then Check for updates.</p>
     <h2>iPhone</h2>
     <p>There is no iPhone app yet. On iPhone, open this site in Safari, tap Share, then Add to Home Screen. It opens like an app and keeps the chapters you read for offline use.</p>
   </div>`;

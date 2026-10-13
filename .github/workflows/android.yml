@@ -82,6 +82,8 @@ jobs:
           echo "version=$v" >> "$GITHUB_OUTPUT"
 
       - name: Gather the app's files
+        env:
+          KC_APP_VERSION: ${{ steps.version.outputs.version }}
         run: |
           python3 tools/build_app.py
           npx cap sync android

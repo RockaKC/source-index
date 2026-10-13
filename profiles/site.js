@@ -8,5 +8,6 @@ const PROFILE = {
   seasonal: true,          // list the seasonal reading guides on book and verse pages
   analytics: true,         // cookieless visit counts (live domain only; see js/analytics.js)
   verseTools: false,       // the app's verse panel, favorites and highlights (js/marks.js)
+  appUpdates: false,       // the app's version and update check (js/updates.js)
   readerTools: false,      // the app's chapter bar, reading toolbar and reading history (js/readerbar.js)
 };
