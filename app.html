@@ -14,7 +14,7 @@
 <meta name="description" content="The Bible of the Ethiopian canon, with a guide to its names, words and translations.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9C%3C/text%3E%3C/svg%3E">
 <title>KC Tewahedo Bible</title>
-<link rel="stylesheet" href="css/site.css?v=25dd351ead">
+<link rel="stylesheet" href="css/site.css?v=dfb83e8b40">
 </head>
 <body>
 <div class="wrap">
@@ -51,18 +51,30 @@
       <div class="sheethead"><h2 id="sheet-t"></h2>
         <button class="ibtn" id="sheetx" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
       <p class="sheetver" id="sheet-v"></p>
+      <div id="sheet-main">
       <p class="sheetmsg" id="sheet-msg" role="status" aria-live="polite"></p>
       <div class="sheetacts">
         <button type="button" class="sbtn" data-act="fav" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l2.4 5 5.4.7-4 3.8 1 5.4-4.8-2.6L7.2 19l1-5.4-4-3.8 5.4-.7z"/></svg><span>Favorite</span></button>
         <button type="button" class="sbtn" data-act="copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span>Copy</span></button>
         <button type="button" class="sbtn" data-act="share"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="2.5"/><circle cx="17.5" cy="6" r="2.5"/><circle cx="17.5" cy="18" r="2.5"/><path d="M8.2 10.8l7-3.6M8.2 13.2l7 3.6"/></svg><span>Share</span></button>
       </div>
+      <button type="button" class="notebtn" data-act="note"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M8.5 9h7M8.5 13h7M8.5 17h4"/></svg><span class="nbody"><span id="note-label">Write a note</span><span class="npreview" id="note-preview"></span></span></button>
       <p class="sheetlabel">Highlight</p>
       <div class="swatches" role="group" aria-label="Highlight colors"><button type="button" class="sw m-c1" data-hl="c1" aria-label="Yellow highlight" aria-pressed="false"></button><button type="button" class="sw m-c2" data-hl="c2" aria-label="Green highlight" aria-pressed="false"></button><button type="button" class="sw m-c3" data-hl="c3" aria-label="Blue highlight" aria-pressed="false"></button><button type="button" class="sw m-c4" data-hl="c4" aria-label="Pink highlight" aria-pressed="false"></button><button type="button" class="sw m-c5" data-hl="c5" aria-label="Orange highlight" aria-pressed="false"></button><button type="button" class="sw m-c6" data-hl="c6" aria-label="Purple highlight" aria-pressed="false"></button></div>
       <div class="hlmore">
         <button type="button" class="sbtn row" data-hl="u1" aria-pressed="false"><span class="m-u1">Underline</span></button>
         <button type="button" class="sbtn row" data-hl="u2" aria-pressed="false"><span class="m-u2">Double</span></button>
         <button type="button" class="sbtn row" data-act="unhl" disabled><span>Remove</span></button>
+      </div>
+      </div>
+      <div id="sheet-note" hidden>
+        <label class="sheetlabel" for="note-text">Your note</label>
+        <textarea id="note-text" rows="5" maxlength="2000" placeholder="Write a note for this verse" enterkeyhint="enter"></textarea>
+        <div class="noteacts">
+          <button type="button" class="sbtn row done" data-act="notedone"><span>Done</span></button>
+          <button type="button" class="sbtn row" id="note-del" data-act="notedel"><span>Delete note</span></button>
+        </div>
+        <p class="cap notehint">Your note is kept on this phone, and saved when you leave this box.</p>
       </div>
     </div>
   </dialog>
@@ -75,12 +87,16 @@
       <nav class="menu" aria-label="More">
         <p class="drawerhead">My collections</p>
         <ul>
+          <li><a href="#/notes">
+            <svg class="line" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M8.5 9h7M8.5 13h7M8.5 17h4"/></svg>Notes</a></li>
           <li><a href="#/favorites">
             <svg class="line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l2.4 5 5.4.7-4 3.8 1 5.4-4.8-2.6L7.2 19l1-5.4-4-3.8 5.4-.7z"/></svg>Favorites</a></li>
           <li><a href="#/highlights">
             <svg class="line" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h5L19 10l-5-5L4 15z"/><path d="M12 7l5 5"/></svg>Highlights</a></li>
           <li><a href="#/history">
             <svg class="line" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>History</a></li>
+          <li><a href="#/backup">
+            <svg class="line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>Back up and restore</a></li>
         </ul>
         <p class="drawerhead">Bible</p>
         <ul>
@@ -122,9 +138,10 @@
 <script src="js/search.js?v=572496d257"></script>
 <script src="js/reader.js?v=60c0e7de67"></script>
 <script src="js/readerbar.js?v=b1cab6d843"></script>
-<script src="js/marks.js?v=271a254fa6"></script>
+<script src="js/marks.js?v=6cd649b7ab"></script>
+<script src="js/backup.js?v=a95b2c74f1"></script>
 <script src="js/guide.js?v=c0aea60fe8"></script>
-<script src="js/pages.js?v=e36b5cb365"></script>
+<script src="js/pages.js?v=8aa6143fbb"></script>
 <script src="js/analytics.js?v=3fe32ca2fe"></script>
 <script src="js/chrome.js?v=e232cfadaa"></script>
 <script src="js/offline.js?v=cc39c7c063"></script>

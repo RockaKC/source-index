@@ -104,7 +104,7 @@ test('the menu groups my collections, the Bible tools and the Kingdom Code items
   await settle(page);
   await page.click('#menubtn');
   const drawer = page.locator('#drawer');
-  for (const r of ['#/favorites', '#/highlights', '#/history', '#/books', '#/find', '#/guide', '#/kc']) await expect(drawer.locator(`a[href="${r}"]`)).toBeVisible();
+  for (const r of ['#/notes', '#/favorites', '#/highlights', '#/history', '#/backup', '#/books', '#/find', '#/guide', '#/kc']) await expect(drawer.locator(`a[href="${r}"]`)).toBeVisible();
   await expect(drawer.locator('.drawerhead')).toHaveText(['My collections', 'Bible', 'Kingdom Code']);
 });
 

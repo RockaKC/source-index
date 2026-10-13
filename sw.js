@@ -10,7 +10,7 @@
 const SHELL = 'kc-shell-v7';
 const BOOKS = 'kc-books-v2';
 const PRECACHE = ['./', 'profiles/site.js', 'data/site.js', 'css/site.css',
-  'js/core.js', 'js/text.js', 'js/words.js', 'js/essays.js', 'js/search.js', 'js/reader.js', 'js/readerbar.js', 'js/marks.js', 'js/guide.js',
+  'js/core.js', 'js/text.js', 'js/words.js', 'js/essays.js', 'js/search.js', 'js/reader.js', 'js/readerbar.js', 'js/marks.js', 'js/backup.js', 'js/guide.js',
   'js/pages.js', 'js/analytics.js', 'js/chrome.js', 'js/offline.js', 'js/router.js',
   'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png'];
 
