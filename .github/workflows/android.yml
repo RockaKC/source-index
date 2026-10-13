@@ -2,8 +2,9 @@ name: Android app
 
 # Builds KC Tewahedo Bible for Android. See tools/README.md, "Android app".
 #   Pull requests that touch the app, and the Run workflow button: a preview APK, kept 14 days under the run's Artifacts.
-#   A tag app-v<version> (for example app-v1.0.0): the release APK, signed with the Kingdom Code key, published as a
-#   GitHub Release. The key comes from the repository's secrets and never touches the repo.
+#   Run workflow on main with a version in "Publish a release" (for example 1.0.0), or a pushed tag app-v<version>: the
+#   release APK, signed with the Kingdom Code key, published as GitHub Release app-v<version> (the workflow makes the
+#   tag). The key comes from the repository's secrets and never touches the repo.
 #   Run workflow with "Sign with the release key" ticked: the same signed build, kept as an artifact and not published,
 #   to check the signing secrets work.
 on:
@@ -25,6 +26,10 @@ on:
     tags: ['app-v*']
   workflow_dispatch:
     inputs:
+      release:
+        description: Publish a release, version like 1.0.0 (run on main; leave empty for a preview)
+        type: string
+        default: ''
       signed:
         description: Sign with the release key (a test; nothing is published)
         type: boolean
@@ -55,10 +60,17 @@ jobs:
 
       - name: Work out the version
         id: version
+        env:
+          RELEASE: ${{ inputs.release }}
         run: |
-          if [[ "$GITHUB_REF" == refs/tags/app-v* ]]; then
-            v="${GITHUB_REF_NAME#app-v}"
-            [[ "$v" =~ ^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}$ ]] || { echo "::error::Tag $GITHUB_REF_NAME must look like app-v1.2.3"; exit 1; }
+          if [[ "$GITHUB_REF" == refs/tags/app-v* || -n "$RELEASE" ]]; then
+            if [[ -n "$RELEASE" ]]; then
+              [[ "$GITHUB_REF" == refs/heads/main ]] || { echo "::error::Publish releases from main, not $GITHUB_REF_NAME"; exit 1; }
+              v="${RELEASE#v}"
+            else
+              v="${GITHUB_REF_NAME#app-v}"
+            fi
+            [[ "$v" =~ ^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}$ ]] || { echo "::error::The version must look like 1.2.3, not $v"; exit 1; }
             echo "release=true" >> "$GITHUB_OUTPUT"
             echo "signed=true" >> "$GITHUB_OUTPUT"
           else
@@ -142,5 +154,5 @@ jobs:
             "- SHA-256 of the APK: \`$digest\`" \
             "- Signing certificate SHA-256: \`$cert\`" > notes.md
           cp "out/$name" out/KC-Tewahedo-Bible.apk   # the fixed name the site's download page links to (releases/latest/download/)
-          gh release create "$GITHUB_REF_NAME" "out/$name" "out/$name.sha256" out/KC-Tewahedo-Bible.apk \
-            --repo "$GITHUB_REPOSITORY" --title "KC Tewahedo Bible $VERSION" --notes-file notes.md
+          gh release create "app-v$VERSION" "out/$name" "out/$name.sha256" out/KC-Tewahedo-Bible.apk \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "KC Tewahedo Bible $VERSION" --notes-file notes.md
