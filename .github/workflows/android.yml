@@ -1,0 +1,136 @@
+name: Android app
+
+# Builds KC Tewahedo Bible for Android. See tools/README.md, "Android app".
+#   Pull requests that touch the app, and the Run workflow button: a preview APK, kept 14 days under the run's Artifacts.
+#   A tag app-v<version> (for example app-v1.0.0): the release APK, signed with the Kingdom Code key, published as a
+#   GitHub Release. The key comes from the repository's secrets and never touches the repo.
+on:
+  pull_request:
+    paths:
+      - app.html
+      - css/**
+      - js/**
+      - profiles/**
+      - data/**
+      - bible/**
+      - android/**
+      - capacitor.config.json
+      - package.json
+      - package-lock.json
+      - tools/build_app.py
+      - .github/workflows/android.yml
+  push:
+    tags: ['app-v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install build tools
+        run: npm ci
+
+      - name: Work out the version
+        id: version
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/app-v* ]]; then
+            v="${GITHUB_REF_NAME#app-v}"
+            [[ "$v" =~ ^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}$ ]] || { echo "::error::Tag $GITHUB_REF_NAME must look like app-v1.2.3"; exit 1; }
+            echo "release=true" >> "$GITHUB_OUTPUT"
+          else
+            v="0.0.0"
+            echo "release=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+
+      - name: Gather the app's files
+        run: |
+          python3 tools/build_app.py
+          npx cap sync android
+
+      - name: Build the preview APK
+        if: steps.version.outputs.release == 'false'
+        working-directory: android
+        run: |
+          ./gradlew --no-daemon assembleDebug -PappVersion=${{ steps.version.outputs.version }}
+          mkdir -p ../out && cp app/build/outputs/apk/debug/app-debug.apk ../out/KC-Tewahedo-Bible-preview.apk
+
+      - name: Build and sign the release APK
+        if: steps.version.outputs.release == 'true'
+        working-directory: android
+        env:
+          KC_KEYSTORE_BASE64: ${{ secrets.KC_KEYSTORE_BASE64 }}
+          KC_KEYSTORE_PASSWORD: ${{ secrets.KC_KEYSTORE_PASSWORD }}
+          KC_KEY_ALIAS: ${{ secrets.KC_KEY_ALIAS }}
+          KC_KEY_PASSWORD: ${{ secrets.KC_KEY_PASSWORD }}
+        run: |
+          [ -n "$KC_KEYSTORE_BASE64" ] || { echo "::error::The signing key is not in the repository's secrets (KC_KEYSTORE_BASE64). See tools/README.md, Android app."; exit 1; }
+          export KC_KEYSTORE_FILE="$RUNNER_TEMP/kc-release.jks"
+          echo "$KC_KEYSTORE_BASE64" | base64 -d > "$KC_KEYSTORE_FILE"
+          ./gradlew --no-daemon assembleRelease -PappVersion=${{ steps.version.outputs.version }}
+          rm -f "$KC_KEYSTORE_FILE"
+          apk=app/build/outputs/apk/release/app-release.apk
+          apksigner="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)/apksigner"
+          "$apksigner" verify --print-certs "$apk" | tee ../signer.txt
+          name="KC-Tewahedo-Bible-${{ steps.version.outputs.version }}.apk"
+          mkdir -p ../out && cp "$apk" "../out/$name"
+          cd ../out && sha256sum "$name" > "$name.sha256"
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: ${{ steps.version.outputs.release == 'true' && 'release-apk' || 'preview-apk' }}
+          path: |
+            out/
+            signer.txt
+          if-no-files-found: error
+          retention-days: 14
+
+    outputs:
+      release: ${{ steps.version.outputs.release }}
+      version: ${{ steps.version.outputs.version }}
+
+  publish:
+    needs: build
+    if: needs.build.outputs.release == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write          # to create the GitHub Release
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: release-apk
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.build.outputs.version }}
+        run: |
+          name="KC-Tewahedo-Bible-$VERSION.apk"
+          digest="$(cut -d' ' -f1 "out/$name.sha256")"
+          cert="$(grep -m1 'certificate SHA-256 digest' signer.txt | sed 's/.*: //')"
+          printf '%s\n' \
+            "KC Tewahedo Bible $VERSION for Android." \
+            "" \
+            "Download $name below and open it on your phone to install." \
+            "" \
+            "To check the file is ours:" \
+            "- SHA-256 of the APK: \`$digest\`" \
+            "- Signing certificate SHA-256: \`$cert\`" > notes.md
+          gh release create "$GITHUB_REF_NAME" "out/$name" "out/$name.sha256" \
+            --repo "$GITHUB_REPOSITORY" --title "KC Tewahedo Bible $VERSION" --notes-file notes.md

@@ -2,12 +2,15 @@
   "name": "kc-source-index",
   "private": true,
   "license": "UNLICENSED",
-  "description": "Kingdom Code Source Index. The site is static; this file only sets up the tests.",
+  "description": "Kingdom Code Source Index and KC Tewahedo Bible. The site is static; this file sets up the tests and the Android build.",
   "scripts": {
     "test": "playwright test",
     "test:update": "UPDATE_GOLDEN=1 playwright test tests/search.spec.js"
   },
   "devDependencies": {
+    "@capacitor/android": "8.5.2",
+    "@capacitor/cli": "8.5.2",
+    "@capacitor/core": "8.5.2",
     "@playwright/test": "1.56.1"
   }
 }

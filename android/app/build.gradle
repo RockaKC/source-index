@@ -1,0 +1,69 @@
+apply plugin: 'com.android.application'
+
+// Version: from the release tag (app-v1.2.3 -> versionName 1.2.3, versionCode 10203), passed in by
+// .github/workflows/android.yml as -PappVersion=1.2.3. A build without it is 0.0.0, code 1.
+def appVersion = (project.findProperty('appVersion') ?: '0.0.0').toString()
+def appVersionParts = appVersion.tokenize('.').collect { it as int }
+if (appVersionParts.size() != 3 || appVersionParts.any { it < 0 || it > 99 }) throw new GradleException("appVersion must look like 1.2.3 (each part 0-99), not ${appVersion}")
+def appVersionCode = Math.max(1, appVersionParts[0] * 10000 + appVersionParts[1] * 100 + appVersionParts[2])
+
+// Signing: the release key never lives in the repo. The workflow writes it from the repository's secrets
+// to a temporary file and names it here; without it, only the preview (debug) build can be made.
+def keystoreFile = System.getenv('KC_KEYSTORE_FILE')
+
+android {
+    namespace = "com.kingdomcodearchive.tewahedo"
+    compileSdk = rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "com.kingdomcodearchive.tewahedo"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode appVersionCode
+        versionName appVersion
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    signingConfigs {
+        if (keystoreFile) {
+            release {
+                storeFile file(keystoreFile)
+                storePassword System.getenv('KC_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('KC_KEY_ALIAS')
+                keyPassword System.getenv('KC_KEY_PASSWORD')
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (keystoreFile) signingConfig signingConfigs.release
+        }
+        debug {
+            // The preview build installs beside the released app instead of replacing it.
+            applicationIdSuffix '.preview'
+            versionNameSuffix '-preview'
+        }
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'

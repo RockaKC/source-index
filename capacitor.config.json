@@ -1,0 +1,10 @@
+{
+  "appId": "com.kingdomcodearchive.tewahedo",
+  "appName": "KC Tewahedo Bible",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": false,
+    "webContentsDebuggingEnabled": false
+  }
+}

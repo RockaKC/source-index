@@ -1,6 +1,7 @@
 // Static file server for the tests: serves the repository root the way GitHub Pages does.
 //   node tests/serve.js [port]        run on its own (used by playwright.config.js)
 //   require('./serve').start(port)    start one inside a test (the offline test stops it mid-test)
+//   require('./serve').start(port, dir)   serve another folder, e.g. www/ (the Android app's files)
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -11,20 +12,20 @@ const MIME = {
   '.webmanifest': 'application/manifest+json', '.png': 'image/png', '.svg': 'image/svg+xml', '.css': 'text/css',
 };
 
-function handler(req, res) {
+const handler = root => (req, res) => {
   let url = decodeURIComponent(req.url.split('?')[0]);
   if (url.endsWith('/')) url += 'index.html';
-  const file = path.join(ROOT, url);
-  if (!file.startsWith(ROOT + path.sep) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
+  const file = path.join(root, url);
+  if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
     res.writeHead(404); res.end(); return;
   }
   res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream' });
   fs.createReadStream(file).pipe(res);
-}
+};
 
-function start(port = 0) {
+function start(port = 0, root = ROOT) {
   return new Promise(resolve => {
-    const server = http.createServer(handler).listen(port, '127.0.0.1', () => resolve(server));
+    const server = http.createServer(handler(path.resolve(root))).listen(port, '127.0.0.1', () => resolve(server));
   });
 }
 
