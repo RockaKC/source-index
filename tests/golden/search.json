@@ -1,0 +1,952 @@
+{
+ "Psalm 23": {
+  "sug": [
+   "Psalms 23Not cited yet"
+  ],
+  "hash": "#/book/23",
+  "h1": "Psalms",
+  "caps": [
+   "Number 23 of 46 in the Old Testament list. Septuagint, translated from Greek."
+  ],
+  "reads": [
+   "Psalms 1",
+   "Psalms 1:1–3",
+   "Psalms 6",
+   "Psalms 12 (13 in English Bibles)",
+   "Psalms 15:5–11 (16 in English Bibles)",
+   "Psalms 18:5–7 (19 in English Bibles)",
+   "Psalms 22 (23 in English Bibles)",
+   "Psalms 22 (23 in English Bibles)",
+   "Psalms 26:1–6 (27 in English Bibles)",
+   "Psalms 26:7–14 (27 in English Bibles)",
+   "Psalms 29:2–13 (30 in English Bibles)",
+   "Psalms 31:1–7 (32 in English Bibles)",
+   "Psalms 41 (42 in English Bibles)",
+   "Psalms 42 (43 in English Bibles)",
+   "Psalms 45 (46 in English Bibles)",
+   "Psalms 45:11–12 (46 in English Bibles)",
+   "Psalms 50:3–14 (51 in English Bibles)",
+   "Psalms 61:2–3 (62 in English Bibles)",
+   "Psalms 61:6–9 (62 in English Bibles)",
+   "Psalms 64:10–14 (65 in English Bibles)",
+   "Psalms 76:2–16 (77 in English Bibles)",
+   "Psalms 80:2–11 (81 in English Bibles)",
+   "Psalms 84:2–14 (85 in English Bibles)",
+   "Psalms 87 (88 in English Bibles)",
+   "Psalms 89:12 (90 in English Bibles)",
+   "Psalms 89:14–17 (90 in English Bibles)",
+   "Psalms 90 (91 in English Bibles)",
+   "Psalms 101:2–12 (102 in English Bibles)",
+   "Psalms 102:1–14 (103 in English Bibles)",
+   "Psalms 117:19–29 (118 in English Bibles)",
+   "Psalms 120 (121 in English Bibles)",
+   "Psalms 120 (121 in English Bibles)",
+   "Psalms 125:5–6 (126 in English Bibles)",
+   "Psalms 126:1–2 (127 in English Bibles)",
+   "Psalms 128:1–4 (129 in English Bibles)",
+   "Psalms 130 (131 in English Bibles)",
+   "Psalms 138:1–12 (139 in English Bibles)",
+   "Psalms 138:13–18 (139 in English Bibles)"
+  ]
+ },
+ "Psalm 23:1": {
+  "sug": [],
+  "hash": "#/verse/28/22/1",
+  "h1": "Psalms 22:1",
+  "caps": [
+   "Psalms 22:1, Septuagint",
+   "Psalm 23:1 in English Bibles"
+  ],
+  "reads": [
+   "Psalms 22 (23 in English Bibles)",
+   "Psalms 22 (23 in English Bibles)"
+  ]
+ },
+ "Psalm 22:1": {
+  "sug": [
+   "Psalms 21:2 (English 22:1)Verse"
+  ],
+  "hash": "#/verse/28/21/2",
+  "h1": "Psalms 21:2",
+  "caps": [
+   "Psalms 21:2, Septuagint",
+   "Psalm 22:1 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Psalm 22:1-5": {
+  "sug": [
+   "Psalms 22:1–5Passage · range"
+  ],
+  "hash": "#/range/28/21/2/6",
+  "h1": "Psalms 21:2–6",
+  "caps": [
+   "Psalms 21:2–6, Septuagint",
+   "Psalm 22:1 in English Bibles"
+  ],
+  "reads": []
+ },
+ "psalm 23:1-3": {
+  "sug": [
+   "Psalms 23:1–3Passage · range"
+  ],
+  "hash": "#/range/28/22/1/3",
+  "h1": "Psalms 22:1–3",
+  "caps": [
+   "Psalms 22:1–3, Septuagint",
+   "Psalm 23:1 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Psalm 9:1": {
+  "sug": [],
+  "hash": "#/verse/28/9/2",
+  "h1": "Psalms 9:2",
+  "caps": [
+   "Psalms 9:2, Septuagint",
+   "Psalm 9:1 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Psalm 9:21": {
+  "sug": [],
+  "hash": "#/verse/28/9/21",
+  "h1": "Psalms 9:21",
+  "caps": [
+   "Psalms 9:21, Septuagint",
+   "Psalm 9:20 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Psalm 10:1": {
+  "sug": [],
+  "hash": "#/verse/28/9/22",
+  "h1": "Psalms 9:22",
+  "caps": [
+   "Psalms 9:22, Septuagint",
+   "Psalm 10:1 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Psalm 10:15": {
+  "sug": [],
+  "hash": "#/verse/28/9/36",
+  "h1": "Psalms 9:36",
+  "caps": [
+   "Psalms 9:36, Septuagint",
+   "Psalm 10:15 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Psalm 51:1": {
+  "sug": [
+   "Psalms 50:3 (English 51:1)Verse"
+  ],
+  "hash": "#/verse/28/50/3",
+  "h1": "Psalms 50:3",
+  "caps": [
+   "Psalms 50:3, Septuagint",
+   "Psalm 51:1 in English Bibles"
+  ],
+  "reads": [
+   "Psalms 50:3–14 (51 in English Bibles)"
+  ]
+ },
+ "Psalm 51:3": {
+  "sug": [
+   "Psalms 50:5 (English 51:3)Verse"
+  ],
+  "hash": "#/verse/28/50/5",
+  "h1": "Psalms 50:5",
+  "caps": [
+   "Psalms 50:5, Septuagint",
+   "Psalm 51:3 in English Bibles"
+  ],
+  "reads": [
+   "Psalms 50:3–14 (51 in English Bibles)"
+  ]
+ },
+ "Psalm 51:19": {
+  "sug": [
+   "Psalms 50:21 (English 51:19)Verse"
+  ],
+  "hash": "#/verse/28/50/21",
+  "h1": "Psalms 50:21",
+  "caps": [
+   "Psalms 50:21, Septuagint",
+   "Psalm 51:19 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Psalm 119:1-5": {
+  "sug": [
+   "Psalms 119:1–5Passage · range"
+  ],
+  "hash": "#/range/28/118/1/5",
+  "h1": "Psalms 118:1–5",
+  "caps": [
+   "Psalms 118:1–5, Septuagint",
+   "Psalm 119:1 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Psalm 119:176": {
+  "sug": [],
+  "hash": "#/verse/28/118/176",
+  "h1": "Psalms 118:176",
+  "caps": [
+   "Psalms 118:176, Septuagint",
+   "Psalm 119:176 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Psalm 150:6": {
+  "sug": [],
+  "hash": "#/verse/28/150/6",
+  "h1": "Psalms 150:6",
+  "caps": [
+   "Psalms 150:6, Septuagint",
+   "Psalm 150:6 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Psalm 1:1": {
+  "sug": [],
+  "hash": "#/verse/28/1/1",
+  "h1": "Psalms 1:1",
+  "caps": [
+   "Psalms 1:1, Septuagint",
+   "Psalm 1:1 in English Bibles"
+  ],
+  "reads": [
+   "Psalms 1",
+   "Psalms 1:1–3"
+  ]
+ },
+ "Psalm 1:1-3": {
+  "sug": [
+   "Psalms 1:1–3Passage · range"
+  ],
+  "hash": "#/range/28/1/1/3",
+  "h1": "Psalms 1:1–3",
+  "caps": [
+   "Psalms 1:1–3, Septuagint",
+   "Psalm 1:1 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Psalm 3:1": {
+  "sug": [],
+  "hash": "#/verse/28/3/2",
+  "h1": "Psalms 3:2",
+  "caps": [
+   "Psalms 3:2, Septuagint",
+   "Psalm 3:1 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Psalm 18:1": {
+  "sug": [],
+  "hash": "#/verse/28/17/2",
+  "h1": "Psalms 17:2",
+  "caps": [
+   "Psalms 17:2, Septuagint",
+   "Psalm 18:1 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Psalm 18:50": {
+  "sug": [],
+  "hash": "#/verse/28/17/51",
+  "h1": "Psalms 17:51",
+  "caps": [
+   "Psalms 17:51, Septuagint",
+   "Psalm 18:50 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Psalm 88:1": {
+  "sug": [],
+  "hash": "#/verse/28/87/2",
+  "h1": "Psalms 87:2",
+  "caps": [
+   "Psalms 87:2, Septuagint",
+   "Psalm 88:1 in English Bibles"
+  ],
+  "reads": [
+   "Psalms 87 (88 in English Bibles)"
+  ]
+ },
+ "Psalm 88": {
+  "sug": [
+   "Psalms 88Not cited yet"
+  ],
+  "hash": "#/book/23",
+  "h1": "Psalms",
+  "caps": [
+   "Number 23 of 46 in the Old Testament list. Septuagint, translated from Greek."
+  ],
+  "reads": [
+   "Psalms 1",
+   "Psalms 1:1–3",
+   "Psalms 6",
+   "Psalms 12 (13 in English Bibles)",
+   "Psalms 15:5–11 (16 in English Bibles)",
+   "Psalms 18:5–7 (19 in English Bibles)",
+   "Psalms 22 (23 in English Bibles)",
+   "Psalms 22 (23 in English Bibles)",
+   "Psalms 26:1–6 (27 in English Bibles)",
+   "Psalms 26:7–14 (27 in English Bibles)",
+   "Psalms 29:2–13 (30 in English Bibles)",
+   "Psalms 31:1–7 (32 in English Bibles)",
+   "Psalms 41 (42 in English Bibles)",
+   "Psalms 42 (43 in English Bibles)",
+   "Psalms 45 (46 in English Bibles)",
+   "Psalms 45:11–12 (46 in English Bibles)",
+   "Psalms 50:3–14 (51 in English Bibles)",
+   "Psalms 61:2–3 (62 in English Bibles)",
+   "Psalms 61:6–9 (62 in English Bibles)",
+   "Psalms 64:10–14 (65 in English Bibles)",
+   "Psalms 76:2–16 (77 in English Bibles)",
+   "Psalms 80:2–11 (81 in English Bibles)",
+   "Psalms 84:2–14 (85 in English Bibles)",
+   "Psalms 87 (88 in English Bibles)",
+   "Psalms 89:12 (90 in English Bibles)",
+   "Psalms 89:14–17 (90 in English Bibles)",
+   "Psalms 90 (91 in English Bibles)",
+   "Psalms 101:2–12 (102 in English Bibles)",
+   "Psalms 102:1–14 (103 in English Bibles)",
+   "Psalms 117:19–29 (118 in English Bibles)",
+   "Psalms 120 (121 in English Bibles)",
+   "Psalms 120 (121 in English Bibles)",
+   "Psalms 125:5–6 (126 in English Bibles)",
+   "Psalms 126:1–2 (127 in English Bibles)",
+   "Psalms 128:1–4 (129 in English Bibles)",
+   "Psalms 130 (131 in English Bibles)",
+   "Psalms 138:1–12 (139 in English Bibles)",
+   "Psalms 138:13–18 (139 in English Bibles)"
+  ]
+ },
+ "Psalm 147": {
+  "sug": [
+   "Psalms 147Not cited yet"
+  ],
+  "hash": "#/book/23",
+  "h1": "Psalms",
+  "caps": [
+   "Number 23 of 46 in the Old Testament list. Septuagint, translated from Greek."
+  ],
+  "reads": [
+   "Psalms 1",
+   "Psalms 1:1–3",
+   "Psalms 6",
+   "Psalms 12 (13 in English Bibles)",
+   "Psalms 15:5–11 (16 in English Bibles)",
+   "Psalms 18:5–7 (19 in English Bibles)",
+   "Psalms 22 (23 in English Bibles)",
+   "Psalms 22 (23 in English Bibles)",
+   "Psalms 26:1–6 (27 in English Bibles)",
+   "Psalms 26:7–14 (27 in English Bibles)",
+   "Psalms 29:2–13 (30 in English Bibles)",
+   "Psalms 31:1–7 (32 in English Bibles)",
+   "Psalms 41 (42 in English Bibles)",
+   "Psalms 42 (43 in English Bibles)",
+   "Psalms 45 (46 in English Bibles)",
+   "Psalms 45:11–12 (46 in English Bibles)",
+   "Psalms 50:3–14 (51 in English Bibles)",
+   "Psalms 61:2–3 (62 in English Bibles)",
+   "Psalms 61:6–9 (62 in English Bibles)",
+   "Psalms 64:10–14 (65 in English Bibles)",
+   "Psalms 76:2–16 (77 in English Bibles)",
+   "Psalms 80:2–11 (81 in English Bibles)",
+   "Psalms 84:2–14 (85 in English Bibles)",
+   "Psalms 87 (88 in English Bibles)",
+   "Psalms 89:12 (90 in English Bibles)",
+   "Psalms 89:14–17 (90 in English Bibles)",
+   "Psalms 90 (91 in English Bibles)",
+   "Psalms 101:2–12 (102 in English Bibles)",
+   "Psalms 102:1–14 (103 in English Bibles)",
+   "Psalms 117:19–29 (118 in English Bibles)",
+   "Psalms 120 (121 in English Bibles)",
+   "Psalms 120 (121 in English Bibles)",
+   "Psalms 125:5–6 (126 in English Bibles)",
+   "Psalms 126:1–2 (127 in English Bibles)",
+   "Psalms 128:1–4 (129 in English Bibles)",
+   "Psalms 130 (131 in English Bibles)",
+   "Psalms 138:1–12 (139 in English Bibles)",
+   "Psalms 138:13–18 (139 in English Bibles)"
+  ]
+ },
+ "Psalm 148:1": {
+  "sug": [],
+  "hash": "#/verse/28/148/1",
+  "h1": "Psalms 148:1",
+  "caps": [
+   "Psalms 148:1, Septuagint",
+   "Psalm 148:1 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Psalms 116:10": {
+  "sug": [],
+  "hash": "#/verse/28/115/1",
+  "h1": "Psalms 115:1",
+  "caps": [
+   "Psalms 115:1, Septuagint",
+   "Psalm 116:10 in English Bibles"
+  ],
+  "reads": []
+ },
+ "ps 22": {
+  "sug": [
+   "Read Psalms 22Chapter",
+   "Psalms 21:17 (English 22:16)Verse · 2 essays",
+   "Nephesh and psycheSoul: the living creature, or the immortal soul"
+  ],
+  "hash": "#/read/28/21",
+  "h1": "Psalms 21",
+  "caps": [
+   "Septuagint, translated from Greek. This is Psalm 22 in English Bibles. Highlighted verses are cited in Kingdom Code essays. Tap one to see them."
+  ],
+  "reads": []
+ },
+ "ps 22:16": {
+  "sug": [
+   "Psalms 21:17 (English 22:16)Verse · 2 essays",
+   "Nephesh and psycheSoul: the living creature, or the immortal soul"
+  ],
+  "hash": "#/verse/28/21/17",
+  "h1": "Psalms 21:17",
+  "caps": [
+   "Psalms 21:17, Septuagint",
+   "Psalm 22:16 in English Bibles"
+  ],
+  "reads": []
+ },
+ "psalm 21:17": {
+  "sug": [
+   "Psalms 21:17 (English 22:16)Verse · 2 essays"
+  ],
+  "hash": "#/verse/28/21/17",
+  "h1": "Psalms 21:17",
+  "caps": [
+   "Psalms 21:17, Septuagint",
+   "Psalm 22:16 in English Bibles"
+  ],
+  "reads": []
+ },
+ "psalm 56:1": {
+  "sug": [],
+  "hash": "#/verse/28/55/2",
+  "h1": "Psalms 55:2",
+  "caps": [
+   "Psalms 55:2, Septuagint",
+   "Psalm 56:1 in English Bibles"
+  ],
+  "reads": []
+ },
+ "psalm 144:1": {
+  "sug": [
+   "Psalms 143:1 (English 144:1)Verse · 1 essay"
+  ],
+  "hash": "#/verse/28/143/1",
+  "h1": "Psalms 143:1",
+  "caps": [
+   "Psalms 143:1, Septuagint",
+   "Psalm 144:1 in English Bibles"
+  ],
+  "reads": []
+ },
+ "psalm 100": {
+  "sug": [
+   "Psalms 100Not cited yet"
+  ],
+  "hash": "#/book/23",
+  "h1": "Psalms",
+  "caps": [
+   "Number 23 of 46 in the Old Testament list. Septuagint, translated from Greek."
+  ],
+  "reads": [
+   "Psalms 1",
+   "Psalms 1:1–3",
+   "Psalms 6",
+   "Psalms 12 (13 in English Bibles)",
+   "Psalms 15:5–11 (16 in English Bibles)",
+   "Psalms 18:5–7 (19 in English Bibles)",
+   "Psalms 22 (23 in English Bibles)",
+   "Psalms 22 (23 in English Bibles)",
+   "Psalms 26:1–6 (27 in English Bibles)",
+   "Psalms 26:7–14 (27 in English Bibles)",
+   "Psalms 29:2–13 (30 in English Bibles)",
+   "Psalms 31:1–7 (32 in English Bibles)",
+   "Psalms 41 (42 in English Bibles)",
+   "Psalms 42 (43 in English Bibles)",
+   "Psalms 45 (46 in English Bibles)",
+   "Psalms 45:11–12 (46 in English Bibles)",
+   "Psalms 50:3–14 (51 in English Bibles)",
+   "Psalms 61:2–3 (62 in English Bibles)",
+   "Psalms 61:6–9 (62 in English Bibles)",
+   "Psalms 64:10–14 (65 in English Bibles)",
+   "Psalms 76:2–16 (77 in English Bibles)",
+   "Psalms 80:2–11 (81 in English Bibles)",
+   "Psalms 84:2–14 (85 in English Bibles)",
+   "Psalms 87 (88 in English Bibles)",
+   "Psalms 89:12 (90 in English Bibles)",
+   "Psalms 89:14–17 (90 in English Bibles)",
+   "Psalms 90 (91 in English Bibles)",
+   "Psalms 101:2–12 (102 in English Bibles)",
+   "Psalms 102:1–14 (103 in English Bibles)",
+   "Psalms 117:19–29 (118 in English Bibles)",
+   "Psalms 120 (121 in English Bibles)",
+   "Psalms 120 (121 in English Bibles)",
+   "Psalms 125:5–6 (126 in English Bibles)",
+   "Psalms 126:1–2 (127 in English Bibles)",
+   "Psalms 128:1–4 (129 in English Bibles)",
+   "Psalms 130 (131 in English Bibles)",
+   "Psalms 138:1–12 (139 in English Bibles)",
+   "Psalms 138:13–18 (139 in English Bibles)"
+  ]
+ },
+ "Genesis 1:1": {
+  "sug": [
+   "Read Genesis 1Chapter",
+   "Genesis 1:12Verse · 1 essay",
+   "Genesis 1:16Verse · 1 essay"
+  ],
+  "hash": "#/verse/1/1/1",
+  "h1": "Genesis 1:1",
+  "caps": [
+   "Genesis 1:1, Septuagint"
+  ],
+  "reads": [
+   "Genesis 1:1–13",
+   "Genesis 1:1–2"
+  ]
+ },
+ "Genesis 1:1-3": {
+  "sug": [
+   "Genesis 1:1–3Passage · range"
+  ],
+  "hash": "#/range/1/1/1/3",
+  "h1": "Genesis 1:1–3",
+  "caps": [
+   "Genesis 1:1–3, Septuagint"
+  ],
+  "reads": []
+ },
+ "Genesis 6:4": {
+  "sug": [
+   "Read Genesis 6Chapter",
+   "Genesis 6:4Verse · 9 essays"
+  ],
+  "hash": "#/verse/1/6/4",
+  "h1": "Genesis 6:4",
+  "caps": [
+   "Genesis 6:4, Septuagint"
+  ],
+  "reads": []
+ },
+ "Exodus 12:49": {
+  "sug": [
+   "Read Exodus 12Chapter",
+   "Exodus 12:49Verse · 1 essay"
+  ],
+  "hash": "#/verse/2/12/49",
+  "h1": "Exodus 12:49",
+  "caps": [
+   "Exodus 12:49, Septuagint"
+  ],
+  "reads": []
+ },
+ "Isaiah 7:14": {
+  "sug": [
+   "Isaiah 7:14Verse · 2 essays"
+  ],
+  "hash": "#/verse/34/7/14",
+  "h1": "Isaiah 7:14",
+  "caps": [
+   "Isaiah 7:14, Septuagint",
+   "Septuagint numbering. Some verses in Isaiah are numbered differently in English Bibles."
+  ],
+  "reads": []
+ },
+ "Isaiah 9:6": {
+  "sug": [
+   "Isaiah 9:6 (English 9:7)Verse · 1 essay"
+  ],
+  "hash": "#/verse/34/9/6",
+  "h1": "Isaiah 9:6",
+  "caps": [
+   "Isaiah 9:6, Septuagint",
+   "Isaiah 9:7 in English Bibles",
+   "You searched Isaiah by an English number that has not been converted. In Septuagint Isaiah the numbers can differ from English Bibles, so check the verses on either side."
+  ],
+  "reads": []
+ },
+ "Isaiah 9:7": {
+  "sug": [
+   "Isaiah 9:6 (English 9:7)Verse · 1 essay"
+  ],
+  "hash": "#/verse/34/9/6",
+  "h1": "Isaiah 9:6",
+  "caps": [
+   "Isaiah 9:6, Septuagint",
+   "Isaiah 9:7 in English Bibles"
+  ],
+  "reads": []
+ },
+ "John 3:16": {
+  "sug": [
+   "Read John 3Chapter"
+  ],
+  "hash": "#/verse/56/3/16",
+  "h1": "John 3:16",
+  "caps": [
+   "John 3:16, Berean Literal Bible"
+  ],
+  "reads": []
+ },
+ "John 3:16-17": {
+  "sug": [
+   "John 3:16–17Passage · range"
+  ],
+  "hash": "#/range/56/3/16/17",
+  "h1": "John 3:16–17",
+  "caps": [
+   "John 3:16–17, Berean Literal Bible"
+  ],
+  "reads": []
+ },
+ "Romans 6:14": {
+  "sug": [
+   "Read Romans 6Chapter",
+   "Romans 6:14Verse · 2 essays"
+  ],
+  "hash": "#/verse/58/6/14",
+  "h1": "Romans 6:14",
+  "caps": [
+   "Romans 6:14, Berean Literal Bible"
+  ],
+  "reads": []
+ },
+ "Matthew 5:17": {
+  "sug": [
+   "Read Matthew 5Chapter",
+   "Matthew 5:17Verse · 4 essays"
+  ],
+  "hash": "#/verse/53/5/17",
+  "h1": "Matthew 5:17",
+  "caps": [
+   "Matthew 5:17, Berean Literal Bible"
+  ],
+  "reads": []
+ },
+ "Jeremiah 31:33": {
+  "sug": [
+   "Jeremiah 38:33 (English 31:33)Verse · 1 essay"
+  ],
+  "hash": "#/verse/35/38/33",
+  "h1": "Jeremiah 38:33",
+  "caps": [
+   "Jeremiah 38:33, Septuagint",
+   "Jeremiah 31:33 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Jeremiah 38:33": {
+  "sug": [
+   "Jeremiah 38:33 (English 31:33)Verse · 1 essay"
+  ],
+  "hash": "#/verse/35/38/33",
+  "h1": "Jeremiah 38:33",
+  "caps": [
+   "Jeremiah 38:33, Septuagint",
+   "Jeremiah 31:33 in English Bibles",
+   "You searched Jeremiah by an English number that has not been converted. In Septuagint Jeremiah the numbers can differ from English Bibles, so check the verses on either side."
+  ],
+  "reads": []
+ },
+ "Jeremiah 38": {
+  "sug": [
+   "Read Jeremiah 38Chapter",
+   "Jeremiah 38:29 (English 31:29)Verse · 1 essay",
+   "Jeremiah 38:30 (English 31:30)Verse · 1 essay",
+   "Jeremiah 38:31 (English 31:31)Verse · 1 essay",
+   "Jeremiah 38:33 (English 31:33)Verse · 1 essay"
+  ],
+  "hash": "#/read/35/38",
+  "h1": "Jeremiah 38",
+  "caps": [
+   "Septuagint, translated from Greek. Some verses in this book are numbered differently in English Bibles. Highlighted verses are cited in Kingdom Code essays. Tap one to see them."
+  ],
+  "reads": []
+ },
+ "Daniel 3:92": {
+  "sug": [
+   "Daniel 3:92 (English 3:25)Verse · 1 essay"
+  ],
+  "hash": "#/verse/38/3/92",
+  "h1": "Daniel 3:92",
+  "caps": [
+   "Daniel 3:92, Septuagint",
+   "Daniel 3:25 in English Bibles",
+   "You searched Daniel by an English number that has not been converted. In Septuagint Daniel the numbers can differ from English Bibles, so check the verses on either side."
+  ],
+  "reads": []
+ },
+ "Daniel 3:25": {
+  "sug": [
+   "Daniel 3:92 (English 3:25)Verse · 1 essay"
+  ],
+  "hash": "#/verse/38/3/92",
+  "h1": "Daniel 3:92",
+  "caps": [
+   "Daniel 3:92, Septuagint",
+   "Daniel 3:25 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Enoch 1:9": {
+  "sug": [
+   "Read Enoch 1Chapter",
+   "Enoch 1:9Verse · 5 essays"
+  ],
+  "hash": "#/verse/16/1/9",
+  "h1": "Enoch 1:9",
+  "caps": [
+   "Enoch 1:9, R. H. Charles",
+   "Jude quotes this passage. Jude 1:14"
+  ],
+  "reads": [
+   "Enoch 1:3–9"
+  ]
+ },
+ "Enoch 8:3": {
+  "sug": [
+   "Read Enoch 8Chapter",
+   "Enoch 8:3Verse · 2 essays"
+  ],
+  "hash": "#/verse/16/8/3",
+  "h1": "Enoch 8:3",
+  "caps": [
+   "Enoch 8:3, R. H. Charles",
+   "Printed together with verse 2."
+  ],
+  "reads": []
+ },
+ "Jubilees 1:26": {
+  "sug": [
+   "Read Jubilees 1Chapter",
+   "Jubilees 1:26Verse · 1 essay"
+  ],
+  "hash": "#/verse/15/1/26",
+  "h1": "Jubilees 1:26",
+  "caps": [
+   "Jubilees 1:26, R. H. Charles"
+  ],
+  "reads": []
+ },
+ "Job 41:31": {
+  "sug": [
+   "Read Job 41Chapter",
+   "Job 41:31Verse · 1 essay"
+  ],
+  "hash": "#/verse/27/41/31",
+  "h1": "Job 41:31",
+  "caps": [],
+  "reads": []
+ },
+ "Acts 8:37": {
+  "sug": [
+   "Read Acts 8Chapter",
+   "Acts 8:37Verse · 5 essays"
+  ],
+  "hash": "#/verse/57/8/37",
+  "h1": "Acts 8:37",
+  "caps": [],
+  "reads": [
+   "Acts 8:26–40"
+  ]
+ },
+ "Deuteronomy 32:8": {
+  "sug": [
+   "Deuteronomy 32:8Verse · 7 essays"
+  ],
+  "hash": "#/verse/5/32/8",
+  "h1": "Deuteronomy 32:8",
+  "caps": [
+   "Deuteronomy 32:8, Septuagint",
+   "Septuagint numbering. Some verses in Deuteronomy are numbered differently in English Bibles."
+  ],
+  "reads": []
+ },
+ "Ecclesiastes 5:4": {
+  "sug": [
+   "Ecclesiastes 5:3 (English 5:4)Verse · 1 essay"
+  ],
+  "hash": "#/verse/32/5/3",
+  "h1": "Ecclesiastes 5:3",
+  "caps": [
+   "Ecclesiastes 5:3, Septuagint",
+   "Ecclesiastes 5:4 in English Bibles"
+  ],
+  "reads": []
+ },
+ "Proverbs 24:61": {
+  "sug": [
+   "Proverbs 24:61 (English 31:8)Verse · 1 essay"
+  ],
+  "hash": "#/verse/29/24/61",
+  "h1": "Proverbs 24:61",
+  "caps": [
+   "Proverbs 24:61, Septuagint",
+   "Proverbs 31:8 in English Bibles",
+   "You searched Proverbs by an English number that has not been converted. In Septuagint Proverbs the numbers can differ from English Bibles, so check the verses on either side."
+  ],
+  "reads": []
+ },
+ "Esther 4:16": {
+  "sug": [
+   "Read Esther 4Chapter",
+   "Esther 4:16Verse · 1 essay"
+  ],
+  "hash": "#/verse/23/4/16",
+  "h1": "Esther 4:16",
+  "caps": [
+   "Esther 4:16, Septuagint"
+  ],
+  "reads": [
+   "Esther 4:1–17"
+  ]
+ },
+ "Isaiah": {
+  "sug": [
+   "IsaiahBook · 17 essays",
+   "Isaiah 65:20Verse · 3 essays",
+   "Isaiah 7:14Verse · 2 essays",
+   "Isaiah 18:1Verse · 2 essays",
+   "Isaiah 18:2Verse · 2 essays"
+  ],
+  "hash": "#/book/29",
+  "h1": "Isaiah",
+  "caps": [
+   "Number 29 of 46 in the Old Testament list. Septuagint, translated from Greek."
+  ],
+  "reads": [
+   "Isaiah 1:9",
+   "Isaiah 1:10–20",
+   "Isaiah 4:2–6",
+   "Isaiah 10:20–22",
+   "Isaiah 25:6–9",
+   "Isaiah 26:1–9",
+   "Isaiah 28:23–29",
+   "Isaiah 30:15–17",
+   "Isaiah 40:27–31",
+   "Isaiah 40:28–31",
+   "Isaiah 40:31",
+   "Isaiah 43:1",
+   "Isaiah 43:18–19",
+   "Isaiah 43:22–25",
+   "Isaiah 45:1–7",
+   "Isaiah 50:10–11",
+   "Isaiah 53:4–12",
+   "Isaiah 55:8–9",
+   "Isaiah 55:10–11",
+   "Isaiah 56:1–8",
+   "Isaiah 58:1–9",
+   "Isaiah 61:1–4",
+   "Isaiah 61:1–4"
+  ]
+ },
+ "Psalms": {
+  "sug": [
+   "PsalmsBook · 24 essays",
+   "Psalms 67:32 (English 68:31)Verse · 4 essays",
+   "Psalms 21:17 (English 22:16)Verse · 2 essays",
+   "Psalms 23:1 (English 24:1)Verse · 2 essays",
+   "Psalms 86:4 (English 87:4)Verse · 2 essays"
+  ],
+  "hash": "#/book/23",
+  "h1": "Psalms",
+  "caps": [
+   "Number 23 of 46 in the Old Testament list. Septuagint, translated from Greek."
+  ],
+  "reads": [
+   "Psalms 1",
+   "Psalms 1:1–3",
+   "Psalms 6",
+   "Psalms 12 (13 in English Bibles)",
+   "Psalms 15:5–11 (16 in English Bibles)",
+   "Psalms 18:5–7 (19 in English Bibles)",
+   "Psalms 22 (23 in English Bibles)",
+   "Psalms 22 (23 in English Bibles)",
+   "Psalms 26:1–6 (27 in English Bibles)",
+   "Psalms 26:7–14 (27 in English Bibles)",
+   "Psalms 29:2–13 (30 in English Bibles)",
+   "Psalms 31:1–7 (32 in English Bibles)",
+   "Psalms 41 (42 in English Bibles)",
+   "Psalms 42 (43 in English Bibles)",
+   "Psalms 45 (46 in English Bibles)",
+   "Psalms 45:11–12 (46 in English Bibles)",
+   "Psalms 50:3–14 (51 in English Bibles)",
+   "Psalms 61:2–3 (62 in English Bibles)",
+   "Psalms 61:6–9 (62 in English Bibles)",
+   "Psalms 64:10–14 (65 in English Bibles)",
+   "Psalms 76:2–16 (77 in English Bibles)",
+   "Psalms 80:2–11 (81 in English Bibles)",
+   "Psalms 84:2–14 (85 in English Bibles)",
+   "Psalms 87 (88 in English Bibles)",
+   "Psalms 89:12 (90 in English Bibles)",
+   "Psalms 89:14–17 (90 in English Bibles)",
+   "Psalms 90 (91 in English Bibles)",
+   "Psalms 101:2–12 (102 in English Bibles)",
+   "Psalms 102:1–14 (103 in English Bibles)",
+   "Psalms 117:19–29 (118 in English Bibles)",
+   "Psalms 120 (121 in English Bibles)",
+   "Psalms 120 (121 in English Bibles)",
+   "Psalms 125:5–6 (126 in English Bibles)",
+   "Psalms 126:1–2 (127 in English Bibles)",
+   "Psalms 128:1–4 (129 in English Bibles)",
+   "Psalms 130 (131 in English Bibles)",
+   "Psalms 138:1–12 (139 in English Bibles)",
+   "Psalms 138:13–18 (139 in English Bibles)"
+  ]
+ },
+ "nephilim": {
+  "sug": [
+   "The Book Rome Couldn't Allow: An Investigation Into Why The Nephilim Had To DisappearEssay · Sources"
+  ],
+  "hash": "#/search/nephilim",
+  "h1": "Results for “nephilim”",
+  "caps": [
+   "2 essays with that in the title."
+  ],
+  "reads": []
+ },
+ "virgin": {
+  "sug": [
+   "Almah, betulah, parthenosYoung woman, or virgin"
+  ],
+  "hash": "#/word/virgin",
+  "h1": "Almah, betulah, parthenos",
+  "caps": [
+   "Hebrew and Greek. Explained in a Kingdom Code essay.",
+   "Isaiah 7:14, Septuagint",
+   "Matthew 1:23, Berean Literal Bible"
+  ],
+  "reads": []
+ },
+ "strange flesh": {
+  "sug": [
+   "HeterasOther, of a different kind",
+   "The Sodom Secret: What \"Strange Flesh\" Actually Means (And Why You've Never Heard It)Essay · Sources"
+  ],
+  "hash": "#/word/strange-flesh",
+  "h1": "Heteras",
+  "caps": [
+   "Greek. Explained in a Kingdom Code essay.",
+   "Jude 1:7, Berean Literal Bible"
+  ],
+  "reads": []
+ }
+}

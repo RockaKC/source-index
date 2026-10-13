@@ -9,6 +9,15 @@ python3 tools/export_site.py /path/to/kc_v13.db           # rebuild index.html d
 
 Needs Python 3 only. No packages.
 
+## Tests
+
+Every pull request runs the tests on GitHub (`.github/workflows/tests.yml`); a red check means do not merge. To run them locally: `npm install` once, then `npm test` (needs Node 22; `npx playwright install chromium` the first time).
+
+- `tests/data.spec.js` checks the exported data without a browser: every book with text has its file and chapters, a translation label and source language; every essay has a link; every cited verse points at a real book and essay; the manifest icons and offline files exist.
+- `tests/routes.spec.js` opens every kind of page (every book page, the first and last chapter of every book with text, a cited verse in every cited book, every path, word and name, sample essays, deep links) and fails on a missing heading, an empty chapter or any page error.
+- `tests/search.spec.js` runs 61 searches and compares the suggestions, the page opened, its heading and notes, and the reading links with `tests/golden/search.json`. When a change is meant to alter them (a database rebuild, new essays, new wording), run `npm run test:update` and read the difference in `tests/golden/search.json` before committing it: that diff is the record of what changed for readers.
+- `tests/offline.spec.js` reads a chapter online, stops the server, and checks the page and chapter still open from the saved copy.
+
 ## What it changes
 
 - `bible/<book id>.json`: every verse of one book, fetched by the page only when a reader opens a verse or chapter in a book no essay cites. Chapters essays cite are inlined in `index.html`. The old single `bible.json` is removed.
