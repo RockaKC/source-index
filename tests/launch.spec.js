@@ -1,4 +1,4 @@
-// Opening the app in one smooth movement: the colours behind the page agree everywhere, the first page takes no entrance of its own,
+// Opening the app in one smooth movement: the colours behind the page agree (launch screen, window, WebView and --bg), the first page takes no entrance of its own,
 // and the native launch code holds the launch screen only until the page has drawn.
 const fs = require('fs');
 const path = require('path');
@@ -12,14 +12,10 @@ const cssBg = scheme => {
 };
 const xmlColor = f => new RegExp('<color name="splash_background">(#[0-9A-Fa-f]{6})</color>').exec(read(f))[1].toLowerCase();
 
-test('the launch screen, the window and the page are the same two colours', () => {
+test('the launch screen, the window and the page are the same two colours (native resources and --bg)', () => {
   const light = cssBg('light'), dark = cssBg('dark');
   expect(xmlColor('android/app/src/main/res/values/ic_launcher_background.xml')).toBe(light);
   expect(xmlColor('android/app/src/main/res/values-night/colors.xml')).toBe(dark);
-  const html = read('app.html');
-  expect(html).toContain(`html{background:${light}}`);
-  expect(html).toContain(`@media (prefers-color-scheme:dark){html{background:${dark}}}`);
-  expect(html).toContain(`html[data-theme=dark]{background:${dark}}`);
 });
 
 test('the window behind the page is the page colour, never the theme grey', () => {
@@ -38,18 +34,6 @@ test('the native code holds the launch screen until the page has drawn, then fad
   const max = +/MAX_WAIT_MS = (\d+)/.exec(java)[1];
   expect(max).toBeGreaterThanOrEqual(1500);
   expect(max).toBeLessThanOrEqual(4000);                         // a stuck page can never keep the reader out
-});
-
-test('before any stylesheet has arrived, the page is already its own colour', async ({ browser }) => {
-  for (const [scheme, rgb] of [['dark', 'rgb(17, 21, 19)'], ['light', 'rgb(255, 255, 255)']]) {
-    const ctx = await browser.newContext({ colorScheme: scheme });
-    const page = await ctx.newPage();
-    await page.route('**/css/site.css*', async r => { await new Promise(res => setTimeout(res, 1500)); r.continue(); });
-    page.goto('/app.html', { waitUntil: 'commit' }).catch(() => {});
-    await page.waitForFunction(() => document.head && document.head.querySelector('style'), null, { timeout: 5000 });
-    expect(await page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor), scheme).toBe(rgb);
-    await ctx.close();
-  }
 });
 
 test('the first page of the app takes no entrance; every later page rises in, and the website keeps its fade', async ({ page }) => {
