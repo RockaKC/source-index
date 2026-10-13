@@ -255,7 +255,51 @@ dialog.drawer[open]::backdrop{background:rgba(0,0,0,.5)}
 .drawer .menu a,.drawer .menu button{min-height:52px;font-size:17px;gap:16px}
 .drawer .menu svg{width:20px;height:20px}
 .drawerfoot{margin:auto 0 0;padding:var(--s3) 12px var(--s2)}
-html.drawer-open,html.drawer-open body{overflow:hidden;overscroll-behavior:none}
+html.drawer-open,html.drawer-open body,html.sheet-open,html.sheet-open body{overflow:hidden;overscroll-behavior:none}
+/* The verse panel, marks on verses, and the Favorites and Highlights pages (js/marks.js) */
+:root{--h-c1:rgba(250,204,21,.38);--h-c2:rgba(74,222,128,.36);--h-c3:rgba(96,165,250,.38);--h-c4:rgba(244,114,182,.36);--h-c5:rgba(251,146,60,.38);--h-c6:rgba(192,132,252,.38)}
+[data-product=app] .text p[id^=v]{margin:0 -6px 10px;padding:0 6px;border-radius:6px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.text p.m-c1{background:var(--h-c1)}.text p.m-c2{background:var(--h-c2)}.text p.m-c3{background:var(--h-c3)}
+.text p.m-c4{background:var(--h-c4)}.text p.m-c5{background:var(--h-c5)}.text p.m-c6{background:var(--h-c6)}
+.text p.m-u1,.m-u1{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:5px;text-decoration-color:var(--accent)}
+.text p.m-u2,.m-u2{text-decoration:underline double;text-decoration-thickness:2px;text-underline-offset:5px;text-decoration-color:var(--accent)}
+.text p.fav sup::after{content:"\2605";margin-left:2px;color:var(--accent);font-size:10px}
+.text p.sel{outline:2px solid var(--accent);outline-offset:2px}
+dialog.sheet{position:fixed;inset:auto 0 0 0;width:100%;max-width:none;max-height:85%;margin:0;padding:0 0 env(safe-area-inset-bottom,0px);border:0;border-top:1px solid var(--hairline);border-radius:16px 16px 0 0;background:var(--bg);color:var(--ink);box-shadow:0 -8px 24px rgba(0,0,0,.2);overflow-y:auto;overscroll-behavior:contain;transform:translateY(100%);transition:transform 220ms ease-out,overlay 220ms allow-discrete,display 220ms allow-discrete}
+dialog.sheet[open]{transform:none}
+@starting-style{dialog.sheet[open]{transform:translateY(100%)}}
+dialog.sheet::backdrop{background:rgba(0,0,0,0);transition:background 220ms ease-out,overlay 220ms allow-discrete,display 220ms allow-discrete}
+dialog.sheet[open]::backdrop{background:rgba(0,0,0,.35)}
+@starting-style{dialog.sheet[open]::backdrop{background:rgba(0,0,0,0)}}
+.sheetin{padding:0 var(--s2) var(--s2)}
+.sheethead{display:flex;align-items:center;justify-content:space-between;gap:var(--s1);padding:var(--s2) 0 4px}
+.sheethead h2{margin:0;font:600 21px/28px var(--serif)}
+.sheethead .ibtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;margin-right:-8px;padding:0;border:0;border-radius:8px;background:transparent;color:var(--muted);cursor:pointer}
+.sheethead svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.sheetver{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:0 0 var(--s2);font:400 15px/22px var(--serif);color:var(--muted)}
+.sheetacts,.hlmore{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:64px;padding:6px;border:1px solid var(--hairline);border-radius:12px;background:var(--surface);color:var(--ink);font:500 14px/18px var(--sans);cursor:pointer}
+.sbtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sbtn[aria-pressed=true]{border-color:var(--accent);background:var(--tint)}
+.sbtn[aria-pressed=true] svg{fill:var(--accent);stroke:var(--accent)}
+.sbtn.row{min-height:48px;flex-direction:row}
+.sbtn:disabled{opacity:.4;cursor:default}
+.sheetlabel{margin:var(--s2) 0 8px;font:600 12px/16px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:8px}
+.sw{height:48px;padding:0;border:2px solid transparent;border-radius:12px;cursor:pointer}
+.sw.m-c1{background:var(--h-c1)}.sw.m-c2{background:var(--h-c2)}.sw.m-c3{background:var(--h-c3)}.sw.m-c4{background:var(--h-c4)}.sw.m-c5{background:var(--h-c5)}.sw.m-c6{background:var(--h-c6)}
+.sw[aria-pressed=true]{border-color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:76px;z-index:20;max-width:calc(100vw - 32px);padding:10px 16px;border-radius:999px;background:var(--ink);color:var(--bg);font:500 15px/20px var(--sans);text-align:center;transform:translate(-50%,8px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity 160ms,transform 160ms,visibility 0s 160ms}
+.toast.show{transform:translate(-50%,0);opacity:1;visibility:visible;transition:opacity 160ms,transform 160ms}
+.mlist{margin-top:var(--s3)}
+.mrow{display:block;padding:12px 0 12px 12px;border-bottom:1px solid var(--hairline);border-left:4px solid var(--hairline);text-decoration:none}
+.mrow .t{display:block;font:600 17px/24px var(--serif)}
+.mrow .t i{margin-left:8px;font:400 13px/18px var(--sans);font-style:normal;color:var(--muted)}
+.mrow .vp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;font:400 16px/24px var(--serif);color:var(--muted)}
+.mrow:hover .t{color:var(--accent)}
+.mrow.m-c1{border-left-color:rgb(250,204,21)}.mrow.m-c2{border-left-color:rgb(74,222,128)}.mrow.m-c3{border-left-color:rgb(96,165,250)}
+.mrow.m-c4{border-left-color:rgb(244,114,182)}.mrow.m-c5{border-left-color:rgb(251,146,60)}.mrow.m-c6{border-left-color:rgb(192,132,252)}
+.mrow.m-u1,.mrow.m-u2{border-left-color:var(--accent);text-decoration:none}
 .drawerhead{margin:var(--s3) 12px 4px;padding-bottom:6px;border-bottom:1px solid var(--hairline);font:600 12px/16px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .drawer .menu .drawerhead:first-child{margin-top:var(--s1)}
 /* The app's reading bar in the header, and the reading toolbar at the bottom of a chapter (js/readerbar.js) */

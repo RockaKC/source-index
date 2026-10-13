@@ -7,5 +7,6 @@ const PROFILE = {
   essaysInBible: true,     // highlight cited verses and list essays on book, chapter, verse and passage pages
   seasonal: true,          // list the seasonal reading guides on book and verse pages
   analytics: true,         // cookieless visit counts (live domain only; see js/analytics.js)
+  verseTools: false,       // the app's verse panel, favorites and highlights (js/marks.js)
   readerTools: false,      // the app's chapter bar, reading toolbar and reading history (js/readerbar.js)
 };

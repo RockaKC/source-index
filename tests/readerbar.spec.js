@@ -99,13 +99,13 @@ test('the history lists chapters read, newest first, and clears on a second tap'
   await expect(page.locator('#app')).toContainText('Chapters you read will be listed here');
 });
 
-test('the menu groups the Bible tools and keeps the Kingdom Code items apart', async ({ page }) => {
+test('the menu groups my collections, the Bible tools and the Kingdom Code items', async ({ page }) => {
   await page.goto('/app.html');
   await settle(page);
   await page.click('#menubtn');
   const drawer = page.locator('#drawer');
-  for (const r of ['#/books', '#/find', '#/history', '#/guide', '#/kc']) await expect(drawer.locator(`a[href="${r}"]`)).toBeVisible();
-  await expect(drawer.locator('.drawerhead')).toHaveText(['Bible', 'Kingdom Code']);
+  for (const r of ['#/favorites', '#/highlights', '#/history', '#/books', '#/find', '#/guide', '#/kc']) await expect(drawer.locator(`a[href="${r}"]`)).toBeVisible();
+  await expect(drawer.locator('.drawerhead')).toHaveText(['My collections', 'Bible', 'Kingdom Code']);
 });
 
 test('the website has none of it', async ({ page }) => {
