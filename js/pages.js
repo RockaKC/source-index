@@ -91,10 +91,8 @@ function viewAbout() {
 }
 // ---------- the Android app's download page ----------
 // The release workflow (.github/workflows/android.yml) publishes every version under this fixed name, so the link
-// always gives the newest. APP_SIGNER is the Kingdom Code signing key's fingerprint, shown on every release too.
+// always gives the newest.
 const APP_DOWNLOAD = 'https://github.com/RockaKC/source-index/releases/latest/download/KC-Tewahedo-Bible.apk';
-const APP_RELEASES = 'https://github.com/RockaKC/source-index/releases';
-const APP_SIGNER = 'A2:C0:40:6B:84:33:48:0A:45:33:FD:E4:BE:48:B9:FC:F7:72:AF:87:D3:A7:94:2D:28:F6:FE:15:AD:49:BF:60';
 function viewApp() {
   const withText = D.entries.filter(e => e.books.some(b => D.CC[b])).length;
   return `
@@ -117,8 +115,6 @@ function viewApp() {
     <p>When a new version is out, download it again from this page and install it over the old one. Your place and your settings stay.</p>
     <h2>iPhone</h2>
     <p>There is no iPhone app yet. On iPhone, open this site in Safari, tap Share, then Add to Home Screen. It opens like an app and keeps the chapters you read for offline use.</p>
-    <h2>Check it is ours</h2>
-    <p class="cap">Every release is signed with the Kingdom Code key. Its SHA-256 fingerprint is <span class="base">${APP_SIGNER}</span>. Each <a href="${APP_RELEASES}" target="_blank" rel="noopener">release page</a> lists it, with the file's own SHA-256.</p>
   </div>`;
 }
 function viewCredits() {
