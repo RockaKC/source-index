@@ -6,7 +6,7 @@
    kept under its plain address whatever its ?v= stamp.
    Bible text (bible/<translation>/<book id>.json): served from the saved copy at once, refreshed in the background.
    Everything on another origin (analytics, Ko-fi) is left alone.
-   Bump SHELL when the caching rules below change. BOOKS is also used by the page's "Save for offline" button. */
+   Bump SHELL when the caching rules below change. */
 const SHELL = 'kc-shell-v7';
 const BOOKS = 'kc-books-v2';
 const PRECACHE = ['./', 'profiles/site.js', 'data/site.js', 'css/site.css',

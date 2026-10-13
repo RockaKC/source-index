@@ -50,13 +50,14 @@ function routePath(p) {               // readable page names for the visit repor
   if (p[0] === 'search') return '/search';   // the words typed are logged only when nothing was found
   return '/' + p.filter(Boolean).join('/');
 }
-document.addEventListener('click', e => {   // clicks that leave the site: essays, Patreon, Substack, Ko-fi, email
+document.addEventListener('click', e => {   // clicks that leave the site: essays, Patreon, Substack, Ko-fi, the app download, email
   if (!analyticsOn) return;
   const a = e.target.closest('a[href]'); if (!a) return;
   const href = a.getAttribute('href') || '';
   if (/^mailto:/i.test(href)) { track('click/contact'); return; }
   if (!/^https?:/i.test(href)) return;
   const where = a.closest('#menu') ? 'menu' : 'page';
+  if (a.hasAttribute('data-app-download')) { track('click/app-download'); return; }
   if (a.dataset.pid) track('click/essay', a.dataset.pid, (a.getAttribute('aria-label') || a.textContent || '').replace(/^Read the essay:\s*/, '').trim().slice(0, 80));
   else if (/patreon\.com$/.test(a.hostname)) track('click/patreon', where);
   else if (/substack\.com$/.test(a.hostname)) track('click/substack', where);

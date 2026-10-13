@@ -199,6 +199,10 @@ footer .cap{margin:0}
 .about p{margin:var(--s2) 0 0;max-width:56ch;font:400 19px/30px var(--serif)}
 .about p a{color:var(--accent)}
 .about .act{margin-top:var(--s3)}
+.about ol{margin:var(--s2) 0 0;padding-left:1.3em;max-width:56ch;font:400 19px/30px var(--serif)}
+.about li + li{margin-top:var(--s1)}
+.about p.cap{font:400 15px/24px var(--sans);color:var(--muted)}
+.about p.cap a{color:inherit}
 .tier{margin-top:var(--s4)}
 .tier h2{display:flex;align-items:center;gap:12px;margin:0 0 var(--s1)}
 .tb{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font:700 18px/1 var(--serif)}

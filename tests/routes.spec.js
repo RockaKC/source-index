@@ -8,7 +8,7 @@ const firstCited = b => {
 };
 
 const groups = {
-  'main pages': ['#/', '#/books', '#/words', '#/names', '#/translations', '#/english', '#/about', '#/credits',
+  'main pages': ['#/', '#/books', '#/words', '#/names', '#/translations', '#/english', '#/about', '#/app', '#/credits',
     '#/search/nephilim'],
   'every book page': D.entries.map(e => `#/book/${e.id}`),
   'the first chapter of every book with text': D.order.map(b => `#/read/${b}/${D.CC[b][0]}`),

@@ -127,10 +127,11 @@ jobs:
           printf '%s\n' \
             "KC Tewahedo Bible $VERSION for Android." \
             "" \
-            "Download $name below and open it on your phone to install." \
+            "Download $name below and open it on your phone to install. KC-Tewahedo-Bible.apk is the same file under the name the download page links to." \
             "" \
             "To check the file is ours:" \
             "- SHA-256 of the APK: \`$digest\`" \
             "- Signing certificate SHA-256: \`$cert\`" > notes.md
-          gh release create "$GITHUB_REF_NAME" "out/$name" "out/$name.sha256" \
+          cp "out/$name" out/KC-Tewahedo-Bible.apk   # the fixed name the site's download page links to (releases/latest/download/)
+          gh release create "$GITHUB_REF_NAME" "out/$name" "out/$name.sha256" out/KC-Tewahedo-Bible.apk \
             --repo "$GITHUB_REPOSITORY" --title "KC Tewahedo Bible $VERSION" --notes-file notes.md
