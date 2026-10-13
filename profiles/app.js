@@ -8,4 +8,5 @@ const PROFILE = {
   essaysInBible: false,
   seasonal: false,
   analytics: false,
+  readerTools: true,       // the chapter bar in the header, the reading toolbar, reading history, and the search page (js/readerbar.js)
 };

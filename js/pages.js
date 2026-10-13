@@ -14,19 +14,22 @@ function continueCard() {           // the last chapter read, or the first chapt
   const b = ok ? last[0] : D.order[0], ch = ok ? last[1] : D.CC[D.order[0]][0];
   return `<div class="contcard"><div><span class="cap">${ok ? 'Continue reading' : 'Read the Bible'}</span><b>${esc(bname(b))} ${ch}</b></div><a class="btn secondary" href="#/read/${b}/${ch}">${ok ? 'Continue' : 'Start'}</a></div>`;
 }
+function searchForm() {            // the search box with its suggestions (js/search.js wires it up by these ids)
+  return `<form class="search" role="search" id="sf">
+    <label class="sr" for="q">Search by verse or word</label>
+    <input id="q" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug" aria-haspopup="listbox" placeholder="A verse or a word" autocomplete="off" autocapitalize="none" spellcheck="false" enterkeyhint="search">
+    <button class="btn primary" type="submit">Search</button>
+    <ul class="sug" id="sug" role="listbox" aria-label="Suggestions" hidden></ul>
+    <div class="sr" id="sugstat" role="status" aria-live="polite"></div>
+  </form>`;
+}
 function viewReaderHome() {         // the app's home: the Bible first, the Guide and the essays after
   const withText = D.entries.filter(e => e.books.some(b => D.CC[b])).length;
   return `
   <h1>Read the Bible.</h1>
   <p class="lede">All 81 books of the Ethiopian canon, as the Ethiopian and Eritrean Orthodox Tewahedo Churches list them. ${withText} have their text here so far.</p>
   ${continueCard()}
-  <form class="search" role="search" id="sf">
-    <label class="sr" for="q">Search by verse or word</label>
-    <input id="q" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug" aria-haspopup="listbox" placeholder="A verse or a word" autocomplete="off" autocapitalize="none" spellcheck="false" enterkeyhint="search">
-    <button class="btn primary" type="submit">Search</button>
-    <ul class="sug" id="sug" role="listbox" aria-label="Suggestions" hidden></ul>
-    <div class="sr" id="sugstat" role="status" aria-live="polite"></div>
-  </form>
+  ${searchForm()}
   <h2>The 81 books</h2>
   <div class="tabs" role="tablist" aria-label="Testament">
     <button class="tab" role="tab" aria-selected="true" data-t="OT">Old Testament</button>
@@ -129,4 +132,12 @@ function viewMissing() { return `${backLink(`#/`)}<h1>Not found</h1><p class="le
 addRoute('', () => viewHome());
 addRoute('about', () => viewAbout());
 addRoute('app', () => viewApp());
+if (PROFILE.readerTools) {          // the app's search page, opened from the reading bar and the menu
+  addRoute('find', () => `
+  ${backLink('#/')}
+  <h1>Search</h1>
+  <p class="lede">A verse such as Genesis 6:4, a book, or a word.</p>
+  ${searchForm()}`);
+  onPage(p => { if (p[0] === 'find') { const q = document.getElementById('q'); if (q) q.focus(); } });
+}
 addRoute('credits', () => viewCredits());
