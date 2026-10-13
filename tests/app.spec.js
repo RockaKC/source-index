@@ -56,6 +56,26 @@ test('the essays live in From Kingdom Code, and the guide lists its parts', asyn
     await expect(page.locator(`#app a[href="${r}"]`)).toBeVisible();
 });
 
+test('the menu is a side drawer without the Guide\'s pages, and Back closes it', async ({ page }) => {
+  await page.goto('/app.html#/read/1/1');
+  await settle(page);
+  await page.click('#menubtn');
+  const drawer = page.locator('#drawer');
+  await expect(drawer).toBeVisible();
+  for (const r of ['#/names', '#/words', '#/translations']) await expect(drawer.locator(`a[href="${r}"]`)).toHaveCount(0);
+  await expect(drawer.locator('a[href="#/kc"]')).toBeVisible();
+  await page.goBack();
+  await expect(drawer).toBeHidden();
+  expect(await page.evaluate(() => location.hash), 'Back closes the drawer and stays on the page').toBe('#/read/1/1');
+  await page.click('#menubtn');
+  await drawer.locator('a[href="#/kc"]').click();
+  await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('From Kingdom Code');
+  await page.goBack();
+  await settle(page);
+  expect(await page.evaluate(() => location.hash), 'Back from a drawer page returns to the chapter').toBe('#/read/1/1');
+});
+
 test('About names the app on the app only', async ({ page }) => {
   await page.goto('/app.html#/about');
   await settle(page);
