@@ -9,6 +9,28 @@ python3 tools/export_site.py /path/to/kc_v13.db           # rebuild data/site.js
 
 Needs Python 3 only. No packages.
 
+## Code layout
+
+The site is static: no build step. `index.html` is the page frame (header, menu, footer, support window) and loads, in order:
+
+- `css/site.css`: all styles.
+- `data/site.js`: the page data, `const D = {...}` (written by the exporter; never edit by hand).
+- `js/*.js`, plain scripts that share the page's global scope, one per feature:
+  - `core.js`: shared helpers, local storage, the Back link, and the **route registry**.
+  - `text.js`: Bible text by translation (`loadBook`), verse lookup, numbering notices.
+  - `words.js`: the Hebrew and Greek word entries.
+  - `essays.js`: Kingdom Code essays, question paths, seasonal reads, the essay page, the call-to-action tool.
+  - `search.js`: reading a typed reference, suggestions, title search.
+  - `reader.js`: the 81 books, book pages, chapters, verses, passages.
+  - `guide.js`: Names profiles and the translation tier list.
+  - `pages.js`: home, About, Sources and credits, not found.
+  - `analytics.js`, `chrome.js` (menu, support window, theme), `offline.js` (install and offline reading).
+  - `router.js`: draws the page for the current address. Loaded last, it starts the app.
+
+**Adding a page or a section.** In the feature's file (or a new `js/<feature>.js`), write a view function that returns the page HTML and register it: `addRoute('name', p => viewName(p[1]))` answers `#/name/...` (`p` is the address split on `/`). Wiring a page needs after it is drawn (forms, buttons) goes in `onPage(p => { ... })`. A new file also needs a `<script src="js/<feature>.js?v=0">` tag in `index.html` before `router.js`, and an entry in `PRECACHE` in `sw.js`; a file's top-level code may only use names from files loaded before it.
+
+**After editing anything in `css/` or `js/`**, run `python3 tools/stamp_assets.py`: it refreshes the `?v=` content stamp on each tag so a browser never mixes a new page with an old file. The exporter runs it too. The tests fail on a stale stamp or a file missing from `PRECACHE`.
+
 ## Tests
 
 Every pull request runs the tests on GitHub (`.github/workflows/tests.yml`); a red check means do not merge. To run them locally: `npm install` once, then `npm test` (needs Node 22; `npx playwright install chromium` the first time).
@@ -64,7 +86,7 @@ A book with only some verses mapped from English to Septuagint numbers warns on 
 
 The site installs to a phone's home screen and reads offline. Files at the repo root, all hand-kept (the exporter does not touch them): `manifest.webmanifest` (name, colours, icons), `sw.js` (the service worker) and `icons/` (192 and 512 px, a maskable 512 px, and the 180 px Apple icon, a "KC" monogram in the site's green).
 
-`sw.js`: pages and `data/site.js` are fetched network-first, so a reader online always gets the current site and the last copy is only the offline fallback (the data file is kept under its plain address whatever its `?v=` version, and both are saved when the worker installs, so the site opens offline after a single visit); Bible text (`bible/<translation>/<id>.json`) is served from the saved copy and refreshed in the background; anything on another origin (analytics, Ko-fi) is left alone. Two caches: `kc-shell-v4` and `kc-books-v2`. Bump `SHELL` in `sw.js` when its caching rules change, and `BOOKS` (with `OFFLINE_CACHE` in `index.html`) when the book files move. The About page has a "Save for offline reading" button that stores every book file (about 5 MB) into the books cache, and, where the browser offers it, an "Install the app" button. iPhone has no install prompt; the About page tells readers to use Share, then Add to Home Screen.
+`sw.js`: pages and the page's own files (`data/site.js`, `js/*.js`, `css/site.css`) are fetched network-first, so a reader online always gets the current site and the last copy is only the offline fallback (each file is kept under its plain address whatever its `?v=` stamp, and all are saved when the worker installs, so the site opens offline after a single visit; every file `index.html` loads must be in `PRECACHE`, and a test checks it); Bible text (`bible/<translation>/<id>.json`) is served from the saved copy and refreshed in the background; anything on another origin (analytics, Ko-fi) is left alone. Two caches: `kc-shell-v5` and `kc-books-v2`. Bump `SHELL` in `sw.js` when its caching rules change, and `BOOKS` (with `OFFLINE_CACHE` in `index.html`) when the book files move. The About page has a "Save for offline reading" button that stores every book file (about 5 MB) into the books cache, and, where the browser offers it, an "Install the app" button. iPhone has no install prompt; the About page tells readers to use Share, then Add to Home Screen.
 
 Two analytics events: `app/open` (once per session, when opened from the home screen) and `app/installed`. Test it with a real offline (stop the test server), not Playwright's offline switch, which does not block a service worker's own requests.
 

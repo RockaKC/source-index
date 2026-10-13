@@ -8,8 +8,8 @@ What it writes:
   * data/site.js                        the page data: one `const D = {...};` line
   * bible/<translation>/<book id>.json  every verse of one book in one translation, fetched on demand
                                         (translation = the book's house translation, lower case, e.g. bible/lxx/1.json)
-  * index.html                          only the ?v= version on its data/site.js script tag, so a browser
-                                        never pairs a new page with old data
+  * index.html                          only the ?v= stamps on its script and stylesheet tags
+                                        (tools/stamp_assets.py), so a browser never pairs a new page with old data
 
 What it reads from the database (read-only): scripture, books, canon, citations,
 published articles, the Psalm map, verse spans/parts, and guide passages.
@@ -27,18 +27,19 @@ tools/curated.json.
 """
 import argparse
 import collections
-import hashlib
 import json
 import re
 import sqlite3
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import stamp_assets  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 CURATED = ROOT / "tools" / "curated.json"
 HTML = ROOT / "index.html"
 DATA_JS = ROOT / "data" / "site.js"         # the page data, loaded by index.html before the app
-DATA_TAG = re.compile(r'<script src="data/site\.js\?v=[0-9a-f]+"></script>')
 BIBLE_DIR = ROOT / "bible"                  # bible/<translation>/<book id>.json
 
 EXPECTED_TABLES = {
@@ -457,17 +458,15 @@ def write_bible(bible, house):
 
 
 def write_data(D):
-    """Write data/site.js and stamp its version into index.html's script tag."""
+    """Write data/site.js, then refresh the ?v= stamps in index.html."""
     body = ("// Kingdom Code Source Index page data. Written by tools/export_site.py from the database: do not edit.\n"
             "const D = " + dumps(D) + ";\n")
     DATA_JS.parent.mkdir(exist_ok=True)
     DATA_JS.write_text(body, encoding="utf-8")
-    version = hashlib.sha256(body.encode("utf-8")).hexdigest()[:10]
-    html = HTML.read_text(encoding="utf-8")
-    if len(DATA_TAG.findall(html)) != 1:
-        sys.exit('index.html must load the data with exactly one <script src="data/site.js?v=..."></script> tag')
-    HTML.write_text(DATA_TAG.sub('<script src="data/site.js?v=%s"></script>' % version, html), encoding="utf-8")
-    return version
+    if 'src="data/site.js?v=' not in HTML.read_text(encoding="utf-8"):
+        sys.exit('index.html must load the data with <script src="data/site.js?v=..."></script>')
+    stamp_assets.stamp()
+    return stamp_assets.version("data/site.js")
 
 
 def summarize(old, new, old_bible, new_bible):
@@ -528,7 +527,7 @@ def main():
         return
     version = write_data(D)
     write_bible(bible, D["HT"])
-    print("wrote data/site.js (version %s), index.html's data tag, and bible/ (%d books)" % (version, len(bible)))
+    print("wrote data/site.js (version %s), the stamps in index.html, and bible/ (%d books)" % (version, len(bible)))
 
 
 if __name__ == "__main__":
