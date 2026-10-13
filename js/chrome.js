@@ -13,6 +13,7 @@ function setMenu(open) {
   if (drawer) {
     if (open && !drawer.open) {
       drawer.showModal(); menuBtn.setAttribute('aria-expanded', 'true');
+      document.documentElement.classList.add('drawer-open');   // the page behind stays still
       history.pushState({kcDrawer: true}, ''); drawerEntry = true;
     } else if (!open && drawer.open) drawer.close();
     return;
@@ -31,6 +32,7 @@ if (drawer) {
   });
   drawer.addEventListener('close', () => {          // every way of closing it, Escape included
     menuBtn.setAttribute('aria-expanded', 'false');
+    document.documentElement.classList.remove('drawer-open');
     if (drawerEntry) { drawerEntry = false; history.back(); }
   });
   window.addEventListener('popstate', () => { if (drawer.open) { drawerEntry = false; drawer.close(); } });   // Back
