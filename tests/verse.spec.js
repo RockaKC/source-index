@@ -92,8 +92,10 @@ test('highlights: six colors, underline, double underline; the same one again, o
 test('a verse tapped right after a panel closes still gets its panel, with one history entry', async ({ page }) => {
   const entries = await page.evaluate(() => history.length);
   await page.click(verse(2));
-  await page.click('#sheet [data-act="fav"]');
-  await page.evaluate(sel => document.querySelector(sel).click(), verse(5));   // before the browser has stepped back
+  await page.evaluate(sel => {                    // one task: the panel's close event cannot have run when the next tap lands
+    document.querySelector('#sheet [data-act="fav"]').click();
+    document.querySelector(sel).click();
+  }, verse(5));
   await page.waitForTimeout(700);
   await expect(page.locator('#sheet')).toBeVisible();
   await expect(page.locator('#sheet-t')).toHaveText(`${bn} ${ch}:5`);

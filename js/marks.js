@@ -79,17 +79,22 @@ if (sheet && PROFILE.verseTools) {
     if (!el || !el.dataset.k || sheet.open) return;
     const sel = window.getSelection && window.getSelection();
     if (sel && String(sel).trim()) return;
+    finishClose();                                            // the last panel's close event may not have run yet
     if (backPending) { openAfterBack = el; return; }          // a late Back from the last panel would close this one
     openSheet(el);
   });
-  sheet.addEventListener('close', () => {
+  // Everything that follows a panel closing. The browser's close event runs it, and so does a new tap that gets in
+  // before that event; a stale close event, arriving after a newer panel has opened, must do nothing.
+  function finishClose() {
+    if (sheet.open) return;
     document.documentElement.classList.remove('sheet-open');
     if (sheetEl) sheetEl.classList.remove('sel');
     if (sheetEntry) {
       sheetEntry = false; backPending = true; history.back();
       setTimeout(() => backDone(), 400);                      // in case no Back ever arrives
     }
-  });
+  }
+  sheet.addEventListener('close', finishClose);
   const backDone = () => {
     if (!backPending) return;
     backPending = false;
