@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """Rebuild the Source Index data from the Kingdom Code SQLite database.
 
-    python3 tools/export_site.py /path/to/kc_v13.db            # rebuild index.html data + bible/
+    python3 tools/export_site.py /path/to/kc_v13.db            # rebuild data/site.js + bible/
     python3 tools/export_site.py /path/to/kc_v13.db --check    # report what would change, write nothing
 
 What it writes:
-  * bible/<book id>.json  every verse of one book, fetched on demand (the old single bible.json is removed)
-  * index.html            the single `const D = {...};` line (nothing else in the file changes)
+  * data/site.js                        the page data: one `const D = {...};` line
+  * bible/<translation>/<book id>.json  every verse of one book in one translation, fetched on demand
+                                        (translation = the book's house translation, lower case, e.g. bible/lxx/1.json)
+  * index.html                          only the ?v= version on its data/site.js script tag, so a browser
+                                        never pairs a new page with old data
 
 What it reads from the database (read-only): scripture, books, canon, citations,
 published articles, the Psalm map, verse spans/parts, and guide passages.
@@ -24,6 +27,7 @@ tools/curated.json.
 """
 import argparse
 import collections
+import hashlib
 import json
 import re
 import sqlite3
@@ -33,8 +37,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 CURATED = ROOT / "tools" / "curated.json"
 HTML = ROOT / "index.html"
-BIBLE_DIR = ROOT / "bible"                  # one file per book: bible/<book id>.json
-LEGACY_BIBLE = ROOT / "bible.json"          # the old single file; read once for comparison, then removed
+DATA_JS = ROOT / "data" / "site.js"         # the page data, loaded by index.html before the app
+DATA_TAG = re.compile(r'<script src="data/site\.js\?v=[0-9a-f]+"></script>')
+BIBLE_DIR = ROOT / "bible"                  # bible/<translation>/<book id>.json
 
 EXPECTED_TABLES = {
     "books", "canon_entries", "nodes", "articles", "citations", "verses", "verse_parts",
@@ -323,6 +328,10 @@ def build(con, cur, warn):
     if sorted(src) != sorted(labels):
         sys.exit("translation_sources must name exactly the translations in translation_labels: %s vs %s" % (sorted(src), sorted(labels)))
     D["TS"] = {str(b): src[trans_of[b]] for b in sorted(text_rows)}
+    D["HT"] = {str(b): trans_of[b].lower() for b in sorted(text_rows)}
+    bad = sorted({c for c in D["HT"].values() if not re.fullmatch(r"[a-z]+", c)})
+    if bad:
+        sys.exit("translation codes must be letters only (they name the bible/<code>/ folders): %s" % bad)
     bn = {}
     for k, v in cur.get("book_notes", {}).items():
         if k.startswith("_"):
@@ -407,12 +416,15 @@ def build(con, cur, warn):
 
 
 def read_current():
-    for line in HTML.read_text(encoding="utf-8").splitlines(keepends=True):
-        if line.startswith("const D = "):
-            body = line.rstrip("\n")
-            assert body.endswith(";"), "data line should end with ';'"
-            return json.loads(body[len("const D = "):-1])
-    sys.exit("could not find the `const D = ` line in index.html")
+    """The page data as it is now: data/site.js, or the old inline line in index.html before the move."""
+    for src in (DATA_JS, HTML):
+        if not src.exists():
+            continue
+        for line in src.read_text(encoding="utf-8").splitlines():
+            if line.startswith("const D = "):
+                assert line.endswith(";"), "data line should end with ';'"
+                return json.loads(line[len("const D = "):-1])
+    sys.exit("could not find the `const D = ` line in data/site.js")
 
 
 def normal(key, value):
@@ -425,22 +437,37 @@ def normal(key, value):
 
 
 def read_current_bible():
-    if BIBLE_DIR.is_dir():
-        return {f.stem: json.loads(f.read_text(encoding="utf-8")) for f in BIBLE_DIR.glob("*.json")}
-    if LEGACY_BIBLE.exists():
-        return json.loads(LEGACY_BIBLE.read_text(encoding="utf-8"))
-    return {}
+    """Book id -> chapters, from bible/<translation>/<id>.json (or the older flat bible/<id>.json)."""
+    return {f.stem: json.loads(f.read_text(encoding="utf-8")) for f in BIBLE_DIR.rglob("*.json")}
 
 
-def write_bible(bible):
-    BIBLE_DIR.mkdir(exist_ok=True)
+def write_bible(bible, house):
+    keep = set()
     for b, chapters in bible.items():
-        (BIBLE_DIR / ("%s.json" % b)).write_text(dumps(chapters), encoding="utf-8")
-    for f in BIBLE_DIR.glob("*.json"):
-        if f.stem not in bible:
+        f = BIBLE_DIR / house[b] / ("%s.json" % b)
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text(dumps(chapters), encoding="utf-8")
+        keep.add(f)
+    for f in BIBLE_DIR.rglob("*.json"):
+        if f not in keep:
             f.unlink()
-    if LEGACY_BIBLE.exists():
-        LEGACY_BIBLE.unlink()
+    for d in sorted(BIBLE_DIR.iterdir()):
+        if d.is_dir() and not any(d.iterdir()):
+            d.rmdir()
+
+
+def write_data(D):
+    """Write data/site.js and stamp its version into index.html's script tag."""
+    body = ("// Kingdom Code Source Index page data. Written by tools/export_site.py from the database: do not edit.\n"
+            "const D = " + dumps(D) + ";\n")
+    DATA_JS.parent.mkdir(exist_ok=True)
+    DATA_JS.write_text(body, encoding="utf-8")
+    version = hashlib.sha256(body.encode("utf-8")).hexdigest()[:10]
+    html = HTML.read_text(encoding="utf-8")
+    if len(DATA_TAG.findall(html)) != 1:
+        sys.exit('index.html must load the data with exactly one <script src="data/site.js?v=..."></script> tag')
+    HTML.write_text(DATA_TAG.sub('<script src="data/site.js?v=%s"></script>' % version, html), encoding="utf-8")
+    return version
 
 
 def summarize(old, new, old_bible, new_bible):
@@ -491,7 +518,7 @@ def main():
         print("  citations at verses missing from the stored text (shown as hits with no verse text; check the database):")
         for pid, raw, n in info["phantom"]:
             print("      %5d  %-32s %d verse%s   %s" % (pid, raw, n, "" if n == 1 else "s", D["pieces"][str(pid)][0][:40]))
-    print("Compared with the data currently in index.html:")
+    print("Compared with the data currently in data/site.js:")
     print(summarize(old, D, old_bible, bible))
     for w in sorted(set(warnings)):
         print("  warning:", w)
@@ -499,15 +526,9 @@ def main():
     if args.check:
         print("(--check: nothing written)")
         return
-    html = HTML.read_text(encoding="utf-8")
-    lines = html.splitlines(keepends=True)
-    for i, line in enumerate(lines):
-        if line.startswith("const D = "):
-            lines[i] = "const D = " + dumps(D) + ";\n"
-            break
-    HTML.write_text("".join(lines), encoding="utf-8")
-    write_bible(bible)
-    print("wrote index.html and bible/ (%d books)" % len(bible))
+    version = write_data(D)
+    write_bible(bible, D["HT"])
+    print("wrote data/site.js (version %s), index.html's data tag, and bible/ (%d books)" % (version, len(bible)))
 
 
 if __name__ == "__main__":

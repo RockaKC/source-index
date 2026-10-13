@@ -1,12 +1,13 @@
 /* Service worker for the Kingdom Code Source Index.
    Lets the site open without a connection and keeps Bible text a reader has opened.
    Pages: network first, so a reader online always gets the current site; the last copy is the offline fallback.
-   Bible text (bible/<book id>.json): served from the saved copy at once, refreshed in the background.
+   Site data (data/site.js): network first, like pages; one saved copy, kept under its plain address.
+   Bible text (bible/<translation>/<book id>.json): served from the saved copy at once, refreshed in the background.
    Everything on another origin (analytics, Ko-fi) is left alone.
    Bump SHELL when the caching rules below change. BOOKS is also used by the page's "Save for offline" button. */
-const SHELL = 'kc-shell-v3';
-const BOOKS = 'kc-books-v1';
-const PRECACHE = ['./', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png'];
+const SHELL = 'kc-shell-v4';
+const BOOKS = 'kc-books-v2';
+const PRECACHE = ['./', 'data/site.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(SHELL).then(c => c.addAll(PRECACHE)).then(() => self.skipWaiting()));
@@ -32,6 +33,17 @@ async function page(request) {                       // network first; the saved
   }
 }
 
+async function data(request) {                       // network first; one saved copy whatever the ?v= version
+  const cache = await caches.open(SHELL), key = new URL('data/site.js', self.registration.scope).href;
+  try {
+    const res = await fetch(request);
+    if (res.ok) cache.put(key, res.clone());
+    return res;
+  } catch (err) {
+    return (await cache.match(key)) || Response.error();
+  }
+}
+
 async function saved(request, name) {                // saved copy first, refreshed in the background
   const cache = await caches.open(name);
   const hit = await cache.match(request);
@@ -44,6 +56,7 @@ self.addEventListener('fetch', e => {
   const req = e.request, url = new URL(req.url);
   if (req.method !== 'GET' || url.origin !== self.location.origin) return;
   if (req.mode === 'navigate') { e.respondWith(page(req)); return; }
-  if (/\/bible\/\d+\.json$/.test(url.pathname)) { e.respondWith(saved(req, BOOKS)); return; }
+  if (/\/data\/site\.js$/.test(url.pathname)) { e.respondWith(data(req)); return; }
+  if (/\/bible\/[a-z]+\/\d+\.json$/.test(url.pathname)) { e.respondWith(saved(req, BOOKS)); return; }
   if (/\/(icons\/|manifest\.webmanifest$)/.test(url.pathname)) e.respondWith(saved(req, SHELL));
 });

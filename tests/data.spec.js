@@ -9,20 +9,34 @@ const books = D.order.map(String);
 
 test('every book with text has its file, with the chapters the index lists', () => {
   expect(Object.keys(D.CC).sort()).toEqual([...books].sort());
+  const expected = [];
   for (const b of books) {
-    const file = path.join(ROOT, 'bible', `${b}.json`);
-    expect(fs.existsSync(file), `bible/${b}.json`).toBe(true);
-    const text = JSON.parse(fs.readFileSync(file, 'utf8'));
-    expect(Object.keys(text).map(Number).sort((x, y) => x - y), `chapters of book ${b}`).toEqual(D.CC[b]);
+    expect(D.HT[b], `house translation of book ${b}`).toMatch(/^[a-z]+$/);
+    const rel = `bible/${D.HT[b]}/${b}.json`;
+    expected.push(rel);
+    expect(fs.existsSync(path.join(ROOT, rel)), rel).toBe(true);
+    const text = JSON.parse(fs.readFileSync(path.join(ROOT, rel), 'utf8'));
+    expect(Object.keys(text).map(Number).sort((x, y) => x - y), `chapters of ${rel}`).toEqual(D.CC[b]);
     const empty = [];
     for (const [ch, verses] of Object.entries(text)) {
       if (!verses.length) empty.push(`${ch} (no verses)`);
       for (const [v, t] of verses) if (!String(t).trim()) empty.push(`${ch}:${v}`);
     }
-    expect(empty, `empty chapters or verses in book ${b}`).toEqual([]);
+    expect(empty, `empty chapters or verses in ${rel}`).toEqual([]);
   }
-  const files = fs.readdirSync(path.join(ROOT, 'bible')).filter(f => f.endsWith('.json')).map(f => f.slice(0, -5));
-  expect(files.sort(), 'no stray book files').toEqual([...books].sort());
+  const found = fs.readdirSync(path.join(ROOT, 'bible'), { recursive: true })
+    .map(f => String(f).split(path.sep).join('/')).filter(f => f.endsWith('.json')).map(f => `bible/${f}`);
+  expect(found.sort(), 'no stray or misplaced book files').toEqual(expected.sort());
+});
+
+test('index.html loads the data file it was exported with', () => {
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  expect(html, 'no page data left inline').not.toMatch(/^const D = /m);
+  const tags = html.match(/<script src="data\/site\.js\?v=([0-9a-f]+)"><\/script>/g) || [];
+  expect(tags.length, 'one data/site.js script tag').toBe(1);
+  const body = fs.readFileSync(path.join(ROOT, 'data', 'site.js'));
+  const version = require('crypto').createHash('sha256').update(body).digest('hex').slice(0, 10);
+  expect(tags[0], 'its ?v= version matches the file (rerun the exporter after editing the data)').toContain(`?v=${version}"`);
 });
 
 test('every book with text names its translation and source language', () => {
