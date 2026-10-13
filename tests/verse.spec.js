@@ -8,6 +8,9 @@ const verse = n => `#rtext p#v${n}`;
 const marks = page => page.evaluate(() => JSON.parse(localStorage.getItem('kc-marks') || '{}'));
 // Closing the panel steps the browser back one entry, which finishes a moment later; a person cannot navigate that fast.
 const panelGone = page => page.waitForFunction(() => !(history.state && history.state.kcSheet));
+// A closing panel stays visible while it slides away, so "still open" must ask the panel itself, after the slide.
+const stillOpen = async page => { await page.waitForTimeout(350); return page.evaluate(() => document.getElementById('sheet').open); };
+const closePanel = async page => { await page.keyboard.press('Escape'); await expect(page.locator('#sheet')).toBeHidden(); await panelGone(page); };
 const plain = (page, n) => page.evaluate(sel => { const c = document.querySelector(sel).cloneNode(true); c.querySelectorAll('sup').forEach(s => s.remove()); return c.textContent.replace(/\s+/g, ' ').trim(); }, verse(n));
 
 test.use({ permissions: ['clipboard-read', 'clipboard-write'] });
@@ -47,53 +50,79 @@ test('selecting text does not open the panel, and the page behind stays still', 
   expect(await page.evaluate(() => scrollY)).toBe(before);
 });
 
-test('favorite marks the verse, is remembered, and toggles off', async ({ page }) => {
+test('favorite marks the verse, the panel stays open and says so, and it is remembered', async ({ page }) => {
   await page.click(verse(3));
   await page.click('#sheet [data-act="fav"]');
-  await expect(page.locator('#sheet')).toBeHidden();
-  await expect(page.locator('#toast')).toHaveText('Added to favorites');
+  expect(await stillOpen(page), 'the panel stays open after a choice').toBe(true);
+  await expect(page.locator('#sheet-msg')).toHaveText('Added to favorites');
+  await expect(page.locator('#sheet [data-act="fav"] span')).toHaveText('Unfavorite');
+  await expect(page.locator('#sheet [data-act="fav"]')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator(verse(3))).toHaveClass(/fav/);
   expect(Object.keys(await marks(page))).toEqual([`${b1}:${ch}:3`]);
+  await closePanel(page);
   await page.reload();                                             // still there after the app is reopened
   await settle(page);
   await expect(page.locator(verse(3))).toHaveClass(/fav/);
   await page.click(verse(3));
+  await expect(page.locator('#sheet-msg'), 'a fresh panel starts with no message').toHaveText('');
   await expect(page.locator('#sheet [data-act="fav"] span')).toHaveText('Unfavorite');
   await page.click('#sheet [data-act="fav"]');
+  await expect(page.locator('#sheet-msg')).toHaveText('Removed from favorites');
   await expect(page.locator(verse(3))).not.toHaveClass(/fav/);
   expect(await marks(page), 'nothing left once the last mark is gone').toEqual({});
 });
 
-test('highlights: six colors, underline, double underline; the same one again, or Remove, takes it off', async ({ page }) => {
+test('highlights: eight styles in a row without the panel closing; the same again, or Remove, takes it off', async ({ page }) => {
+  const codes = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'u1', 'u2'];
   await page.click(verse(1));
   await expect(page.locator('#sheet [data-act="unhl"]')).toBeDisabled();
-  await page.keyboard.press('Escape');
-  for (const [i, code] of ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'u1', 'u2'].entries()) {
-    await page.click(verse(1));
-    await expect(page.locator(`#sheet [data-hl="${code}"]`)).toHaveAttribute('aria-pressed', 'false');
+  for (const [i, code] of codes.entries()) {
     await page.click(`#sheet [data-hl="${code}"]`);
+    expect(await stillOpen(page), 'the panel stays open after a pick').toBe(true);
+    await expect(page.locator(`#sheet [data-hl="${code}"]`)).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('#sheet-msg')).toHaveText('Highlighted');
     await expect(page.locator(verse(1))).toHaveClass(new RegExp(`m-${code}`));
     expect((await marks(page))[`${b1}:${ch}:1`].h).toBe(code);
-    if (i) await expect(page.locator(verse(1)), 'one highlight at a time').not.toHaveClass(new RegExp(`m-${['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'u1', 'u2'][i - 1]}\\b`));
+    if (i) {
+      await expect(page.locator(`#sheet [data-hl="${codes[i - 1]}"]`)).toHaveAttribute('aria-pressed', 'false');
+      await expect(page.locator(verse(1)), 'one highlight at a time').not.toHaveClass(new RegExp(`m-${codes[i - 1]}\\b`));
+    }
   }
-  await page.click(verse(1));
-  await expect(page.locator('#sheet [data-hl="u2"]')).toHaveAttribute('aria-pressed', 'true');
   await page.click('#sheet [data-hl="u2"]');                       // the same again
-  await expect(page.locator('#toast')).toHaveText('Highlight removed');
+  await expect(page.locator('#sheet-msg')).toHaveText('Highlight removed');
+  await expect(page.locator('#sheet [data-act="unhl"]')).toBeDisabled();
   expect(await marks(page)).toEqual({});
-  await page.click(verse(1));
   await page.click('#sheet [data-hl="c3"]');
-  await page.click(verse(1));
   await page.click('#sheet [data-act="unhl"]');                    // Remove
   await expect(page.locator(verse(1))).not.toHaveClass(/m-c3/);
   expect(await marks(page)).toEqual({});
+});
+
+test('favorite and highlight together, in one visit to the panel', async ({ page }) => {
+  await page.click(verse(4));
+  await page.click('#sheet [data-hl="c4"]');
+  await page.click('#sheet [data-act="fav"]');
+  expect(await stillOpen(page)).toBe(true);
+  expect(await marks(page)).toEqual({ [`${b1}:${ch}:4`]: expect.objectContaining({ f: 1, h: 'c4' }) });
+  await expect(page.locator(verse(4))).toHaveClass(/fav/);
+  await expect(page.locator(verse(4))).toHaveClass(/m-c4/);
+});
+
+test('a verse low on the screen is scrolled above the panel', async ({ page }) => {
+  await page.evaluate(sel => document.querySelector(sel).scrollIntoView({ block: 'end' }), verse(6));
+  await page.waitForTimeout(150);
+  await page.click(verse(6));
+  await expect(page.locator('#sheet')).toBeVisible();
+  await page.waitForTimeout(300);
+  const [verseBottom, sheetTop] = await page.evaluate(sel => [document.querySelector(sel).getBoundingClientRect().bottom, document.getElementById('sheet').getBoundingClientRect().top], verse(6));
+  expect(verseBottom, 'the verse ends above the panel').toBeLessThanOrEqual(sheetTop);
 });
 
 test('a verse tapped right after a panel closes still gets its panel, with one history entry', async ({ page }) => {
   const entries = await page.evaluate(() => history.length);
   await page.click(verse(2));
   await page.evaluate(sel => {                    // one task: the panel's close event cannot have run when the next tap lands
-    document.querySelector('#sheet [data-act="fav"]').click();
+    document.querySelector('#sheetx').click();
     document.querySelector(sel).click();
   }, verse(5));
   await page.waitForTimeout(700);
@@ -108,7 +137,8 @@ test('a verse tapped right after a panel closes still gets its panel, with one h
 test('copy puts the verse and its source on the clipboard', async ({ page }) => {
   await page.click(verse(3));
   await page.click('#sheet [data-act="copy"]');
-  await expect(page.locator('#toast')).toHaveText('Copied');
+  await expect(page.locator('#sheet-msg')).toHaveText('Copied');
+  expect(await stillOpen(page), 'the panel stays open after Copy').toBe(true);
   const text = await plain(page, 3);
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(`“${text}”\n— ${bn} ${ch}:3 (${TR})`);
 });
@@ -131,23 +161,20 @@ test('share uses the phone\'s share sheet, or the browser\'s, or copies', async 
   const text = `“${await plain(page, 3)}”\n— ${bn} ${ch}:3 (${TR})`;
   expect(await page.evaluate(() => window.__shared)).toEqual(['plugin', { text, dialogTitle: 'Share this verse' }]);
   await page.evaluate(() => { delete window.Capacitor; });
-  await page.click(verse(3));
   await page.click('#sheet [data-act="share"]');
   expect(await page.evaluate(() => window.__shared)).toEqual(['web', { text }]);
   await page.evaluate(() => { navigator.share = undefined; });
-  await page.click(verse(3));
   await page.click('#sheet [data-act="share"]');
-  await expect(page.locator('#toast')).toHaveText('Copied');
+  await expect(page.locator('#sheet-msg')).toHaveText('Copied');
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(text);
 });
 
 test('the Favorites and Highlights pages list them newest first, with the verse, and open it', async ({ page }) => {
-  await page.click(verse(2)); await page.click('#sheet [data-hl="c2"]');
+  await page.click(verse(2)); await page.click('#sheet [data-hl="c2"]'); await closePanel(page);
   await page.waitForTimeout(20);
-  await page.click(verse(5)); await page.click('#sheet [data-act="fav"]');
+  await page.click(verse(5)); await page.click('#sheet [data-act="fav"]'); await closePanel(page);
   await page.waitForTimeout(20);
-  await page.click(verse(2)); await page.click('#sheet [data-act="fav"]');
-  await panelGone(page);
+  await page.click(verse(2)); await page.click('#sheet [data-act="fav"]'); await closePanel(page);
   await page.evaluate(() => { location.hash = '#/favorites'; });
   await settle(page);
   await expect(page.locator('#app .mrow .t')).toHaveText([`${bn} ${ch}:2`, `${bn} ${ch}:5`]);

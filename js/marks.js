@@ -40,15 +40,6 @@ onPage(p => {
   verseEls().forEach(el => { el.dataset.k = vkey(+p[1], +p[2], el.id.slice(1)); paintVerse(el); });
 });
 
-// ---------- a short message at the bottom ----------
-const toastEl = document.getElementById('toast');
-let toastTimer = 0;
-function toast(msg) {
-  if (!toastEl) return;
-  toastEl.textContent = msg; toastEl.classList.add('show');
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2000);
-}
-
 // ---------- the verse panel ----------
 const sheet = document.getElementById('sheet');
 let sheetKey = null, sheetEl = null, sheetEntry = false;
@@ -58,17 +49,24 @@ function citation(key) {
   const [b, ch, v] = vparts(key), eng = engLabel(b, ch, v);
   return `${bname(b)} ${ch}:${v} (${TR[b]})${eng ? `, ${eng}` : ''}`;
 }
-function openSheet(el) {
-  sheetEl = el; sheetKey = el.dataset.k;
-  const [b, ch, v] = vparts(sheetKey), rec = loadMarks()[sheetKey] || {};
-  document.getElementById('sheet-t').textContent = `${bname(b)} ${ch}:${v}`;
-  document.getElementById('sheet-v').textContent = verseTextOf(el);
+function syncSheet() {                                        // the buttons show what is set on this verse now
+  const rec = loadMarks()[sheetKey] || {};
   const fav = sheet.querySelector('[data-act="fav"]');
   fav.setAttribute('aria-pressed', String(!!rec.f)); fav.querySelector('span').textContent = rec.f ? 'Unfavorite' : 'Favorite';
   sheet.querySelectorAll('[data-hl]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.hl === rec.h)));
   sheet.querySelector('[data-act="unhl"]').disabled = !rec.h;
+}
+const say = msg => { document.getElementById('sheet-msg').textContent = msg || ''; };   // the panel stays open, so it answers inside itself
+function openSheet(el) {
+  sheetEl = el; sheetKey = el.dataset.k;
+  const [b, ch, v] = vparts(sheetKey);
+  document.getElementById('sheet-t').textContent = `${bname(b)} ${ch}:${v}`;
+  document.getElementById('sheet-v').textContent = verseTextOf(el);
+  say(''); syncSheet();
   el.classList.add('sel');
   sheet.showModal();
+  const top = window.innerHeight - sheet.offsetHeight, r = el.getBoundingClientRect();   // the panel must not cover the verse
+  if (r.bottom > top - 12) window.scrollBy({top: Math.min(r.bottom - top + 12, r.top - 8), behavior: 'auto'});
   document.documentElement.classList.add('sheet-open');       // the page behind stays still
   history.pushState({kcSheet: true}, ''); sheetEntry = true;  // the phone's Back button closes the panel, not the page
 }
@@ -117,7 +115,7 @@ if (sheet && PROFILE.verseTools) {
     else if (act && act.dataset.act === 'copy') msg = (await copyText(shareText(key, el))) ? 'Copied' : 'Could not copy';
     else if (act && act.dataset.act === 'share') msg = await shareVerse(key, el);
     else return;
-    paintVerse(el); closeSheet(); if (msg) toast(msg);
+    paintVerse(el); syncSheet(); say(msg);                    // the panel stays open: more than one choice is common
   });
 }
 

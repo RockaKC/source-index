@@ -276,6 +276,7 @@ dialog.sheet[open]::backdrop{background:rgba(0,0,0,.35)}
 .sheethead h2{margin:0;font:600 21px/28px var(--serif)}
 .sheethead .ibtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;margin-right:-8px;padding:0;border:0;border-radius:8px;background:transparent;color:var(--muted);cursor:pointer}
 .sheethead svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.sheetmsg{min-height:20px;margin:-8px 0 8px;font:600 14px/20px var(--sans);color:var(--accent)}
 .sheetver{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:0 0 var(--s2);font:400 15px/22px var(--serif);color:var(--muted)}
 .sheetacts,.hlmore{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .sbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:64px;padding:6px;border:1px solid var(--hairline);border-radius:12px;background:var(--surface);color:var(--ink);font:500 14px/18px var(--sans);cursor:pointer}
@@ -289,8 +290,6 @@ dialog.sheet[open]::backdrop{background:rgba(0,0,0,.35)}
 .sw{height:48px;padding:0;border:2px solid transparent;border-radius:12px;cursor:pointer}
 .sw.m-c1{background:var(--h-c1)}.sw.m-c2{background:var(--h-c2)}.sw.m-c3{background:var(--h-c3)}.sw.m-c4{background:var(--h-c4)}.sw.m-c5{background:var(--h-c5)}.sw.m-c6{background:var(--h-c6)}
 .sw[aria-pressed=true]{border-color:var(--ink)}
-.toast{position:fixed;left:50%;bottom:76px;z-index:20;max-width:calc(100vw - 32px);padding:10px 16px;border-radius:999px;background:var(--ink);color:var(--bg);font:500 15px/20px var(--sans);text-align:center;transform:translate(-50%,8px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity 160ms,transform 160ms,visibility 0s 160ms}
-.toast.show{transform:translate(-50%,0);opacity:1;visibility:visible;transition:opacity 160ms,transform 160ms}
 .mlist{margin-top:var(--s3)}
 .mrow{display:block;padding:12px 0 12px 12px;border-bottom:1px solid var(--hairline);border-left:4px solid var(--hairline);text-decoration:none}
 .mrow .t{display:block;font:600 17px/24px var(--serif)}
