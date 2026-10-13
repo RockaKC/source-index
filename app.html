@@ -14,7 +14,7 @@
 <meta name="description" content="The Bible of the Ethiopian canon, with a guide to its names, words and translations.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9C%3C/text%3E%3C/svg%3E">
 <title>KC Tewahedo Bible</title>
-<link rel="stylesheet" href="css/site.css?v=0fd6367627">
+<link rel="stylesheet" href="css/site.css?v=b9b71899a1">
 </head>
 <body>
 <div class="wrap">
@@ -46,6 +46,26 @@
     <button type="button" id="rt-top" aria-label="Top of the chapter"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6M6 11l6-6 6 6M5 20h14"/></svg></button>
     <button type="button" id="rt-fwd" aria-label="Forward to the chapter you left" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 14l5-5-5-5M20 9h-9a7 7 0 0 0-7 7v3"/></svg></button>
   </nav>
+  <dialog class="sheet" id="sheet" aria-labelledby="sheet-t">
+    <div class="sheetin">
+      <div class="sheethead"><h2 id="sheet-t"></h2>
+        <button class="ibtn" id="sheetx" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <p class="sheetver" id="sheet-v"></p>
+      <div class="sheetacts">
+        <button type="button" class="sbtn" data-act="fav" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l2.4 5 5.4.7-4 3.8 1 5.4-4.8-2.6L7.2 19l1-5.4-4-3.8 5.4-.7z"/></svg><span>Favorite</span></button>
+        <button type="button" class="sbtn" data-act="copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span>Copy</span></button>
+        <button type="button" class="sbtn" data-act="share"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="2.5"/><circle cx="17.5" cy="6" r="2.5"/><circle cx="17.5" cy="18" r="2.5"/><path d="M8.2 10.8l7-3.6M8.2 13.2l7 3.6"/></svg><span>Share</span></button>
+      </div>
+      <p class="sheetlabel">Highlight</p>
+      <div class="swatches" role="group" aria-label="Highlight colors"><button type="button" class="sw m-c1" data-hl="c1" aria-label="Yellow highlight" aria-pressed="false"></button><button type="button" class="sw m-c2" data-hl="c2" aria-label="Green highlight" aria-pressed="false"></button><button type="button" class="sw m-c3" data-hl="c3" aria-label="Blue highlight" aria-pressed="false"></button><button type="button" class="sw m-c4" data-hl="c4" aria-label="Pink highlight" aria-pressed="false"></button><button type="button" class="sw m-c5" data-hl="c5" aria-label="Orange highlight" aria-pressed="false"></button><button type="button" class="sw m-c6" data-hl="c6" aria-label="Purple highlight" aria-pressed="false"></button></div>
+      <div class="hlmore">
+        <button type="button" class="sbtn row" data-hl="u1" aria-pressed="false"><span class="m-u1">Underline</span></button>
+        <button type="button" class="sbtn row" data-hl="u2" aria-pressed="false"><span class="m-u2">Double</span></button>
+        <button type="button" class="sbtn row" data-act="unhl" disabled><span>Remove</span></button>
+      </div>
+    </div>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <dialog class="drawer" id="drawer" aria-label="Menu">
     <div class="drawerin" tabindex="-1" autofocus>
       <div class="drawerbar">
@@ -53,14 +73,21 @@
         <button class="ibtn" id="drawerx" type="button" aria-label="Close menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
       <nav class="menu" aria-label="More">
+        <p class="drawerhead">My collections</p>
+        <ul>
+          <li><a href="#/favorites">
+            <svg class="line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l2.4 5 5.4.7-4 3.8 1 5.4-4.8-2.6L7.2 19l1-5.4-4-3.8 5.4-.7z"/></svg>Favorites</a></li>
+          <li><a href="#/highlights">
+            <svg class="line" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h5L19 10l-5-5L4 15z"/><path d="M12 7l5 5"/></svg>Highlights</a></li>
+          <li><a href="#/history">
+            <svg class="line" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>History</a></li>
+        </ul>
         <p class="drawerhead">Bible</p>
         <ul>
           <li><a href="#/books">
             <svg class="line" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="5" height="16" rx="1"/><rect x="11" y="4" width="5" height="16" rx="1"/><path d="M18.2 6l2.7.8-3.6 13-2.7-.8z"/></svg>The books</a></li>
           <li><a href="#/find">
             <svg class="line" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.2-4.2"/></svg>Search</a></li>
-          <li><a href="#/history">
-            <svg class="line" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>History</a></li>
           <li><a href="#/guide">
             <svg class="line" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>Guide</a></li>
         </ul>
@@ -86,7 +113,7 @@
     <div class="dlgbody" id="supportbody"></div>
   </dialog>
 </div>
-<script src="profiles/app.js?v=73d3a68faa"></script>
+<script src="profiles/app.js?v=2578e47c84"></script>
 <script src="data/site.js?v=aab7269827"></script>
 <script src="js/core.js?v=18b5531345"></script>
 <script src="js/text.js?v=d041d52512"></script>
@@ -95,8 +122,9 @@
 <script src="js/search.js?v=572496d257"></script>
 <script src="js/reader.js?v=60c0e7de67"></script>
 <script src="js/readerbar.js?v=b1cab6d843"></script>
+<script src="js/marks.js?v=faf7d2df23"></script>
 <script src="js/guide.js?v=c0aea60fe8"></script>
-<script src="js/pages.js?v=2704aee618"></script>
+<script src="js/pages.js?v=e36b5cb365"></script>
 <script src="js/analytics.js?v=3fe32ca2fe"></script>
 <script src="js/chrome.js?v=e232cfadaa"></script>
 <script src="js/offline.js?v=cc39c7c063"></script>

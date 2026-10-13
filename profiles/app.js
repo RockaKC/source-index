@@ -8,5 +8,6 @@ const PROFILE = {
   essaysInBible: false,
   seasonal: false,
   analytics: false,
+  verseTools: true,        // tap a verse for the verse panel: favorite, highlight, copy, share; the Favorites and Highlights pages (js/marks.js)
   readerTools: true,       // the chapter bar in the header, the reading toolbar, reading history, and the search page (js/readerbar.js)
 };
