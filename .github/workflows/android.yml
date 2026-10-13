@@ -4,6 +4,8 @@ name: Android app
 #   Pull requests that touch the app, and the Run workflow button: a preview APK, kept 14 days under the run's Artifacts.
 #   A tag app-v<version> (for example app-v1.0.0): the release APK, signed with the Kingdom Code key, published as a
 #   GitHub Release. The key comes from the repository's secrets and never touches the repo.
+#   Run workflow with "Sign with the release key" ticked: the same signed build, kept as an artifact and not published,
+#   to check the signing secrets work.
 on:
   pull_request:
     paths:
@@ -22,6 +24,11 @@ on:
   push:
     tags: ['app-v*']
   workflow_dispatch:
+    inputs:
+      signed:
+        description: Sign with the release key (a test; nothing is published)
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -53,9 +60,11 @@ jobs:
             v="${GITHUB_REF_NAME#app-v}"
             [[ "$v" =~ ^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}$ ]] || { echo "::error::Tag $GITHUB_REF_NAME must look like app-v1.2.3"; exit 1; }
             echo "release=true" >> "$GITHUB_OUTPUT"
+            echo "signed=true" >> "$GITHUB_OUTPUT"
           else
             v="0.0.0"
             echo "release=false" >> "$GITHUB_OUTPUT"
+            echo "signed=${{ inputs.signed == true }}" >> "$GITHUB_OUTPUT"
           fi
           echo "version=$v" >> "$GITHUB_OUTPUT"
 
@@ -65,14 +74,14 @@ jobs:
           npx cap sync android
 
       - name: Build the preview APK
-        if: steps.version.outputs.release == 'false'
+        if: steps.version.outputs.signed != 'true'
         working-directory: android
         run: |
           ./gradlew --no-daemon assembleDebug -PappVersion=${{ steps.version.outputs.version }}
           mkdir -p ../out && cp app/build/outputs/apk/debug/app-debug.apk ../out/KC-Tewahedo-Bible-preview.apk
 
       - name: Build and sign the release APK
-        if: steps.version.outputs.release == 'true'
+        if: steps.version.outputs.signed == 'true'
         working-directory: android
         env:
           KC_KEYSTORE_BASE64: ${{ secrets.KC_KEYSTORE_BASE64 }}
@@ -94,7 +103,7 @@ jobs:
 
       - uses: actions/upload-artifact@v6
         with:
-          name: ${{ steps.version.outputs.release == 'true' && 'release-apk' || 'preview-apk' }}
+          name: ${{ steps.version.outputs.release == 'true' && 'release-apk' || steps.version.outputs.signed == 'true' && 'signed-test-apk' || 'preview-apk' }}
           path: |
             out/
             signer.txt
