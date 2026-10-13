@@ -113,3 +113,14 @@ test('the app loads no analytics', async ({ page }) => {
   expect(await page.evaluate(() => PROFILE.analytics)).toBe(false);
   expect(outside).toEqual([]);
 });
+
+test('the app: About has no support line or button; the drawer keeps Support', async ({ page }) => {
+  await page.goto('/app.html');
+  await settle(page);
+  await open(page, '#/about');
+  await expect(page.locator('#app h1')).toHaveText('About');
+  await expect(page.locator('#app')).toContainText('This app is called');
+  await expect(page.locator('#app')).not.toContainText('free to read and share');
+  await expect(page.locator('#app [data-support]')).toHaveCount(0);
+  await expect(page.locator('#drawer [data-support]')).toHaveCount(1);
+});
