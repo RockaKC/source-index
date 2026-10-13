@@ -29,14 +29,33 @@ test('every book with text has its file, with the chapters the index lists', () 
   expect(found.sort(), 'no stray or misplaced book files').toEqual(expected.sort());
 });
 
-test('index.html loads the data file it was exported with', () => {
+const precacheList = () => {
+  const sw = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
+  return JSON.parse(sw.match(/const PRECACHE = (\[[\s\S]*?\]);/)[1].replace(/'/g, '"'));
+};
+const pageAssets = () => {
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  return [...html.matchAll(/(?:src|href)="([\w./-]+\.(?:js|css))\?v=([0-9a-f]+)"/g)].map(m => ({ file: m[1], v: m[2] }));
+};
+
+test('index.html loads each of its files under a current version stamp', () => {
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   expect(html, 'no page data left inline').not.toMatch(/^const D = /m);
-  const tags = html.match(/<script src="data\/site\.js\?v=([0-9a-f]+)"><\/script>/g) || [];
-  expect(tags.length, 'one data/site.js script tag').toBe(1);
-  const body = fs.readFileSync(path.join(ROOT, 'data', 'site.js'));
-  const version = require('crypto').createHash('sha256').update(body).digest('hex').slice(0, 10);
-  expect(tags[0], 'its ?v= version matches the file (rerun the exporter after editing the data)').toContain(`?v=${version}"`);
+  expect(html, 'no styles left inline').not.toMatch(/<style>/);
+  const assets = pageAssets();
+  expect(assets.map(a => a.file)).toContain('data/site.js');
+  expect(assets.map(a => a.file)).toContain('js/router.js');
+  for (const { file, v } of assets) {
+    const want = require('crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT, file))).digest('hex').slice(0, 10);
+    expect(v, `${file} stamp (run python3 tools/stamp_assets.py after editing it)`).toBe(want);
+  }
+  const local = [...html.matchAll(/<script src="([^"?]+)/g)].map(m => m[1]);
+  expect(local.length, 'every script tag carries a stamp').toBe(assets.filter(a => a.file.endsWith('.js')).length);
+});
+
+test('every file the page loads is saved for offline use', () => {
+  const precache = precacheList();
+  for (const { file } of pageAssets()) expect(precache, `${file} in the PRECACHE list in sw.js`).toContain(file);
 });
 
 test('every book with text names its translation and source language', () => {
@@ -66,7 +85,6 @@ test('the app manifest and offline files exist', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'manifest.webmanifest'), 'utf8'));
   expect(manifest.name).toBeTruthy();
   for (const icon of manifest.icons) expect(fs.existsSync(path.join(ROOT, icon.src)), icon.src).toBe(true);
-  const sw = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
-  const precache = JSON.parse(sw.match(/const PRECACHE = (\[.*\]);/)[1].replace(/'/g, '"'));
+  const precache = precacheList();
   for (const f of precache) if (f !== './') expect(fs.existsSync(path.join(ROOT, f)), `precached ${f}`).toBe(true);
 });
