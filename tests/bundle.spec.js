@@ -44,3 +44,12 @@ test('the app registers no offline worker and offers no install or save buttons'
   await page.waitForTimeout(300);
   expect(await page.evaluate(() => navigator.serviceWorker.getRegistrations().then(r => r.length))).toBe(0);
 });
+
+test('the tier list picture is in the app and loads from the phone', async ({ page }) => {
+  await asApp(page);
+  await page.goto(base + '#/translations');
+  await settle(page);
+  const img = page.locator('#app .tierfig img');
+  await expect(img).toBeVisible();
+  await expect.poll(() => img.evaluate(e => e.complete && e.naturalWidth)).toBe(1536);
+});

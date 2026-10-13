@@ -8,6 +8,7 @@ What goes in, all copied as they are from the repo:
   * app.html, as www/index.html          the app's page frame (profile profiles/app.js)
   * every script and stylesheet it loads  read from its <script src> and <link href> tags
   * bible/                               every book's text, so the whole Bible reads without a connection
+  * img/                                 the pictures the pages show (the translation tier list)
 
 What stays out: index.html, sw.js and manifest.webmanifest (the site's own page, offline worker
 and install file), the tests, the tools and the database. www/ is rebuilt from scratch on every
@@ -46,6 +47,7 @@ def build():
         (OUT / f).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / f, OUT / f)
     shutil.copytree(ROOT / "bible", OUT / "bible")
+    shutil.copytree(ROOT / "img", OUT / "img")
     books = sum(1 for _ in (OUT / "bible").rglob("*.json"))
     size = sum(p.stat().st_size for p in OUT.rglob("*") if p.is_file())
     print("www/: index.html, %d files it loads, %d book files, %.1f MB" % (len(files), books, size / 1e6))
