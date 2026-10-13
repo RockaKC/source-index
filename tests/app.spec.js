@@ -82,7 +82,22 @@ test('About names the app on the app only', async ({ page }) => {
   await expect(page.locator('#app')).toContainText('This app is called KC Tewahedo Bible.');
   await page.goto('/#/about');
   await settle(page);
-  await expect(page.locator('#app')).not.toContainText('Tewahedo Bible');
+  await expect(page.locator('#app')).not.toContainText('This app is called');
+});
+
+test('the site\'s About page sends readers to the app download page', async ({ page }) => {
+  await page.goto('/#/about');
+  await settle(page);
+  await expect(page.locator('#offline, #install'), 'the old save and install buttons are gone').toHaveCount(0);
+  await page.locator('#app a[href="#/app"]', { hasText: 'Download the app' }).click();
+  await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('KC Tewahedo Bible for Android');
+  await expect(page.locator('#app a[data-app-download]'))
+    .toHaveAttribute('href', 'https://github.com/RockaKC/source-index/releases/latest/download/KC-Tewahedo-Bible.apk');
+  await expect(page.locator('#app')).toContainText('Why Android warns you');
+  await page.goto('/app.html#/about');
+  await settle(page);
+  await expect(page.locator('#app a[href="#/app"]'), 'the app does not offer itself').toHaveCount(0);
 });
 
 test('the app loads no analytics', async ({ page }) => {
