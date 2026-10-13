@@ -100,7 +100,7 @@ function viewApp() {
   <h1>KC Tewahedo Bible for Android</h1>
   <p class="lede">All 81 books of the Ethiopian canon on your phone, ${withText} with their text so far, every one readable without a connection. Free, with no account and no ads.</p>
   <p class="act" style="margin-top:24px"><a class="btn primary" href="${APP_DOWNLOAD}" data-app-download>Download for Android</a></p>
-  <p class="cap" style="margin-top:8px">Android 7 or newer. About 7 MB.</p>
+  <p class="cap" style="margin-top:8px">Android 7 or newer. About 6 MB.</p>
   <div class="about">
     <h2>Installing it</h2>
     <ol>
