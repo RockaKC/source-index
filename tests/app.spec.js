@@ -56,6 +56,15 @@ test('the essays live in From Kingdom Code, and the guide lists its parts', asyn
     await expect(page.locator(`#app a[href="${r}"]`)).toBeVisible();
 });
 
+test('About names the app on the app only', async ({ page }) => {
+  await page.goto('/app.html#/about');
+  await settle(page);
+  await expect(page.locator('#app')).toContainText('This app is called KC Tewahedo Bible.');
+  await page.goto('/#/about');
+  await settle(page);
+  await expect(page.locator('#app')).not.toContainText('Tewahedo Bible');
+});
+
 test('the app loads no analytics', async ({ page }) => {
   const outside = [];
   page.on('request', r => { if (!r.url().startsWith('http://127.0.0.1')) outside.push(r.url()); });

@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "KC Tewahedo Bible",
-  "short_name": "KC Tewahedo",
+  "name": "Kingdom Code Source Index",
+  "short_name": "Source Index",
   "description": "Read the books of the Ethiopian canon, look up any verse, and see the Hebrew and Greek words behind the text. Free to read.",
   "start_url": "./",
   "scope": "./",
