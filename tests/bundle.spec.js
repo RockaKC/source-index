@@ -53,3 +53,17 @@ test('the tier list picture is in the app and loads from the phone', async ({ pa
   await expect(img).toBeVisible();
   await expect.poll(() => img.evaluate(e => e.complete && e.naturalWidth)).toBe(1536);
 });
+
+test('the build stamps the app with the version it is publishing, and the app reads it', async ({ page }) => {
+  execFileSync('python3', [path.join(ROOT, 'tools', 'build_app.py')], { cwd: ROOT, stdio: 'pipe', env: { ...process.env, KC_APP_VERSION: '2.3.4' } });
+  try {
+    await asApp(page);
+    await page.goto(base + '#/updates');
+    await settle(page);
+    await expect(page.locator('#up-version')).toHaveText('You have version 2.3.4.');
+  } finally {
+    execFileSync('python3', [path.join(ROOT, 'tools', 'build_app.py')], { cwd: ROOT, stdio: 'pipe' });      // back to the preview stamp
+  }
+  expect(() => execFileSync('python3', [path.join(ROOT, 'tools', 'build_app.py')], { cwd: ROOT, stdio: 'pipe', env: { ...process.env, KC_APP_VERSION: 'x' } })).toThrow();
+  execFileSync('python3', [path.join(ROOT, 'tools', 'build_app.py')], { cwd: ROOT, stdio: 'pipe' });
+});

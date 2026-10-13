@@ -7,11 +7,11 @@
    Bible text (bible/<translation>/<book id>.json): served from the saved copy at once, refreshed in the background.
    Everything on another origin (analytics, Ko-fi) is left alone.
    Bump SHELL when the caching rules below change. */
-const SHELL = 'kc-shell-v8';
+const SHELL = 'kc-shell-v9';
 const BOOKS = 'kc-books-v2';
 const PRECACHE = ['./', 'profiles/site.js', 'data/site.js', 'css/site.css',
   'js/core.js', 'js/text.js', 'js/words.js', 'js/essays.js', 'js/search.js', 'js/reader.js', 'js/readerbar.js', 'js/marks.js', 'js/backup.js', 'js/guide.js',
-  'js/pages.js', 'js/analytics.js', 'js/chrome.js', 'js/offline.js', 'js/router.js',
+  'js/pages.js', 'js/updates.js', 'js/analytics.js', 'js/chrome.js', 'js/offline.js', 'js/router.js',
   'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'img/translations-tier-list.webp'];
 
 self.addEventListener('install', e => {
