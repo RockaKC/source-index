@@ -1,0 +1,12 @@
+{
+  "name": "kc-source-index",
+  "private": true,
+  "description": "Kingdom Code Source Index. The site is static; this file only sets up the tests.",
+  "scripts": {
+    "test": "playwright test",
+    "test:update": "UPDATE_GOLDEN=1 playwright test tests/search.spec.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  }
+}
