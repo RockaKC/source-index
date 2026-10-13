@@ -18,10 +18,11 @@
     </style>
 
 
-    <!-- The launch screen: the page colour (white, or near-black in dark mode) with the app icon. -->
+    <!-- The launch screen: the icon's own green, filling the screen, with the book on it (drawable/splash_mark.png: the icon's tile with its leather faded out, so no plate shows). -->
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
         <item name="android:background">@drawable/splash</item>
-        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenBackground">@color/launch_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_mark</item>
         <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
     </style>
 </resources>

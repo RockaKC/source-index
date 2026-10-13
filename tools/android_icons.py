@@ -14,14 +14,17 @@ into android/app/src/main/res/:
   * values/ic_launcher_background.xml    the leather green behind it (ic_launcher_background), sampled from the tile
   * mipmap-*/ic_launcher.png             the tile alone, for Android 7
   * mipmap-*/ic_launcher_round.png       the foreground on its green, cut to a circle, for Android 7 round icons
-  * drawable/splash_mark.png             the tile, on the launch screen of Android 7 to 11 (drawable/splash.xml)
+  * drawable/splash_mark.png             the book on the launch screen, on every Android version (windowSplashScreenAnimatedIcon in
+                                         values/styles.xml, and drawable/splash.xml for Android 7 to 11): the tile with its leather
+                                         faded away at the edges, so the book sits on the plain green screen (ic_launcher_background)
+                                         with no plate showing
 Needs Pillow (pip install pillow). The icons are committed; the build does not run this.
 """
 import re
 import sys
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageOps
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "android" / "icon-source.jpg"
@@ -64,6 +67,32 @@ def leather(tile):
     return tuple(median(c) for c in strip.split())
 
 
+def splash_mark(tile, canvas=576, share=0.60, feather=0.10):
+    """The tile on a transparent square for the launch screen, its leather faded out toward the edges and the book left whole.
+
+    The system shows a launch-screen icon inside a circle two thirds of the square, so the tile takes `share` of the square.
+    The fade is the tile's outline eroded by `feather` of its width and blurred (with zeros around it, so straight edges
+    fade too), then cut so nothing is left at the rim. The book is found as what is not leather green (green not clearly above
+    red: black cover, gold, red ribbon), kept in full, and kept away from the corners where the tile's bright rim is."""
+    size = round(canvas * share)
+    t = tile.resize((size, size), Image.LANCZOS)
+    alpha, e = t.split()[3], round(size * feather)
+    pad = e * 3
+    fade = ImageOps.expand(alpha, border=pad, fill=0).filter(ImageFilter.MinFilter(2 * e + 1)).filter(ImageFilter.GaussianBlur(e * 0.7))
+    fade = fade.crop((pad, pad, pad + size, pad + size)).point(lambda v: int(255 * min(1, max(0, (v - 50) / 170))))
+    r, g, _ = t.convert("RGB").split()
+    book = ImageChops.subtract(g, r).point(lambda v: 255 if v < 6 else 0).filter(ImageFilter.MaxFilter(11)).filter(ImageFilter.GaussianBlur(5))
+    inner = Image.new("L", (size * 2, size * 2), 0)
+    d = round(size * 0.045) * 2
+    ImageDraw.Draw(inner).rounded_rectangle((d, d, size * 2 - d, size * 2 - d), radius=size * 0.30, fill=255)
+    inner = inner.resize((size, size), Image.LANCZOS).filter(ImageFilter.GaussianBlur(3))
+    t.putalpha(ImageChops.lighter(fade, ImageChops.multiply(ImageChops.multiply(book, inner), alpha)))
+    out = Image.new("RGBA", (canvas, canvas), (0, 0, 0, 0))
+    off = (canvas - size) // 2
+    out.paste(t, (off, off), t)
+    return out
+
+
 def square(img, size):
     return img.resize((size, size), Image.LANCZOS)
 
@@ -94,7 +123,7 @@ def main(src):
         ImageDraw.Draw(mask).ellipse((0, 0, legacy * 4 - 1, legacy * 4 - 1), fill=255)
         shown.putalpha(mask.resize((legacy, legacy), Image.LANCZOS))
         shown.save(out / "ic_launcher_round.png", optimize=True)
-    square(tile, 288).save(RES / "drawable" / "splash_mark.png", optimize=True)
+    splash_mark(tile).save(RES / "drawable" / "splash_mark.png", optimize=True)
     hexgreen = "#%02X%02X%02X" % green
     bg = RES / "values" / "ic_launcher_background.xml"
     text = bg.read_text(encoding="utf-8")

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_launcher_background">#061D10</color>
+    <!-- Behind the page while it loads (the page's own colour: white here, near-black in values-night/). -->
     <color name="splash_background">#FFFFFF</color>
+    <!-- The launch screen: the icon's own leather green, so the icon sits on it with no edge (light and dark mode alike). -->
+    <color name="launch_background">@color/ic_launcher_background</color>
 </resources>
