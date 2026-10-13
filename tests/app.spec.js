@@ -64,6 +64,11 @@ test('the menu is a side drawer without the Guide\'s pages, and Back closes it',
   await expect(drawer).toBeVisible();
   for (const r of ['#/names', '#/words', '#/translations']) await expect(drawer.locator(`a[href="${r}"]`)).toHaveCount(0);
   await expect(drawer.locator('a[href="#/kc"]')).toBeVisible();
+  const before = await page.evaluate(() => scrollY);
+  await page.mouse.move(380, 500);
+  await page.mouse.wheel(0, 800);
+  await page.waitForTimeout(300);
+  expect(await page.evaluate(() => scrollY), 'the page behind the open drawer does not scroll').toBe(before);
   await page.goBack();
   await expect(drawer).toBeHidden();
   expect(await page.evaluate(() => location.hash), 'Back closes the drawer and stays on the page').toBe('#/read/1/1');

@@ -254,6 +254,8 @@ dialog.drawer[open]::backdrop{background:rgba(0,0,0,.5)}
 .drawer .menu a,.drawer .menu button{min-height:52px;font-size:17px;gap:16px}
 .drawer .menu svg{width:20px;height:20px}
 .drawerfoot{margin:auto 0 0;padding:var(--s3) 12px var(--s2)}
+html.drawer-open,html.drawer-open body{overflow:hidden;overscroll-behavior:none}
+dialog.drawer{overscroll-behavior:contain}
 [data-product=app] body::before,[data-product=app] body::after{content:"";position:fixed;left:0;right:0;z-index:5;background:var(--bg);pointer-events:none}
 [data-product=app] body::before{top:0;height:env(safe-area-inset-top,0px)}
 [data-product=app] body::after{bottom:0;height:env(safe-area-inset-bottom,0px)}
