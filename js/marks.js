@@ -5,11 +5,12 @@
 // ---------- the marks a reader keeps ----------
 // One object on the phone (localStorage 'kc-marks'), keyed by verse "book id:chapter:verse" in the house text's own numbering:
 //   { "1:1:3": { f: 1, h: "c2", t: 1760000000000 } }      f = favorite, h = highlight (below), t = when it last changed
-// Notes (part 3 of the reading tools) join the same record as n, so one object is everything to export and restore.
+// n = the reader's note (up to 2000 characters). One object holds everything a reader keeps, so a backup is that object.
 const MARKS_KEY = 'kc-marks';
 const HIGHLIGHTS = [['c1', 'Yellow'], ['c2', 'Green'], ['c3', 'Blue'], ['c4', 'Pink'], ['c5', 'Orange'], ['c6', 'Purple'],
   ['u1', 'Underline'], ['u2', 'Double underline']];
 const HL_NAME = Object.fromEntries(HIGHLIGHTS);
+const NOTE_MAX = 2000;
 let MARKS = null;
 function loadMarks() {
   if (MARKS) return MARKS;
@@ -17,12 +18,15 @@ function loadMarks() {
   catch (e) { MARKS = {}; }
   return MARKS;
 }
+const freshMarks = () => { MARKS = null; return loadMarks(); };   // read again from the phone: for backup and restore, which must not trust a stale copy
 const vkey = (b, ch, v) => `${b}:${ch}:${v}`;
 const vparts = k => { const [b, ch, v] = k.split(':'); return [+b, +ch, /^\d+$/.test(v) ? +v : v]; };
 function setMark(key, patch) {
   const m = loadMarks(), rec = Object.assign({}, m[key], patch, {t: Date.now()});
   if (!rec.f) delete rec.f;
   if (!HL_NAME[rec.h]) delete rec.h;
+  rec.n = typeof rec.n === 'string' ? rec.n.trim().slice(0, NOTE_MAX) : '';
+  if (!rec.n) delete rec.n;
   if (rec.f || rec.h || rec.n) m[key] = rec; else delete m[key];
   store.set(MARKS_KEY, JSON.stringify(m));
 }
@@ -31,9 +35,10 @@ function setMark(key, patch) {
 const verseEls = () => document.querySelectorAll('#rtext p[id^="v"]');
 function paintVerse(el) {
   const rec = loadMarks()[el.dataset.k] || {};
-  el.className = el.className.replace(/\b(m-\w+|fav)\b/g, '').trim();
+  el.className = el.className.replace(/\b(m-\w+|fav|noted)\b/g, '').trim();
   if (rec.h && HL_NAME[rec.h]) el.classList.add('m-' + rec.h);
   if (rec.f) el.classList.add('fav');
+  if (rec.n) el.classList.add('noted');
 }
 onPage(p => {
   if (!PROFILE.verseTools || p[0] !== 'read' || !document.getElementById('sheet')) return;
@@ -55,6 +60,27 @@ function syncSheet() {                                        // the buttons sho
   fav.setAttribute('aria-pressed', String(!!rec.f)); fav.querySelector('span').textContent = rec.f ? 'Unfavorite' : 'Favorite';
   sheet.querySelectorAll('[data-hl]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.hl === rec.h)));
   sheet.querySelector('[data-act="unhl"]').disabled = !rec.h;
+  document.getElementById('note-label').textContent = rec.n ? 'Edit note' : 'Write a note';
+  document.getElementById('note-preview').textContent = rec.n || '';
+}
+// The note editor shares the panel with the choices; leaving it, any way at all, keeps what was typed.
+const noteBox = document.getElementById('note-text'), notePane = document.getElementById('sheet-note'), mainPane = document.getElementById('sheet-main');
+const editingNote = () => !!notePane && !notePane.hidden;
+const deleteBtn = () => document.getElementById('note-del');
+function resetDelete() { const b = deleteBtn(); delete b.dataset.sure; b.textContent = 'Delete note'; }
+function showNote() {
+  noteBox.value = (loadMarks()[sheetKey] || {}).n || '';
+  mainPane.hidden = true; notePane.hidden = false;
+  deleteBtn().hidden = !noteBox.value; resetDelete();
+  noteBox.focus();
+}
+function commitNote() {                                       // the text in the box becomes the verse's note
+  if (!editingNote()) return '';
+  const was = (loadMarks()[sheetKey] || {}).n || '', now = noteBox.value.trim();
+  notePane.hidden = true; mainPane.hidden = false;
+  if (now === was) return '';
+  setMark(sheetKey, {n: now}); paintVerse(sheetEl); syncSheet();
+  return now ? 'Note saved' : 'Note removed';
 }
 const say = msg => { document.getElementById('sheet-msg').textContent = msg || ''; };   // the panel stays open, so it answers inside itself
 function openSheet(el) {
@@ -63,6 +89,7 @@ function openSheet(el) {
   document.getElementById('sheet-t').textContent = `${bname(b)} ${ch}:${v}`;
   document.getElementById('sheet-v').textContent = verseTextOf(el);
   say(''); syncSheet();
+  mainPane.hidden = false; notePane.hidden = true;
   el.classList.add('sel');
   sheet.showModal();
   const top = window.innerHeight - sheet.offsetHeight, r = el.getBoundingClientRect();   // the panel must not cover the verse
@@ -85,6 +112,7 @@ if (sheet && PROFILE.verseTools) {
   // before that event; a stale close event, arriving after a newer panel has opened, must do nothing.
   function finishClose() {
     if (sheet.open) return;
+    commitNote();
     document.documentElement.classList.remove('sheet-open');
     if (sheetEl) sheetEl.classList.remove('sel');
     if (sheetEntry) {
@@ -114,6 +142,12 @@ if (sheet && PROFILE.verseTools) {
     else if (act && act.dataset.act === 'fav') { setMark(key, {f: rec.f ? 0 : 1}); msg = rec.f ? 'Removed from favorites' : 'Added to favorites'; }
     else if (act && act.dataset.act === 'copy') msg = (await copyText(shareText(key, el))) ? 'Copied' : 'Could not copy';
     else if (act && act.dataset.act === 'share') msg = await shareVerse(key, el);
+    else if (act && act.dataset.act === 'note') { showNote(); return; }
+    else if (act && act.dataset.act === 'notedone') msg = commitNote();
+    else if (act && act.dataset.act === 'notedel') {          // deleting asks twice, so a stray touch cannot lose a note
+      if (!act.dataset.sure) { act.dataset.sure = '1'; act.textContent = 'Tap again to delete'; return; }
+      noteBox.value = ''; msg = commitNote();
+    }
     else return;
     paintVerse(el); syncSheet(); say(msg);                    // the panel stays open: more than one choice is common
   });
@@ -141,16 +175,18 @@ async function shareVerse(key, el) {                          // the phone's sha
 }
 
 // ---------- the Favorites and Highlights pages ----------
-function marksPage(kind) {
-  const m = loadMarks();
-  const rows = Object.keys(m).filter(k => m[k] && (kind === 'f' ? m[k].f : m[k].h) && hasChapter(...vparts(k).slice(0, 2)))
+function marksPage(kind) {                                    // 'f' favorites, 'h' highlights, 'n' notes
+  const m = loadMarks(), has = {f: r => r.f, h: r => r.h, n: r => r.n}[kind];
+  const rows = Object.keys(m).filter(k => m[k] && has(m[k]) && hasChapter(...vparts(k).slice(0, 2)))
     .sort((a, c) => m[c].t - m[a].t);
-  const title = kind === 'f' ? 'Favorites' : 'Highlights';
-  const empty = kind === 'f' ? 'No favorites yet. Tap a verse, then Favorite.' : 'No highlights yet. Tap a verse, then choose a color or an underline.';
+  const title = {f: 'Favorites', h: 'Highlights', n: 'Notes'}[kind];
+  const empty = {f: 'No favorites yet. Tap a verse, then Favorite.', h: 'No highlights yet. Tap a verse, then choose a color or an underline.',
+    n: 'No notes yet. Tap a verse, then Write a note.'}[kind];
   const list = rows.map(k => {
     const [b, ch, v] = vparts(k), h = m[k].h;
     return `<a class="mrow${h ? ' m-' + h : ''}" href="#/read/${b}/${ch}/${v}">
       <span class="t">${esc(bname(b))} ${ch}:${esc(String(v))}${kind === 'h' ? `<i>${esc(HL_NAME[h])}</i>` : ''}</span>
+      ${kind === 'n' ? `<span class="np">${esc(m[k].n)}</span>` : ''}
       <span class="vp" data-k="${k}"></span></a>`;
   }).join('');
   return `
@@ -162,8 +198,9 @@ function marksPage(kind) {
 if (PROFILE.verseTools) {
   addRoute('favorites', () => marksPage('f'));
   addRoute('highlights', () => marksPage('h'));
+  addRoute('notes', () => marksPage('n'));
   onPage(p => {                                               // the verse's words, once its book is loaded
-    if (p[0] !== 'favorites' && p[0] !== 'highlights') return;
+    if (!['favorites', 'highlights', 'notes'].includes(p[0])) return;
     document.querySelectorAll('#app .vp[data-k]').forEach(el => {
       const [b, ch, v] = vparts(el.dataset.k);
       ensureBook(b).then(() => { const t = verseText(b, ch, v); if (t) el.innerHTML = fmtText(b, t.text); }).catch(() => {});
