@@ -234,6 +234,27 @@ dialog.dlg::backdrop{background:rgba(0,0,0,.55)}
 .dlgbar svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 .dlgbody iframe{display:block;width:100%;height:min(712px,calc(100vh - 150px));border:0;background:#f9f9f9}
 .dlgfoot{margin:0;padding:10px var(--s2);border-top:1px solid var(--hairline)}
+/* The app (app.html): a side drawer for the menu, and solid bars behind the phone's status bar and buttons */
+.menubtn.lead{margin:-6px 6px -6px -8px}
+.menubtn.lead + .wordmark{margin-right:auto}
+dialog.drawer{position:fixed;inset:0 auto 0 0;width:min(320px,85vw);max-width:none;height:100%;max-height:none;margin:0;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);border:0;border-right:1px solid var(--hairline);background:var(--bg);color:var(--ink);box-shadow:4px 0 24px rgba(0,0,0,.2);overflow-y:auto;transform:translateX(-100%);transition:transform 220ms ease-out,overlay 220ms allow-discrete,display 220ms allow-discrete}
+dialog.drawer[open]{transform:none}
+@starting-style{dialog.drawer[open]{transform:translateX(-100%)}}
+dialog.drawer::backdrop{background:rgba(0,0,0,0);transition:background 220ms ease-out,overlay 220ms allow-discrete,display 220ms allow-discrete}
+dialog.drawer[open]::backdrop{background:rgba(0,0,0,.5)}
+@starting-style{dialog.drawer[open]::backdrop{background:rgba(0,0,0,0)}}
+.drawerin{display:flex;flex-direction:column;min-height:100%;padding:0 var(--s1)}
+.drawerbar{display:flex;align-items:center;justify-content:space-between;gap:var(--s1);padding:var(--s2) 0 var(--s2) 12px;margin-bottom:var(--s1);border-bottom:1px solid var(--hairline)}
+.drawerbar .ibtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;border:0;border-radius:8px;background:transparent;color:var(--muted);cursor:pointer}
+.drawerbar .ibtn:hover{color:var(--ink);background:var(--surface)}
+.drawerbar svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.drawer .menu{position:static;width:auto;padding:0;border:0;border-radius:0;box-shadow:none;background:transparent}
+.drawer .menu a,.drawer .menu button{min-height:52px;font-size:17px;gap:16px}
+.drawer .menu svg{width:20px;height:20px}
+.drawerfoot{margin:auto 0 0;padding:var(--s3) 12px var(--s2)}
+[data-product=app] body::before,[data-product=app] body::after{content:"";position:fixed;left:0;right:0;z-index:5;background:var(--bg);pointer-events:none}
+[data-product=app] body::before{top:0;height:env(safe-area-inset-top,0px)}
+[data-product=app] body::after{bottom:0;height:env(safe-area-inset-bottom,0px)}
 .fadein{animation:fade var(--fade)}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @media (max-width:479px){
@@ -245,6 +266,7 @@ dialog.dlg::backdrop{background:rgba(0,0,0,.55)}
   .theme,.menubtn{width:32px}
   .menubtn{margin-right:-4px}
   .menu{right:-4px}
+  .menubtn.lead{margin:-6px 4px -6px -6px}
 }
 @media (max-width:359px){
   .wordmark{font-size:18px}
