@@ -376,6 +376,9 @@ dialog.drawer::backdrop{opacity:var(--scrim,1)}
 @keyframes page-in{from{opacity:.3;transform:translateY(10px)}}
 /* a drawer being dragged by a finger takes no entrance of its own, and its scrim keeps pace with the glide */
 dialog.drawer.swiped::backdrop{animation:none}
+.tierfig{margin:var(--s3) 0}
+.tierfig img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--hairline)}
+.tierfig figcaption{margin-top:8px}
 .fadein{animation:fade var(--fade)}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @media (max-width:479px){

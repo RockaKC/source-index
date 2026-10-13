@@ -16,6 +16,7 @@ on:
       - profiles/**
       - data/**
       - bible/**
+      - img/**
       - android/**
       - capacitor.config.json
       - package.json

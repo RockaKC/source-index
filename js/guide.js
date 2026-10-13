@@ -14,6 +14,8 @@ function viewTranslations() {
   <h1>${esc(t.title)}</h1>
   <p class="lede">${esc(t.lede)}</p>
   <p class="lede" style="margin-top:8px">${esc(t.standard)}</p>
+  <figure class="tierfig"><img src="img/translations-tier-list.webp" width="1536" height="1024" alt="The tier list as a chart. S: BLB, NASB, LSB. A: ESV. B: NET, RSV. C: KJV, NKJV. D: NIV, CSB, NRSV Updated Edition. F: NLT, MEV, The Message, The Passion Translation.">
+    <figcaption class="cap">The list at a glance. The reasons for every placement follow.</figcaption></figure>
   ${tiers}
   <dl class="use">${t.use.map(u => `<div><dt>${esc(u[0])}</dt><dd>${esc(u[1])}</dd></div>`).join('')}</dl>
   <p class="act" style="margin-top:var(--s3)"><a class="btn secondary" ${link(t.essay)}>Read the full essay</a></p>`;

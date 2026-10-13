@@ -73,3 +73,16 @@ test('the site: About has no support line or button, and the menu offers Get the
   await settle(page);
   await expect(page.locator('#app h1')).toHaveText('KC Tewahedo Bible for Android');
 });
+
+test('the translation tier list shows its picture, which loads, before the written tiers', async ({ page }) => {
+  await page.goto('/');
+  await settle(page);
+  await page.evaluate(() => { location.hash = '#/translations'; });
+  await settle(page);
+  const img = page.locator('#app .tierfig img');
+  await expect(img).toBeVisible();
+  await expect.poll(() => img.evaluate(e => e.complete && e.naturalWidth)).toBe(1536);
+  expect(await img.getAttribute('alt')).toContain('S: BLB, NASB, LSB');
+  const order = await page.evaluate(() => { const f = document.querySelector('#app .tierfig'), t = document.querySelector('#app .tier'); return f.compareDocumentPosition(t) & Node.DOCUMENT_POSITION_FOLLOWING; });
+  expect(order).toBeTruthy();
+});
