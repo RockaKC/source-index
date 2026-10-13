@@ -4,7 +4,7 @@ Rebuilds the site's data from the Kingdom Code SQLite database.
 
 ```
 python3 tools/export_site.py /path/to/kc_v13.db --check   # show what would change, write nothing
-python3 tools/export_site.py /path/to/kc_v13.db           # rebuild index.html data + bible/
+python3 tools/export_site.py /path/to/kc_v13.db           # rebuild data/site.js + bible/
 ```
 
 Needs Python 3 only. No packages.
@@ -20,8 +20,9 @@ Every pull request runs the tests on GitHub (`.github/workflows/tests.yml`); a r
 
 ## What it changes
 
-- `bible/<book id>.json`: every verse of one book, fetched by the page only when a reader opens a verse or chapter in a book no essay cites. Chapters essays cite are inlined in `index.html`. The old single `bible.json` is removed.
-- `index.html`: the single `const D = {...};` line. Nothing else in the file is touched.
+- `data/site.js`: the page data, one `const D = {...};` line. `index.html` loads it before the app. Chapters essays cite are inlined here for a fast first page.
+- `bible/<translation>/<book id>.json`: every verse of one book in one translation (the book's house translation, lower case: `lxx`, `blb`, `charles`, `platt`), fetched only when a reader opens a chapter or verse that is not inlined. The page reads them through one loader, `loadBook(book, translation)`, so a second translation of a book can sit beside the first later without moving anything.
+- `index.html`: only the `?v=` version on its `data/site.js` script tag, a hash of the data file, so a browser never pairs a new page with old data. Nothing else in the file is touched.
 
 Running it twice in a row changes nothing the second time.
 
@@ -63,7 +64,7 @@ A book with only some verses mapped from English to Septuagint numbers warns on 
 
 The site installs to a phone's home screen and reads offline. Files at the repo root, all hand-kept (the exporter does not touch them): `manifest.webmanifest` (name, colours, icons), `sw.js` (the service worker) and `icons/` (192 and 512 px, a maskable 512 px, and the 180 px Apple icon, a "KC" monogram in the site's green).
 
-`sw.js`: pages are fetched network-first, so a reader online always gets the current site and the last copy is only the offline fallback; Bible text (`bible/<id>.json`) is served from the saved copy and refreshed in the background; anything on another origin (analytics, Ko-fi) is left alone. Two caches: `kc-shell-v1` and `kc-books-v1`. Bump `SHELL` in `sw.js` when its caching rules change. The About page has a "Save for offline reading" button that stores all 72 book files (about 5 MB) into `kc-books-v1`, and, where the browser offers it, an "Install the app" button. iPhone has no install prompt; the About page tells readers to use Share, then Add to Home Screen.
+`sw.js`: pages and `data/site.js` are fetched network-first, so a reader online always gets the current site and the last copy is only the offline fallback (the data file is kept under its plain address whatever its `?v=` version, and both are saved when the worker installs, so the site opens offline after a single visit); Bible text (`bible/<translation>/<id>.json`) is served from the saved copy and refreshed in the background; anything on another origin (analytics, Ko-fi) is left alone. Two caches: `kc-shell-v4` and `kc-books-v2`. Bump `SHELL` in `sw.js` when its caching rules change, and `BOOKS` (with `OFFLINE_CACHE` in `index.html`) when the book files move. The About page has a "Save for offline reading" button that stores every book file (about 5 MB) into the books cache, and, where the browser offers it, an "Install the app" button. iPhone has no install prompt; the About page tells readers to use Share, then Add to Home Screen.
 
 Two analytics events: `app/open` (once per session, when opened from the home screen) and `app/installed`. Test it with a real offline (stop the test server), not Playwright's offline switch, which does not block a service worker's own requests.
 

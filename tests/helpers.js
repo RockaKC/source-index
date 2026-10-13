@@ -5,11 +5,11 @@ const { test: base, expect } = require('@playwright/test');
 
 const ROOT = path.resolve(__dirname, '..');
 
-// The site's data, read from the `const D = {...};` line of index.html (the exporter writes that line).
+// The site's data, read from the `const D = {...};` line of data/site.js (the exporter writes that file).
 function loadData() {
-  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-  const m = html.match(/^const D = (\{.*\});$/m);
-  if (!m) throw new Error('no `const D = {...};` line in index.html');
+  const js = fs.readFileSync(path.join(ROOT, 'data', 'site.js'), 'utf8');
+  const m = js.match(/^const D = (\{.*\});$/m);
+  if (!m) throw new Error('no `const D = {...};` line in data/site.js');
   return JSON.parse(m[1]);
 }
 

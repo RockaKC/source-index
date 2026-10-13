@@ -30,3 +30,27 @@ test('a chapter read online opens again with the server gone', async ({ browser 
   expect(errors).toEqual([]);
   await context.close();
 });
+
+test('after a single visit, the site opens with the server gone', async ({ browser }) => {
+  const server = await start(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const context = await browser.newContext({ viewport: { width: 390, height: 800 }, serviceWorkers: 'allow' });
+  const page = await context.newPage();
+  const errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+
+  await page.goto(`${base}/`);
+  await page.evaluate(() => navigator.serviceWorker.ready);   // installed: page and data saved, nothing else read
+
+  await new Promise(r => server.close(r));
+  server.closeAllConnections && server.closeAllConnections();
+
+  await page.reload();
+  await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Look up a verse.');
+  await page.evaluate(() => { location.hash = '#/books'; });
+  await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('The 81 books');
+  expect(errors).toEqual([]);
+  await context.close();
+});
