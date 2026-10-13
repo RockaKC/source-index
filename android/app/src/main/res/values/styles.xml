@@ -13,6 +13,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">@null</item>
+        <!-- Until the page has drawn, the window is the page's own colour (white, or near-black in dark mode), never the theme's grey. -->
+        <item name="android:windowBackground">@color/splash_background</item>
     </style>
 
 

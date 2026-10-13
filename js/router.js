@@ -2,11 +2,15 @@
 // Loaded as a plain script after data/site.js; see index.html for the order. Shared names live in the page's global scope.
 
 // ---------- router ----------
+let firstRoute = true;
 function route() {
   trackNav(); deferTrack = false;
   const p = location.hash.replace(/^#\/?/, '').split('/');
   const html = (ROUTES.get(p[0]) || viewMissing)(p);
-  app.innerHTML = `<div class="fadein">${html}</div>`;
+  // The app's first page is already there when the launch screen fades away, so it takes no entrance of its own; every later page does.
+  const enter = firstRoute && PROFILE.id === 'app' ? '' : 'fadein';
+  firstRoute = false;
+  app.innerHTML = `<div class="${enter}">${html}</div>`;
   if (!deferTrack) UNMAPPED = null;     // keep the flag across the loading placeholder
   if (p[0] !== 'cta' && !deferTrack) trackView(routePath(p), (document.querySelector('#app h1') || {}).textContent || PROFILE.name);
   while (pendingEvents.length) { const [n, k] = pendingEvents.shift(); track(n, k); }
