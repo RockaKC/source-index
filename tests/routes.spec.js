@@ -55,3 +55,21 @@ test('an unknown address shows the not-found page', async ({ page }) => {
   await settle(page);
   await expect(page.locator('#app h1')).toHaveText('Not found');
 });
+
+test('the site: About has no support line or button, and the menu offers Get the app after Contact', async ({ page }) => {
+  await page.goto('/');
+  await settle(page);
+  await page.evaluate(() => { location.hash = '#/about'; });
+  await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('About');
+  await expect(page.locator('#app')).not.toContainText('free to read and share');
+  await expect(page.locator('#app [data-support]')).toHaveCount(0);
+  await expect(page.locator('#menu [data-support]')).toHaveCount(1);        // the menu keeps Support
+  const labels = await page.locator('#menu li').evaluateAll(l => l.map(x => x.textContent.trim()));
+  expect(labels.at(-1)).toBe('Get the app');
+  expect(labels.at(-2)).toBe('Contact');
+  await page.locator('#menubtn').click();
+  await page.locator('#menu a[href="#/app"]').click();
+  await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('KC Tewahedo Bible for Android');
+});
