@@ -12,7 +12,7 @@ let drawerEntry = false;
 function setMenu(open) {
   if (drawer) {
     if (open && !drawer.open) {
-      drawer.showModal(); menuBtn.setAttribute('aria-expanded', 'true');
+      drawer.style.removeProperty('--scrim'); drawer.style.animation = ''; drawer.showModal(); menuBtn.setAttribute('aria-expanded', 'true');
       document.documentElement.classList.add('drawer-open');   // the page behind stays still
       history.pushState({kcDrawer: true}, ''); drawerEntry = true;
     } else if (!open && drawer.open) drawer.close();
@@ -36,6 +36,49 @@ if (drawer) {
     if (drawerEntry) { drawerEntry = false; history.back(); }
   });
   window.addEventListener('popstate', () => { if (drawer.open) { drawerEntry = false; drawer.close(); } });   // Back
+  // Swipe the drawer shut: a sideways drag to the left moves it with the finger and fades the dimmed page. Past a third of its
+  // width, or flicked, it closes; otherwise it springs back. A drag that starts upward is the page's own scroll and is left alone.
+  const SLOP = 10, FLICK = 0.5;                       // pixels before a drag counts; pixels per millisecond that count as a flick
+  let swipe = null, quiet = 0;
+  const settle = () => { drawer.style.transition = drawer.style.transform = ''; };   // the entrance animation stays off until the next opening
+  drawer.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'mouse' || !e.isPrimary || !drawer.open) return;
+    swipe = {id: e.pointerId, x: e.clientX, y: e.clientY, drag: false, w: drawer.offsetWidth, pts: [[e.clientX, e.timeStamp]]};
+  });
+  drawer.addEventListener('pointermove', e => {
+    if (!swipe || e.pointerId !== swipe.id) return;
+    const dx = e.clientX - swipe.x, dy = e.clientY - swipe.y;
+    if (!swipe.drag) {
+      if (Math.abs(dy) > SLOP && Math.abs(dy) > Math.abs(dx)) { swipe = null; return; }          // the page's scroll
+      if (dx > -SLOP || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+      swipe.drag = true; drawer.style.animation = 'none'; drawer.style.transition = 'none';
+    }
+    const x = Math.min(0, dx);
+    drawer.style.transform = `translateX(${x}px)`;
+    drawer.style.setProperty('--scrim', String(Math.max(0, 1 + x / swipe.w)));
+    swipe.pts.push([e.clientX, e.timeStamp]);
+    swipe.pts = swipe.pts.filter(p => e.timeStamp - p[1] <= 100);
+  });
+  const endSwipe = (e, cancelled) => {
+    if (!swipe || e.pointerId !== swipe.id) return;
+    const s = swipe; swipe = null;
+    if (!s.drag) return;
+    quiet = Date.now() + 400;                          // the lift is not a tap on whatever is under the finger
+    const dx = Math.min(0, e.clientX - s.x), last = s.pts[s.pts.length - 1], first = s.pts[0];
+    const v = !cancelled && e.timeStamp - last[1] <= 100 && s.pts.length > 1 && last[1] > first[1] ? (last[0] - first[0]) / (last[1] - first[1]) : 0;
+    if (!cancelled && (dx < -s.w / 3 || (v < -FLICK && dx < -30))) {
+      drawer.style.transition = 'transform 180ms cubic-bezier(.4,0,1,1)';
+      drawer.style.setProperty('--scrim', '0');
+      setMenu(false); settle();                        // closes from where the finger let go, on the usual closing curve
+    } else {
+      drawer.style.transition = 'transform 220ms cubic-bezier(.2,.8,.2,1)';
+      drawer.style.transform = 'translateX(0)'; drawer.style.removeProperty('--scrim');
+      setTimeout(settle, 240);
+    }
+  };
+  drawer.addEventListener('pointerup', e => endSwipe(e, false));
+  drawer.addEventListener('pointercancel', e => endSwipe(e, true));
+  drawer.addEventListener('click', e => { if (Date.now() < quiet) { e.stopImmediatePropagation(); e.preventDefault(); } }, true);
 } else {
   menuBtn.addEventListener('click', () => setMenu(menu.hidden));
   menu.addEventListener('click', e => { if (e.target.closest('a, button')) setMenu(false); });

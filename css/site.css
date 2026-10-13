@@ -243,7 +243,7 @@ dialog.dlg::backdrop{background:rgba(0,0,0,.55)}
 .menubtn.lead ~ .wordmark{margin-right:auto}
 dialog.drawer{position:fixed;inset:0 auto 0 0;width:min(320px,85vw);max-width:none;height:100%;max-height:none;margin:0;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);border:0;border-right:1px solid var(--hairline);background:var(--bg);color:var(--ink);box-shadow:4px 0 24px rgba(0,0,0,.2);overflow-y:auto;transform:translateX(-100%);transition:transform 180ms cubic-bezier(.4,0,1,1),overlay 180ms allow-discrete,display 180ms allow-discrete}
 dialog.drawer[open]{transform:none;animation:drawer-in 260ms cubic-bezier(.2,.8,.2,1)}
-dialog.drawer::backdrop{background:rgba(0,0,0,0);transition:background 180ms ease-in,overlay 180ms allow-discrete,display 180ms allow-discrete}
+dialog.drawer::backdrop{background:rgba(0,0,0,0);transition:background 180ms ease-in,opacity 180ms ease-out,overlay 180ms allow-discrete,display 180ms allow-discrete}
 dialog.drawer[open]::backdrop{background:rgba(0,0,0,.5);animation:scrim-in 260ms ease-out}
 .drawerin:focus{outline:none}
 .drawerin{display:flex;flex-direction:column;min-height:100%;padding:0 var(--s1)}
@@ -342,7 +342,8 @@ body[data-view=read] main{padding-bottom:72px}
 .hrow{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);min-height:56px;padding:8px 0;border-bottom:1px solid var(--hairline);text-decoration:none}
 .hrow .t{font:600 19px/26px var(--serif)}
 @media (hover:hover){.hrow:hover .t{color:var(--accent)}}
-dialog.drawer{overscroll-behavior:contain}
+dialog.drawer{overscroll-behavior:contain;touch-action:pan-y}
+dialog.drawer::backdrop{opacity:var(--scrim,1)}
 [data-product=app] body::before,[data-product=app] body::after{content:"";position:fixed;left:0;right:0;z-index:5;background:var(--bg);pointer-events:none}
 [data-product=app] body::before{top:0;height:env(safe-area-inset-top,0px)}
 [data-product=app] body::after{bottom:0;height:env(safe-area-inset-bottom,0px)}
