@@ -1,6 +1,7 @@
 {
   "name": "kc-source-index",
   "private": true,
+  "license": "UNLICENSED",
   "description": "Kingdom Code Source Index. The site is static; this file only sets up the tests.",
   "scripts": {
     "test": "playwright test",

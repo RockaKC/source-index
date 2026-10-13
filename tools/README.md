@@ -127,6 +127,10 @@ The profiles shown at `#/person/<slug>` and listed at `#/names` live in the data
 
 Text changes to database content (a profile's wording, a title) go through `tools/patch_db.py`: write the edit as plain SQL in `tools/patches/<date>-<name>.sql`, with a first comment line giving the reason, then run `python3 tools/patch_db.py tools/patches/<file>.sql kc_vN.db kc_vN+1.db`. It writes a new copy, never touches the input, runs everything in one transaction, stops if any statement changes nothing (so a patch cannot be applied twice or to the wrong database), checks integrity, and logs the patch in `import_log`. Old text of an edited node is kept in `node_revisions` by the database's own trigger. The patch files in this folder are the record of what changed and why.
 
+## License
+
+All rights reserved (`LICENSE`): the repository is public to read, not to reuse. The code, design and Kingdom Code's own writing belong to Kingdom Code; the Bible texts and dictionary entries keep their sources' terms, listed in `LICENSE` and on the Sources and credits page. When a new outside text or library is added, add its terms to both.
+
 ## What stays out of the repo
 
 The database file is never copied here (`.gitignore` blocks `*.db`). The exporter does not read the patron, pledge, income or identity tables. It stops if an email address or an unpublished item turns up in the output.
