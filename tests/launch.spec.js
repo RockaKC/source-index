@@ -18,7 +18,7 @@ test('the launch screen, the window and the page are the same two colours (nativ
   expect(xmlColor('android/app/src/main/res/values-night/colors.xml')).toBe(dark);
 });
 
-test('the launch screen is the icon\'s own green with the book on it, and the book\'s plate fades into that green', () => {
+test('the launch screen is the icon\'s own green with the book on it, and the book\'s plate fades into that green', async ({ page }) => {
   const res = 'android/app/src/main/res/';
   const bg = read(res + 'values/ic_launcher_background.xml');
   expect(bg).toContain('<color name="launch_background">@color/ic_launcher_background</color>');          // one green, from the icon
@@ -26,14 +26,15 @@ test('the launch screen is the icon\'s own green with the book on it, and the bo
   expect(launch).toContain('<item name="windowSplashScreenBackground">@color/launch_background</item>');
   expect(launch).toContain('<item name="windowSplashScreenAnimatedIcon">@drawable/splash_mark</item>');
   expect(read(res + 'drawable/splash.xml')).toContain('@color/launch_background');
-  // splash_mark.png: transparent where the tile's rim and corners were, opaque at the book
-  const probe = JSON.parse(require('child_process').execFileSync('python3', ['-I', '-c', `
-import json, sys
-from PIL import Image
-im = Image.open(sys.argv[1]).convert('RGBA'); w, h = im.size
-a = lambda fx, fy: im.getpixel((int(w * fx), int(h * fy)))[3]
-print(json.dumps({'size': [w, h], 'edges': [a(.5, .205), a(.205, .5), a(.795, .5), a(.5, .795), a(.22, .22), a(.78, .78)], 'book': a(.5, .5), 'corner': a(.07, .07)}))`,
-    path.join(ROOT, res, 'drawable/splash_mark.png')]).toString());
+  // splash_mark.png: transparent where the tile's rim and corners were, opaque at the book (decoded by the browser, so no extra tools)
+  const b64 = fs.readFileSync(path.join(ROOT, res, 'drawable/splash_mark.png')).toString('base64');
+  const probe = await page.evaluate(async b64 => {
+    const img = new Image(); img.src = 'data:image/png;base64,' + b64; await img.decode();
+    const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+    const x = c.getContext('2d'); x.drawImage(img, 0, 0);
+    const a = (fx, fy) => x.getImageData(Math.floor(img.width * fx), Math.floor(img.height * fy), 1, 1).data[3];
+    return { size: [img.width, img.height], edges: [a(.5, .205), a(.205, .5), a(.795, .5), a(.5, .795), a(.22, .22), a(.78, .78)], book: a(.5, .5), corner: a(.07, .07) };
+  }, b64);
   expect(probe.size).toEqual([576, 576]);
   for (const v of probe.edges) expect(v, "the plate's edge and corners are gone").toBeLessThanOrEqual(8);
   expect(probe.book, 'the book is whole').toBeGreaterThanOrEqual(250);
