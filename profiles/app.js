@@ -3,6 +3,7 @@
 // Every product loads one profile before js/core.js. See tools/README.md, "Product profiles".
 const PROFILE = {
   id: 'app',
+  name: 'KC Tewahedo Bible',
   home: 'reader',
   essaysInBible: false,
   seasonal: false,

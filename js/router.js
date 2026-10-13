@@ -8,7 +8,7 @@ function route() {
   const html = (ROUTES.get(p[0]) || viewMissing)(p);
   app.innerHTML = `<div class="fadein">${html}</div>`;
   if (!deferTrack) UNMAPPED = null;     // keep the flag across the loading placeholder
-  if (p[0] !== 'cta' && !deferTrack) trackView(routePath(p), (document.querySelector('#app h1') || {}).textContent || 'Kingdom Code Source Index');
+  if (p[0] !== 'cta' && !deferTrack) trackView(routePath(p), (document.querySelector('#app h1') || {}).textContent || PROFILE.name);
   while (pendingEvents.length) { const [n, k] = pendingEvents.shift(); track(n, k); }
   window.scrollTo(0, 0);
   PAGE_HOOKS.forEach(fn => fn(p));     // each feature wires up its own forms and buttons (see onPage)

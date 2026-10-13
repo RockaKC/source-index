@@ -93,7 +93,7 @@ test('every cited verse points at a book in the canon and a published essay', ()
 
 test('the app manifest and offline files exist', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'manifest.webmanifest'), 'utf8'));
-  expect(manifest.name).toBeTruthy();
+  expect(manifest.name, 'the site installs under its own name; KC Tewahedo Bible is the Android app').toBe('Kingdom Code Source Index');
   for (const icon of manifest.icons) expect(fs.existsSync(path.join(ROOT, icon.src)), icon.src).toBe(true);
   const precache = precacheList();
   for (const f of precache) if (f !== './') expect(fs.existsSync(path.join(ROOT, f)), `precached ${f}`).toBe(true);
