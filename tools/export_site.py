@@ -318,8 +318,10 @@ def build(con, cur, warn):
     D["words"] = cur["words"]
 
     # ---- inlined text for cited chapters (first paint), labels, carried verses, Psalm map ----
+    # The word pages show the text of the verses they name without waiting for a download, so those chapters travel too.
+    shown = cited_chapters | {(v[0], v[1]) for w in cur["words"] for v in w["verses"]}
     cited_by_book = collections.defaultdict(list)
-    for b, ch in cited_chapters:
+    for b, ch in shown:
         cited_by_book[b].append(ch)
     D["T"] = {str(b): {str(ch): bible[str(b)][str(ch)] for ch in sorted(chs) if str(ch) in bible.get(str(b), {})}
               for b, chs in sorted(cited_by_book.items())}
