@@ -124,6 +124,7 @@ def main(src):
         shown.putalpha(mask.resize((legacy, legacy), Image.LANCZOS))
         shown.save(out / "ic_launcher_round.png", optimize=True)
     splash_mark(tile).save(RES / "drawable" / "splash_mark.png", optimize=True)
+    square(tile, 384).save(ROOT / "img" / "app-icon.webp", quality=92)      # the download page's picture of the app
     hexgreen = "#%02X%02X%02X" % green
     bg = RES / "values" / "ic_launcher_background.xml"
     text = bg.read_text(encoding="utf-8")

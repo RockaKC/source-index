@@ -408,3 +408,6 @@ dialog.drawer.swiped::backdrop{animation:none}
 .upprog.wait i{width:40%;transform:none;animation:up-slide 1.1s ease-in-out infinite}
 @keyframes up-slide{from{transform:translateX(-100%)}to{transform:translateX(250%)}}
 @media (prefers-reduced-motion:reduce){.upprog i{transition:none}.upprog.wait i{animation:none;width:100%;opacity:.5}}
+
+/* The app's icon on its download page */
+.appicon{display:block;width:96px;height:96px;margin:var(--s3) 0 var(--s3);filter:drop-shadow(0 6px 14px rgba(0,0,0,.22))}
