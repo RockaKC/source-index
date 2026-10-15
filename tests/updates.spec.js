@@ -131,3 +131,97 @@ test('the menu offers Updates; the website has no such page and never asks GitHu
   await expect(page.locator('#app h1')).toHaveText('Not found');
   expect(asked).toEqual([]);
 });
+
+// ---- Update now, inside the Android app: the native Updater plugin is stood in for by a script ----
+const SHA = 'a'.repeat(64);
+const asset = (v, digest = 'sha256:' + SHA) => ({ assets: [{ name: `KC-Tewahedo-Bible-${v}.apk`, browser_download_url: `https://github.com/RockaKC/source-index/releases/download/app-v${v}/KC-Tewahedo-Bible-${v}.apk`, digest }] });
+async function withUpdater(page, script) {   // script runs in the page before it loads and fills window.__up (the calls) and the plugin
+  await page.addInitScript(`(() => {
+    const calls = window.__up = {download: [], install: 0, listeners: [], removed: 0};
+    const state = window.__upState = {installAnswers: ['started'], downloadFails: 0, steps: [[10, 100], [100, 100]]};
+    window.Capacitor = window.Capacitor || {}; Capacitor.Plugins = Capacitor.Plugins || {};
+    Capacitor.Plugins.Updater = {
+      async addListener(name, cb) { calls.listeners.push(cb); return {remove() { calls.removed++; }}; },
+      async download(o) { calls.download.push(o); if (state.downloadFails > 0) { state.downloadFails--; throw new Error('The download did not finish. Check your connection and try again.'); }
+        for (const [r, t] of state.steps) calls.listeners.forEach(cb => cb({received: r, total: t})); await new Promise(res => setTimeout(res, 50)); return {bytes: 100}; },
+      async install() { calls.install++; return {state: state.installAnswers.shift() || 'started'}; } };
+    ${script || ''}
+  })();`);
+}
+
+test('inside the app, a newer release offers Update now, and the update runs in the page with a filling bar', async ({ page }) => {
+  await withUpdater(page);
+  await page.route(API, r => r.fulfill(release('app-v1.2.0', asset('1.2.0'))));
+  await open(page, '#/updates');
+  const box = await check(page);
+  await expect(box.locator('#up-now')).toHaveText('Update now');
+  await expect(box.locator('a.btn')).toHaveCount(0);               // no browser link in the way
+  await page.evaluate(() => { __upState.steps = [[40, 100], [100, 100]]; });
+  await box.locator('#up-now').click();
+  await expect(box.locator('.upprog')).toBeVisible();
+  await expect(box).toContainText('Ready.');
+  await expect(box.locator('.upprog')).toHaveCount(0);
+  const calls = await page.evaluate(() => ({download: __up.download, install: __up.install, removed: __up.removed}));
+  expect(calls.download).toEqual([{ url: 'https://github.com/RockaKC/source-index/releases/download/app-v1.2.0/KC-Tewahedo-Bible-1.2.0.apk', sha256: SHA }]);
+  expect(calls.install).toBe(1);
+  expect(calls.removed).toBe(1);                                    // the progress listener is let go
+});
+
+test('the bar follows the progress the phone reports', async ({ page }) => {
+  await withUpdater(page);
+  await page.route(API, r => r.fulfill(release('app-v1.2.0', asset('1.2.0'))));
+  await open(page, '#/updates');
+  await check(page);
+  await page.evaluate(() => { __upState.steps = [[50, 100]]; const d = Capacitor.Plugins.Updater.download; Capacitor.Plugins.Updater.download = async o => { await d(o); await new Promise(r => setTimeout(r, 3000)); return {bytes: 1}; }; });
+  await page.click('#up-now');
+  await expect(page.locator('#up-status')).toHaveText('Downloading… 50%');
+  await expect(page.locator('.upprog')).toHaveAttribute('aria-valuenow', '50');
+  expect(await page.$eval('.upprog', e => e.style.getPropertyValue('--p'))).toBe('0.5');
+});
+
+test('Android has to be told once to allow the install: the page explains, and Continue asks again', async ({ page }) => {
+  await withUpdater(page);
+  await page.route(API, r => r.fulfill(release('app-v1.2.0', asset('1.2.0'))));
+  await open(page, '#/updates');
+  await check(page);
+  await page.evaluate(() => { __upState.installAnswers = ['permission', 'started']; });
+  await page.click('#up-now');
+  await expect(page.locator('#up-result')).toContainText('One step first.');
+  await expect(page.locator('#up-now')).toBeEnabled();
+  await page.click('#up-retry');
+  await expect(page.locator('#up-result')).toContainText('Ready.');
+  const c = await page.evaluate(() => ({download: __up.download.length, install: __up.install}));
+  expect(c).toEqual({ download: 1, install: 2 });                   // the file was not fetched twice
+});
+
+test('a failed download says so and Try again starts over; the browser download stays as a last resort', async ({ page }) => {
+  await withUpdater(page);
+  await page.route(API, r => r.fulfill(release('app-v1.2.0', asset('1.2.0'))));
+  await open(page, '#/updates');
+  await check(page);
+  await page.evaluate(() => { __upState.downloadFails = 1; });
+  await page.click('#up-now');
+  await expect(page.locator('#up-result')).toContainText('The download did not finish.');
+  const link = page.locator('#up-result a[target="_blank"]');
+  expect(await link.getAttribute('href')).toBe(await page.evaluate(() => APP_DOWNLOAD));
+  await page.click('#up-retry');
+  await expect(page.locator('#up-result')).toContainText('Ready.');
+  expect(await page.evaluate(() => __up.download.length)).toBe(2);
+});
+
+test('a release without a listed checksum falls back to the browser download, never an unchecked file', async ({ page }) => {
+  await withUpdater(page);
+  await page.route(API, r => r.fulfill(release('app-v1.2.0', asset('1.2.0', ''))));
+  await open(page, '#/updates');
+  const box = await check(page);
+  await expect(box.locator('#up-now')).toHaveCount(0);
+  await expect(box.locator('a.btn')).toHaveText('Download 1.2.0');
+});
+
+test('without the app (a browser or a preview), the download link is all there is', async ({ page }) => {
+  await page.route(API, r => r.fulfill(release('app-v1.2.0', asset('1.2.0'))));
+  await open(page, '#/updates');
+  const box = await check(page);
+  await expect(box.locator('#up-now')).toHaveCount(0);
+  await expect(box.locator('a.btn')).toHaveText('Download 1.2.0');
+});

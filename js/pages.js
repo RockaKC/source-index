@@ -113,9 +113,9 @@ function viewApp() {
     </ol>
     <h2>Why Android warns you</h2>
     <p>Android shows that warning for every app that does not come through the Google Play Store. It says nothing about this app. Kingdom Code publishes the app itself, outside Google's store and its approval process, so no gatekeeper stands between this work and its readers. The warning is the cost of that independence.</p>
-    <p>The app is safe and free, and it collects nothing: no account, no ads, no analytics, no tracking. It asks Android for one permission, internet access, and uses it only when you open a link out of the app, such as Patreon or Ko-fi, or when you tap Check for updates. The whole Bible is stored inside the app, so it reads without a connection.</p>
+    <p>The app is safe and free, and it collects nothing: no account, no ads, no analytics, no tracking. It asks Android for two permissions. Internet access is used only when you open a link out of the app, such as Patreon or Ko-fi, or when you tap Check for updates or Update now. Permission to install apps is used only to put a newer version of this same app over the old one, when you tap Update now; Android asks you once, and shows its own install screen each time. The whole Bible is stored inside the app, so it reads without a connection.</p>
     <h2>Updates</h2>
-    <p>When a new version is out, download it again from this page and install it over the old one. Your place and your settings stay. Once the app is installed, you can also check from inside it: open the menu, tap Updates, then Check for updates.</p>
+    <p>When a new version is out, download it again from this page and install it over the old one. Your place and your settings stay. Once the app is installed, it can update itself: open the menu, tap Updates, then Check for updates, and tap Update now when a newer version is found. The new version downloads inside the app, and Android asks you to confirm the install.</p>
     <h2>iPhone</h2>
     <p>There is no iPhone app yet. On iPhone, open this site in Safari, tap Share, then Add to Home Screen. It opens like an app and keeps the chapters you read for offline use.</p>
   </div>`;
