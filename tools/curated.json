@@ -737,7 +737,26 @@
    "excerpt": [
     "The vocabulary swap was subtle and devastating. The Hebrew nephesh became the Greek psyche. On paper it looks like straightforward translation. In practice it was category replacement. Nephesh in Hebrew is the whole living creature, breath and blood and ground held together. Psyche in Platonic philosophy is the immortal rational soul temporarily housed in corruptible matter. When the Septuagint translated nephesh as psyche, it baptized the Platonic frame into the Hebrew text."
    ],
-   "verses": [],
+   "verses": [
+    [
+     1,
+     2,
+     7,
+     7
+    ],
+    [
+     3,
+     17,
+     11,
+     11
+    ],
+    [
+     37,
+     18,
+     4,
+     4
+    ]
+   ],
    "labels": [],
    "en": "Soul: the living creature, or the immortal soul",
    "kw": [
@@ -774,7 +793,38 @@
    "excerpt": [
     "The translation itself was not neutral work. It never is. Every translator makes choices, and Tyndale’s choices were arguments. He rendered the Greek ekklesia as “congregation” rather than “church.” He rendered presbyteros as “elder” rather than “priest.” He rendered metanoia as “repentance” rather than “penance.” Each of these choices collapsed a piece of the institutional scaffolding. Penance required a priest. A priest required a hierarchy. A hierarchy required Rome."
    ],
-   "verses": [],
+   "verses": [
+    [
+     57,
+     20,
+     17,
+     17
+    ],
+    [
+     57,
+     20,
+     21,
+     21
+    ],
+    [
+     57,
+     20,
+     28,
+     28
+    ],
+    [
+     69,
+     1,
+     5,
+     5
+    ],
+    [
+     55,
+     3,
+     3,
+     3
+    ]
+   ],
    "labels": [],
    "en": "Congregation, elder, repentance",
    "kw": [
