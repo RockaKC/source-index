@@ -26,6 +26,7 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        registerPlugin(UpdaterPlugin.class);                            // before super.onCreate, which starts the bridge
         SplashScreen splash = SplashScreen.installSplashScreen(this);   // before super.onCreate; also swaps in the app's own theme
         splash.setKeepOnScreenCondition(() -> !pageReady);
         splash.setOnExitAnimationListener(provider ->

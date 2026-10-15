@@ -401,3 +401,10 @@ dialog.drawer.swiped::backdrop{animation:none}
   .grid{grid-template-columns:repeat(3,1fr);gap:var(--s2)}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* The app's in-place update: a bar that fills as the new version downloads (js/updates.js) */
+.upprog{height:8px;margin:var(--s3) 0 var(--s2);border-radius:99px;background:var(--tint);overflow:hidden}
+.upprog i{display:block;height:100%;border-radius:99px;background:var(--accent);transform-origin:left center;transform:scaleX(var(--p,0));transition:transform .25s ease-out}
+.upprog.wait i{width:40%;transform:none;animation:up-slide 1.1s ease-in-out infinite}
+@keyframes up-slide{from{transform:translateX(-100%)}to{transform:translateX(250%)}}
+@media (prefers-reduced-motion:reduce){.upprog i{transition:none}.upprog.wait i{animation:none;width:100%;opacity:.5}}
