@@ -103,3 +103,24 @@ test('Pharmakeia names Revelation 18:23 and shows its words', async ({ page }) =
   await expect(page.locator('a.chip[href="#/verse/79/18/23"]')).toBeVisible();
   await expect(page.locator('figure.verse').first()).toContainText('in your sorcery all the nations were deceived');
 });
+
+test('the download page shows the app icon, and the icon loads', async ({ page }) => {
+  await page.goto('/#/app'); await settle(page);
+  const img = page.locator('img.appicon');
+  await expect(img).toBeVisible();
+  expect(await img.evaluate(i => i.complete && i.naturalWidth)).toBeGreaterThan(100);
+});
+
+test('the Download button saves the app from this site once the site holds the file, and keeps the GitHub address until then', async ({ page }) => {
+  const GH = 'https://github.com/RockaKC/source-index/releases/latest/download/KC-Tewahedo-Bible.apk';
+  await page.goto('/#/app'); await settle(page);
+  await page.waitForTimeout(300);
+  await expect(page.locator('[data-app-download]')).toHaveAttribute('href', GH);          // no copy on this site: GitHub
+
+  await page.route('**/download/KC-Tewahedo-Bible.apk', r => r.fulfill({ status: 200, contentType: 'application/vnd.android.package-archive', body: 'x' }));
+  await page.goto('/'); await page.goto('/#/app'); await settle(page);
+  const a = page.locator('[data-app-download]');
+  await expect(a).toHaveAttribute('href', 'download/KC-Tewahedo-Bible.apk');
+  await expect(a).toHaveAttribute('download', 'KC-Tewahedo-Bible.apk');
+  await expect(a).not.toHaveAttribute('target', /.+/);
+});

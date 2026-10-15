@@ -96,10 +96,22 @@ function viewAbout() {
 // The release workflow (.github/workflows/android.yml) publishes every version under this fixed name, so the link
 // always gives the newest.
 const APP_DOWNLOAD = 'https://github.com/RockaKC/source-index/releases/latest/download/KC-Tewahedo-Bible.apk';
+// The same file is also kept on this site (download/KC-Tewahedo-Bible.apk, put there by .github/workflows/pages.yml after each release),
+// so the button can save it from here without sending the reader to GitHub. Until that copy exists the button keeps the GitHub address.
+const SITE_DOWNLOAD = 'download/KC-Tewahedo-Bible.apk';
+onPage(async p => {
+  if (p[0] !== 'app' || PROFILE.id !== 'site') return;
+  try {
+    const r = await fetch(SITE_DOWNLOAD, {method: 'HEAD', cache: 'no-store'});
+    const a = document.querySelector('[data-app-download]');
+    if (r.ok && a && a.isConnected) { a.setAttribute('href', SITE_DOWNLOAD); a.setAttribute('download', 'KC-Tewahedo-Bible.apk'); a.removeAttribute('target'); }
+  } catch (e) { /* offline or no copy: the GitHub address stays */ }
+});
 function viewApp() {
   const withText = D.entries.filter(e => e.books.some(b => D.CC[b])).length;
   return `
   ${backLink('#/about')}
+  <img class="appicon" src="img/app-icon.webp" width="96" height="96" alt="KC Tewahedo Bible app icon">
   <h1>KC Tewahedo Bible for Android</h1>
   <p class="lede">All 81 books of the Ethiopian canon on your phone, ${withText} with their text so far, every one readable without a connection. Free, with no account and no ads.</p>
   <p class="act" style="margin-top:24px"><a class="btn primary" href="${APP_DOWNLOAD}" data-app-download>Download for Android</a></p>

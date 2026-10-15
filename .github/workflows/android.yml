@@ -135,6 +135,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write          # to create the GitHub Release
+      actions: write           # to start the website's publish (pages.yml), which puts the new file at download/
     steps:
       - uses: actions/download-artifact@v7
         with:
@@ -159,3 +160,9 @@ jobs:
           cp "out/$name" out/KC-Tewahedo-Bible.apk   # the fixed name the site's download page links to (releases/latest/download/)
           gh release create "app-v$VERSION" "out/$name" "out/$name.sha256" out/KC-Tewahedo-Bible.apk \
             --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "KC Tewahedo Bible $VERSION" --notes-file notes.md
+
+      - name: Publish the website with the new file
+        continue-on-error: true      # the release is already out; a failure here must not turn it red
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref main
