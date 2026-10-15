@@ -86,3 +86,20 @@ test('the translation tier list shows its picture, which loads, before the writt
   const order = await page.evaluate(() => { const f = document.querySelector('#app .tierfig'), t = document.querySelector('#app .tier'); return f.compareDocumentPosition(t) & Node.DOCUMENT_POSITION_FOLLOWING; });
   expect(order).toBeTruthy();
 });
+
+test('a word page shows the verse text for the verses it names, each linked to its own page', async ({ page }) => {
+  for (const w of D.words) {
+    if (!w.verses.length) continue;
+    await page.goto(`/#/word/${w.slug}`); await settle(page);
+    const hrefs = await page.$$eval('.chips a.chip', as => as.map(a => a.getAttribute('href')));
+    const have = w.verses.filter(([b, ch]) => D.CC[b] && D.CC[b].includes(ch));
+    expect(hrefs.length, w.slug).toBeGreaterThanOrEqual(have.length);
+    expect(await page.locator('figure.verse').count(), w.slug).toBe(Math.min(3, w.verses.length));
+  }
+});
+
+test('Pharmakeia names Revelation 18:23 and shows its words', async ({ page }) => {
+  await page.goto('/#/word/sorcery'); await settle(page);
+  await expect(page.locator('a.chip[href="#/verse/79/18/23"]')).toBeVisible();
+  await expect(page.locator('figure.verse').first()).toContainText('in your sorcery all the nations were deceived');
+});
