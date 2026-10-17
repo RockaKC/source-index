@@ -422,3 +422,13 @@ dialog.drawer.swiped::backdrop{animation:none}
 .gsub{margin:0 0 var(--s2);font-style:italic;color:var(--muted)}
 .gabout{margin:0 0 var(--s2)}
 .gbody .act{display:flex;flex-wrap:wrap;gap:var(--s2);margin:var(--s2) 0 0}
+
+/* A guide's own page: the wide cover, then what is inside */
+.gwide{margin:var(--s3) 0 var(--s3);border-radius:14px}
+.gcoverimg{display:block;width:100%;height:auto;aspect-ratio:1200/675;background:#111}
+.gbody h3 a{color:inherit;text-decoration:none}
+.gtoc{list-style:none;margin:var(--s3) 0 0;padding:0;border-top:1px solid var(--hairline)}
+.gtoc li{display:grid;grid-template-columns:40px 1fr;gap:var(--s2);padding:var(--s2) 0;border-bottom:1px solid var(--hairline)}
+.gtoc .gpg{font:600 14px/22px var(--sans);color:var(--accent);text-align:right}
+.gtoc b{display:block}
+.gtoc span:not(.gpg){display:block;color:var(--muted)}
