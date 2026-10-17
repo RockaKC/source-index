@@ -8,7 +8,7 @@ const firstCited = b => {
 };
 
 const groups = {
-  'main pages': ['#/', '#/books', '#/words', '#/names', '#/translations', '#/english', '#/about', '#/app', '#/credits',
+  'main pages': ['#/', '#/books', '#/guide', '#/words', '#/names', '#/translations', '#/english', '#/about', '#/app', '#/credits',
     '#/search/nephilim'],
   'every book page': D.entries.map(e => `#/book/${e.id}`),
   'the first chapter of every book with text': D.order.map(b => `#/read/${b}/${D.CC[b][0]}`),
@@ -123,4 +123,38 @@ test('the Download button saves the app from this site once the site holds the f
   await expect(a).toHaveAttribute('href', 'download/KC-Tewahedo-Bible.apk');
   await expect(a).toHaveAttribute('download', 'KC-Tewahedo-Bible.apk');
   await expect(a).not.toHaveAttribute('target', /.+/);
+});
+
+test('the site: Guides is in the header where Words was, and Names and Translations left the menu for the Guides page', async ({ page }) => {
+  await page.goto('/'); await settle(page);
+  const nav = await page.locator('header .tools a.nav').evaluateAll(a => a.map(x => [x.textContent.trim(), x.getAttribute('href')]));
+  expect(nav).toEqual([['Bible', '#/books'], ['Guides', '#/guide']]);
+  for (const r of ['#/names', '#/translations', '#/words']) await expect(page.locator(`#menu a[href="${r}"]`)).toHaveCount(0);
+  await page.locator('header a.nav[href="#/guide"]').click(); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Guides');
+  for (const r of ['#/names', '#/words', '#/translations', '#/english']) await expect(page.locator(`#app a[href="${r}"]`)).toHaveCount(1);
+});
+
+test('the Guides page lists Kingdom Code\'s PDF guides with a direct download that is a real PDF', async ({ page, request }) => {
+  await page.goto('/#/guide'); await settle(page);
+  const card = page.locator('.gcard').first();
+  await expect(card.locator('h3')).toHaveText('The Ungovernable Mind');
+  await expect(card).toContainText('PDF \u00b7 48 pages');
+  const dl = card.locator('a[data-guide]');
+  await expect(dl).toHaveText('Download PDF');
+  expect(await dl.getAttribute('href')).toBe('guides/the-ungovernable-mind.pdf');
+  expect(await dl.getAttribute('download')).toBe('the-ungovernable-mind.pdf');
+  const img = card.locator('.gcover img');
+  expect(await img.evaluate(i => i.complete && i.naturalWidth)).toBeGreaterThan(100);
+  const res = await request.get('/guides/the-ungovernable-mind.pdf');
+  expect(res.ok()).toBe(true);
+  expect((await res.body()).subarray(0, 5).toString()).toBe('%PDF-');
+  expect(Math.abs((await res.body()).length - (await page.evaluate(() => D.KG[0].bytes)))).toBe(0);   // the size shown is the file's own
+});
+
+test('the app keeps its own Guide page, without the PDF guides', async ({ page }) => {
+  await page.goto('/app.html'); await settle(page);
+  await page.evaluate(() => { location.hash = '#/guide'; }); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Guide');
+  await expect(page.locator('.gcard')).toHaveCount(0);
 });

@@ -411,3 +411,14 @@ dialog.drawer.swiped::backdrop{animation:none}
 
 /* The app's icon on its download page */
 .appicon{display:block;width:96px;height:96px;margin:var(--s3) 0 var(--s3);filter:drop-shadow(0 6px 14px rgba(0,0,0,.22))}
+
+/* Kingdom Code's downloadable guides, on the website's Guides page */
+.gcards{list-style:none;margin:var(--s3) 0 0;padding:0;display:grid;gap:var(--s3)}
+.gcard{display:grid;grid-template-columns:96px 1fr;gap:var(--s3);padding:var(--s3);border:1px solid var(--hairline);border-radius:14px;background:var(--surface)}
+.gcover{display:block;align-self:start}
+.gcover img{display:block;width:96px;height:auto;border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.22)}
+.gbody h3{margin:0 0 2px;font-size:20px;line-height:26px}
+.gsub{margin:0 0 var(--s2);font-style:italic;color:var(--muted)}
+.gabout{margin:0 0 var(--s2)}
+.gbody .act{display:flex;flex-wrap:wrap;gap:var(--s2);margin:var(--s2) 0 0}
+@media (max-width:420px){.gcard{grid-template-columns:1fr}.gcover img{width:120px}}

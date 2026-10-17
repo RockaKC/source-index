@@ -55,7 +55,35 @@ function guideList() {              // the Guide's sections, for the Guide page 
   if (D.EN) items.push(`<li><a class="wl" href="#/english"><b>The Ethiopian books in English</b><span class="en">Which of the 81 books you can read in English, and where.</span></a></li>`);
   return `<div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">${items.join('')}</ul></div>`;
 }
+const fileSize = n => n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB';
+function kcGuideCards() {           // Kingdom Code's own guides, each a PDF kept on this site (guides/), free to download
+  return `<ul class="gcards">${D.KG.map(g => {
+    const day = new Date(g.date + 'T12:00:00Z'), when = isNaN(day) ? '' : ` \u00b7 ${day.toLocaleDateString('en-GB', {month: 'long', year: 'numeric', timeZone: 'UTC'})}`;
+    return `<li class="gcard">
+      <a class="gcover" href="${esc(g.file)}" target="_blank" rel="noopener" aria-label="Read ${esc(g.title)} online as a PDF"><img src="${esc(g.cover)}" width="96" height="137" alt="" loading="lazy"></a>
+      <div class="gbody">
+        <h3>${esc(g.title)}</h3>
+        <p class="gsub">${esc(g.sub)}</p>
+        <p class="gabout">${esc(g.about)}</p>
+        <p class="cap">PDF \u00b7 ${g.pages} pages \u00b7 ${fileSize(g.bytes)}${esc(when)}</p>
+        <p class="act"><a class="btn primary" href="${esc(g.file)}" download="${esc(g.slug)}.pdf" data-guide="${esc(g.slug)}">Download PDF</a>
+          <a class="btn secondary" href="${esc(g.file)}" target="_blank" rel="noopener" data-guide-read="${esc(g.slug)}">Read online</a></p>
+      </div></li>`;
+  }).join('')}</ul>`;
+}
+document.addEventListener('click', e => {
+  const d = e.target.closest('[data-guide]'), r = e.target.closest('[data-guide-read]');
+  if (d) track('guide/download', d.dataset.guide); else if (r) track('guide/read', r.dataset.guideRead);
+});
 function viewGuide() {
+  if (PROFILE.kcGuides && D.KG && D.KG.length) return `
+  ${backLink('#/')}
+  <h1>Guides</h1>
+  <p class="lede">Guides from Kingdom Code, free to read and keep, and help for reading the Bible: names, words, and which translations to trust.</p>
+  <h2>Kingdom Code guides</h2>
+  ${kcGuideCards()}
+  <h2>Reading help</h2>
+  ${guideList()}`;
   return `
   ${backLink('#/')}
   <h1>Guide</h1>
