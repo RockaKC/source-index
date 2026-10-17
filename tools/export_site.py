@@ -315,6 +315,19 @@ def build(con, cur, warn):
         if str(tl["essay"]) not in D["pieces"]:
             sys.exit("the tier list points at essay %s, which is not a published essay on the page" % tl["essay"])
         D["TL"] = {k: v for k, v in tl.items() if not k.startswith("_")}
+    kg = cur.get("kc_guides")
+    if kg:
+        guides = []
+        for g in kg:
+            f = ROOT / g["file"]
+            if not f.is_file() or f.read_bytes()[:5] != b"%PDF-":
+                sys.exit("guide %s: %s is not a PDF file in the repository" % (g["slug"], g["file"]))
+            if not (ROOT / g["cover"]).is_file():
+                sys.exit("guide %s: cover image %s is missing" % (g["slug"], g["cover"]))
+            guides.append({**g, "bytes": f.stat().st_size})
+        if len({g["slug"] for g in guides}) != len(guides):
+            sys.exit("kc_guides: a slug is used twice")
+        D["KG"] = guides
     D["words"] = cur["words"]
 
     # ---- inlined text for cited chapters (first paint), labels, carried verses, Psalm map ----

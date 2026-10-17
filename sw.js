@@ -12,7 +12,7 @@ const BOOKS = 'kc-books-v2';
 const PRECACHE = ['./', 'profiles/site.js', 'data/site.js', 'css/site.css',
   'js/core.js', 'js/text.js', 'js/words.js', 'js/essays.js', 'js/search.js', 'js/reader.js', 'js/readerbar.js', 'js/marks.js', 'js/backup.js', 'js/guide.js',
   'js/pages.js', 'js/updates.js', 'js/analytics.js', 'js/chrome.js', 'js/offline.js', 'js/router.js',
-  'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'img/translations-tier-list.webp', 'img/app-icon.webp'];
+  'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'img/translations-tier-list.webp', 'img/app-icon.webp', 'img/guides/the-ungovernable-mind.webp'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(SHELL).then(c => c.addAll(PRECACHE)).then(() => self.skipWaiting()));
