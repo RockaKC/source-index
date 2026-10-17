@@ -60,7 +60,7 @@ function kcGuideCards() {           // Kingdom Code's own guides, each a PDF kep
   return `<ul class="gcards">${D.KG.map(g => {
     const day = new Date(g.date + 'T12:00:00Z'), when = isNaN(day) ? '' : ` \u00b7 ${day.toLocaleDateString('en-GB', {month: 'long', year: 'numeric', timeZone: 'UTC'})}`;
     return `<li class="gcard">
-      <a class="gcover" href="${esc(g.file)}" target="_blank" rel="noopener" aria-label="Read ${esc(g.title)} online as a PDF"><img src="${esc(g.cover)}" width="96" height="137" alt="" loading="lazy"></a>
+      <a class="gcover" href="${esc(g.file)}" target="_blank" rel="noopener" aria-label="Read ${esc(g.title)} online as a PDF"><img src="${esc(g.cover)}" width="1200" height="675" alt="" loading="lazy"></a>
       <div class="gbody">
         <h3>${esc(g.title)}</h3>
         <p class="gsub">${esc(g.sub)}</p>

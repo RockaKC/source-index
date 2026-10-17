@@ -140,6 +140,8 @@ test('the Guides page lists Kingdom Code\'s PDF guides with a direct download th
   const card = page.locator('.gcard').first();
   await expect(card.locator('h3')).toHaveText('The Ungovernable Mind');
   await expect(card).toContainText('PDF \u00b7 48 pages');
+  await expect(card).toContainText('and exercise independent judgment, with a Discernment Field Sheet.');
+  await expect(card).not.toContainText('six-step');
   const dl = card.locator('a[data-guide]');
   await expect(dl).toHaveText('Download PDF');
   expect(await dl.getAttribute('href')).toBe('guides/the-ungovernable-mind.pdf');
