@@ -449,6 +449,18 @@
    "file": "guides/the-ungovernable-mind.pdf",
    "cover": "img/guides/the-ungovernable-mind.webp",
    "pages": 48,
+   "contents": [
+    {"title": "The Ungovernable Mind", "page": 3, "about": "Why Christ commanded His followers to be wise, discerning, and prepared to navigate the world."},
+    {"title": "Govern Yourself First", "page": 4, "about": "The discipline of self-examination, intellectual humility, and recognizing the weaknesses that compromise your judgment."},
+    {"title": "Understand How Power Operates", "page": 8, "about": "How authority is established, maintained, and exercised through institutions, alliances, education, and political influence."},
+    {"title": "Recognize Manipulation", "page": 14, "about": "How propaganda, language, emotional pressure, and entertainment shape what people believe."},
+    {"title": "Resist the Crowd", "page": 21, "about": "Why people surrender their judgment to movements, leaders, and collective identities, and how to remain faithful when conformity is demanded."},
+    {"title": "Exercise Independent Judgment", "page": 28, "about": "How to distinguish knowledge from wisdom, examine evidence, and exercise sound judgment in an age of expanding technological power."},
+    {"title": "The Discernment Field Sheet", "page": 37, "about": "A practical worksheet for examining claims, recognizing manipulation, identifying personal biases, and reaching informed conclusions."},
+    {"title": "The Ungovernable Christian", "page": 41, "about": "The responsibility to pursue wisdom, act upon the truth, and remain governed by Christ rather than falsehood."},
+    {"title": "Source Index & Further Reading", "page": 45, "about": "Scripture references, primary historical works, and recommended books underlying the guide."},
+    {"title": "About Kingdom Code", "page": 48, "about": "Our mission, the Source Index, and how to support independent Christian research."}
+   ],
    "date": "2026-10-17"
   }
  ],

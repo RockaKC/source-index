@@ -324,6 +324,9 @@ def build(con, cur, warn):
                 sys.exit("guide %s: %s is not a PDF file in the repository" % (g["slug"], g["file"]))
             if not (ROOT / g["cover"]).is_file():
                 sys.exit("guide %s: cover image %s is missing" % (g["slug"], g["cover"]))
+            for c in g.get("contents", []):
+                if not (1 <= c["page"] <= g["pages"]) or not c["title"] or not c["about"]:
+                    sys.exit("guide %s: contents entry %r needs a title, a line, and a page from 1 to %d" % (g["slug"], c.get("title"), g["pages"]))
             guides.append({**g, "bytes": f.stat().st_size})
         if len({g["slug"] for g in guides}) != len(guides):
             sys.exit("kc_guides: a slug is used twice")

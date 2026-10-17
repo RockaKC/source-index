@@ -8,7 +8,7 @@ const firstCited = b => {
 };
 
 const groups = {
-  'main pages': ['#/', '#/books', '#/guide', '#/words', '#/names', '#/translations', '#/english', '#/about', '#/app', '#/credits',
+  'main pages': ['#/', '#/books', '#/guide', '#/guides', '#/guides/the-ungovernable-mind', '#/words', '#/names', '#/translations', '#/english', '#/about', '#/app', '#/credits',
     '#/search/nephilim'],
   'every book page': D.entries.map(e => `#/book/${e.id}`),
   'the first chapter of every book with text': D.order.map(b => `#/read/${b}/${D.CC[b][0]}`),
@@ -132,26 +132,60 @@ test('the site: Guides is in the header where Words was, and Names and Translati
   for (const r of ['#/names', '#/translations', '#/words']) await expect(page.locator(`#menu a[href="${r}"]`)).toHaveCount(0);
   await page.locator('header a.nav[href="#/guide"]').click(); await settle(page);
   await expect(page.locator('#app h1')).toHaveText('Guides');
-  for (const r of ['#/names', '#/words', '#/translations', '#/english']) await expect(page.locator(`#app a[href="${r}"]`)).toHaveCount(1);
+  for (const r of ['#/guides', '#/names', '#/words', '#/translations', '#/english']) await expect(page.locator(`#app a[href="${r}"]`)).toHaveCount(1);
 });
 
-test('the Guides page lists Kingdom Code\'s PDF guides with a direct download that is a real PDF', async ({ page, request }) => {
+test('the Guides page is a short menu: Kingdom Code Guides first, then the reading help', async ({ page }) => {
   await page.goto('/#/guide'); await settle(page);
+  const hrefs = await page.locator('#app .wl').evaluateAll(a => a.map(x => x.getAttribute('href')));
+  expect(hrefs).toEqual(['#/guides', '#/names', '#/words', '#/translations', '#/english']);
+  await expect(page.locator('#app .gcard')).toHaveCount(0);          // the guides themselves are one page deeper
+  await expect(page.locator('#app .wl').first()).toContainText('1 guide');
+});
+
+test('Kingdom Code Guides lists each guide, its cover and title open the guide, and Download saves a real PDF', async ({ page, request }) => {
+  await page.goto('/#/guides'); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Kingdom Code Guides');
   const card = page.locator('.gcard').first();
   await expect(card.locator('h3')).toHaveText('The Ungovernable Mind');
   await expect(card).toContainText('PDF \u00b7 48 pages');
   await expect(card).toContainText('and exercise independent judgment, with a Discernment Field Sheet.');
   await expect(card).not.toContainText('six-step');
+  expect(await card.locator('.gcover').getAttribute('href')).toBe('#/guides/the-ungovernable-mind');
+  expect(await card.locator('h3 a').getAttribute('href')).toBe('#/guides/the-ungovernable-mind');
   const dl = card.locator('a[data-guide]');
   await expect(dl).toHaveText('Download PDF');
   expect(await dl.getAttribute('href')).toBe('guides/the-ungovernable-mind.pdf');
   expect(await dl.getAttribute('download')).toBe('the-ungovernable-mind.pdf');
-  const img = card.locator('.gcover img');
-  expect(await img.evaluate(i => i.complete && i.naturalWidth)).toBeGreaterThan(100);
+  expect(await card.locator('.gcover img').evaluate(i => i.complete && i.naturalWidth)).toBeGreaterThan(100);
   const res = await request.get('/guides/the-ungovernable-mind.pdf');
   expect(res.ok()).toBe(true);
-  expect((await res.body()).subarray(0, 5).toString()).toBe('%PDF-');
-  expect(Math.abs((await res.body()).length - (await page.evaluate(() => D.KG[0].bytes)))).toBe(0);   // the size shown is the file's own
+  const body = await res.body();
+  expect(body.subarray(0, 5).toString()).toBe('%PDF-');
+  expect(body.length).toBe(await page.evaluate(() => D.KG[0].bytes));   // the size shown is the file's own
+  await card.locator('h3 a').click(); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('The Ungovernable Mind');
+});
+
+test('each guide has its own page: the cover, the description, the buttons, and what is inside with page numbers', async ({ page }) => {
+  await page.goto('/#/guides/the-ungovernable-mind'); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('The Ungovernable Mind');
+  await expect(page.locator('.gsub')).toContainText('Discernment, Power, and Independent Judgment');
+  expect(await page.locator('img.gcoverimg').evaluate(i => i.complete && i.naturalWidth)).toBeGreaterThan(100);
+  expect(await page.locator('img.gcoverimg').getAttribute('alt')).toContain('The Ungovernable Mind');
+  await expect(page.locator('a[data-guide]')).toHaveAttribute('href', 'guides/the-ungovernable-mind.pdf');
+  await expect(page.locator('a[data-guide-read]')).toHaveAttribute('target', '_blank');
+  const toc = await page.locator('.gtoc li').evaluateAll(l => l.map(x => [x.querySelector('.gpg').textContent, x.querySelector('b').textContent]));
+  expect(toc).toHaveLength(10);
+  expect(toc[0]).toEqual(['3', 'The Ungovernable Mind']);
+  expect(toc.at(-1)).toEqual(['48', 'About Kingdom Code']);
+  await expect(page.locator('#app')).not.toContainText('six-step');
+  expect(await page.locator('.back').getAttribute('href')).toBe('#/guides');
+});
+
+test('an unknown guide shows the not-found page', async ({ page }) => {
+  await page.goto('/#/guides/no-such-guide'); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Not found');
 });
 
 test('the app keeps its own Guide page, without the PDF guides', async ({ page }) => {
