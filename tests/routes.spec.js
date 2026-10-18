@@ -300,3 +300,21 @@ test('the app does not carry essay text: its essay links still open the publicat
   expect(await a.getAttribute('href')).toMatch(/^https:\/\//);
   expect(asked).toEqual([]);
 });
+
+test('links between essays, and to this site, stay on the site; the held-back posts never appear', async ({ page }) => {
+  const byTitle = t => Object.keys(D.ET).find(id => D.pieces[id][0].startsWith(t));
+  const pid = byTitle('The Christian Code Inside Your Phone');
+  expect(pid, 'the post promoted from a draft is on the site').toBeTruthy();
+  await page.goto('/#/essay/' + pid); await settle(page);
+  const inner = page.locator('.essaytext a[href^="#/"]');
+  expect(await inner.count()).toBeGreaterThan(0);
+  expect(await inner.first().getAttribute('target')).toBeNull();
+  await expect(page.locator('.essaytext a[href*="sources.kingdomcodearchive.com"]')).toHaveCount(0);
+  await expect(page.locator('#app')).toContainText('Scripture cited in this essay');          // its citations came with the draft
+  const titles = Object.values(D.pieces).map(p => p[0]);
+  expect(titles.some(t => t.startsWith('Act Like Men'))).toBe(false);                          // members-only on Substack
+  expect(titles.some(t => t.startsWith('Start Here: The Door Into'))).toBe(false);             // a start page, not an essay
+  expect(byTitle('Who Were the Sons of God'), 'a new essay without citations is read as text').toBeTruthy();
+  await page.goto('/#/essay/' + byTitle('Who Were the Sons of God')); await settle(page);
+  await expect(page.locator('.essaytext')).toBeVisible();
+});

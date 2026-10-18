@@ -14,8 +14,16 @@ _ITALIC = re.compile(r"(?<![\w*])\*(?=[^\s*])(.+?)(?<=[^\s*])\*(?![\w*])", re.S)
 _ESCAPED = re.compile(r"\\([\\`*_{}\[\]()#+\-.!>|~])")
 
 
-def inline(text):
-    """Escape, then apply links, bold and italics. Links must be http(s); they open in a new tab."""
+def _a(m, rewrite):
+    href, label = m.group(2), m.group(1)
+    mine = rewrite(href) if rewrite else None            # a link to another essay or page of this site stays on the site
+    if mine:
+        return '<a href="%s">%s</a>' % (mine.replace('"', "&quot;"), label)
+    return '<a href="%s" target="_blank" rel="noopener">%s</a>' % (href.replace('"', "&quot;"), label)
+
+
+def inline(text, rewrite=None):
+    """Escape, then apply links, bold and italics. Links must be http(s); they open in a new tab unless rewrite(href) names a page here."""
     s = html.escape(text, quote=False)
     keep = []
 
@@ -24,7 +32,7 @@ def inline(text):
         return "\x00%d\x00" % (len(keep) - 1)
 
     s = _ESCAPED.sub(hold, s)
-    s = _LINK.sub(lambda m: '<a href="%s" target="_blank" rel="noopener">%s</a>' % (m.group(2).replace('"', "&quot;"), m.group(1)), s)
+    s = _LINK.sub(lambda m: _a(m, rewrite), s)
     s = _BOLD_ITALIC.sub(r"<strong><em>\1</em></strong>", s)
     s = _BOLD.sub(r"<strong>\1</strong>", s)
     s = _ITALIC.sub(r"<em>\1</em>", s)
@@ -32,19 +40,19 @@ def inline(text):
     return re.sub("\x00(\\d+)\x00", lambda m: keep[int(m.group(1))], s)
 
 
-def _paragraph(lines):
+def _paragraph(lines, rewrite=None):
     text = "\n".join(l.strip() for l in lines if l.strip())         # emphasis may run across the lines of one paragraph
-    return "<p>%s</p>" % inline(text).replace("\n", "<br>")
+    return "<p>%s</p>" % inline(text, rewrite).replace("\n", "<br>")
 
 
-def to_html(md):
-    """Markdown -> HTML (a string of block elements)."""
+def to_html(md, rewrite=None):
+    """Markdown -> HTML (a string of block elements). rewrite(href) may return a page of this site for a link, or None."""
     lines = md.replace("\r\n", "\n").split("\n")
     out, buf, i = [], [], 0
 
     def flush():
         if buf:
-            out.append(_paragraph(buf))
+            out.append(_paragraph(buf, rewrite))
             buf.clear()
 
     while i < len(lines):
@@ -58,13 +66,13 @@ def to_html(md):
         if m:
             flush()
             level = min(4, max(2, len(m.group(1))))        # the page's own title is the h1
-            out.append("<h%d>%s</h%d>" % (level, inline(m.group(2)), level)); i += 1; continue
+            out.append("<h%d>%s</h%d>" % (level, inline(m.group(2), rewrite), level)); i += 1; continue
         if stripped.startswith(">"):
             flush()
             quote = []
             while i < len(lines) and lines[i].strip().startswith(">"):
                 quote.append(re.sub(r"^\s*>\s?", "", lines[i])); i += 1
-            out.append("<blockquote>%s</blockquote>" % to_html("\n".join(quote)))
+            out.append("<blockquote>%s</blockquote>" % to_html("\n".join(quote), rewrite))
             continue
         m = re.match(r"(\s*)([*+-]|\d+\.)\s+(.*)", line)
         if m:
@@ -79,7 +87,7 @@ def to_html(md):
                 while i < len(lines) and lines[i].strip() and not re.match(r"\s*([*+-]|\d+\.)\s+", lines[i]) \
                         and not lines[i].lstrip().startswith((">", "#")) and not re.fullmatch(r"-{3,}", lines[i].strip()):
                     text += " " + lines[i].strip(); i += 1      # a wrapped list line
-                items.append("<li>%s</li>" % inline(text))
+                items.append("<li>%s</li>" % inline(text, rewrite))
             tag = "ol" if ordered else "ul"
             out.append("<%s>%s</%s>" % (tag, "".join(items), tag))
             continue
