@@ -135,8 +135,8 @@ function viewRead(b, ch, focus) {
   if (!hasChapter(b, ch)) return viewMissing();
   const chap = chapterText(b, ch);
   if (!chap) {
-    const want = location.hash;
-    ensureBook(b).then(() => { if (location.hash === want) route(); })
+    const want = curHash();
+    ensureBook(b).then(() => { if (curHash() === want) route(); })
       .catch(() => { const m = document.getElementById('loadmsg'); if (m) m.innerHTML = 'The Bible text could not load. Check your connection, then <a href="' + want + '">try again</a>.'; });
     return `${backLink(`#/book/${D.bookEntry[b]}`)}<h1>${esc(bname(b))} ${ch}</h1><p class="lede" id="loadmsg" role="status">Loading the chapter\u2026</p>`;
   }
@@ -173,9 +173,9 @@ function viewRead(b, ch, focus) {
   </nav>`;
 }
 document.addEventListener('keydown', e => {
-  if (!location.hash.startsWith('#/read/') || /input|textarea|select/i.test((e.target.tagName || '')) || e.altKey || e.metaKey || e.ctrlKey) return;
-  const p = location.hash.slice(2).split('/'), n = e.key === 'ArrowRight' ? neighbour(+p[1], +p[2], 1) : e.key === 'ArrowLeft' ? neighbour(+p[1], +p[2], -1) : null;
-  if (n) location.hash = `#/read/${n[0]}/${n[1]}`;
+  if (!curHash().startsWith('#/read/') || /input|textarea|select/i.test((e.target.tagName || '')) || e.altKey || e.metaKey || e.ctrlKey) return;
+  const p = curHash().slice(2).split('/'), n = e.key === 'ArrowRight' ? neighbour(+p[1], +p[2], 1) : e.key === 'ArrowLeft' ? neighbour(+p[1], +p[2], -1) : null;
+  if (n) navigate(`#/read/${n[0]}/${n[1]}`);
 });
 
 addRoute('books', () => viewBooks('OT'));

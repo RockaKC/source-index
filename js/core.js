@@ -8,7 +8,7 @@ const plural = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
 const PLAT = {substack:'Substack', patreon:'Patreon'};
 const TRANS = {LXX:'Septuagint', BLB:'Berean Literal Bible', CHARLES:'R. H. Charles', REF:'Reference'};
 const fmtDate = d => d ? new Date(d + 'T00:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}) : '';
-const BASE = location.origin + location.pathname;
+const BASE = PROFILE.cleanUrls ? (PROFILE.origin || location.origin) + '/' : location.origin + location.pathname;
 const P = D.pieces, entryOf = id => D.entries.find(e => e.id === id);
 
 const hasVerse = (b, ch, v) => !!(D.verses[b] && D.verses[b][ch] && D.verses[b][ch][v]);

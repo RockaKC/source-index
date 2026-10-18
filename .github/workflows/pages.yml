@@ -4,6 +4,7 @@ name: Website
 # download/KC-Tewahedo-Bible.apk, so the site's Download button saves the app from this site and not from GitHub.
 # Runs when main changes, and after every app release (android.yml starts it). The app file is fetched from the
 # latest GitHub Release, never stored in the repo. See tools/README.md, "Website and app download".
+# Before it uploads, tools/prerender.js saves every page at its clean address (see below the assemble step).
 # One-time setting: Settings > Pages > Build and deployment > Source must be "GitHub Actions".
 on:
   push:
@@ -39,6 +40,21 @@ jobs:
           # The latest release's fixed-name file. Before the first release there is none, and the page keeps its GitHub link.
           gh release download --repo "$GITHUB_REPOSITORY" --pattern KC-Tewahedo-Bible.apk --dir _site/download || echo "No release file to publish."
           ls -la _site/download
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      # Every page is saved as a real file at its clean address (/bible/john/3/), with its own title, description, share card and
+      # structured data, plus sitemap.xml, robots.txt, llms.txt and 404.html, so search engines and AI assistants read finished pages.
+      # Nothing it writes is committed. See tools/README.md, "Clean addresses and search".
+      - name: Save every page at its clean address
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          node tools/prerender.js _site
+          rm -f _site/prerender-report.json
 
       - uses: actions/configure-pages@v5
 

@@ -69,7 +69,7 @@ test('the site: About has no support line or button, and the menu offers Get the
   expect(labels.at(-1)).toBe('Get the app');
   expect(labels.at(-2)).toBe('Contact');
   await page.locator('#menubtn').click();
-  await page.locator('#menu a[href="#/app"]').click();
+  await page.locator('#menu a[href="/app/"]').click();
   await settle(page);
   await expect(page.locator('#app h1')).toHaveText('KC Tewahedo Bible for Android');
 });
@@ -100,7 +100,7 @@ test('a word page shows the verse text for the verses it names, each linked to i
 
 test('Pharmakeia names Revelation 18:23 and shows its words', async ({ page }) => {
   await page.goto('/#/word/sorcery'); await settle(page);
-  await expect(page.locator('a.chip[href="#/verse/79/18/23"]')).toBeVisible();
+  await expect(page.locator('a.chip[href="/bible/revelation/18/23/"]')).toBeVisible();
   await expect(page.locator('figure.verse').first()).toContainText('in your sorcery all the nations were deceived');
 });
 
@@ -128,17 +128,17 @@ test('the Download button saves the app from this site once the site holds the f
 test('the site: Guides is in the header where Words was, and Names and Translations left the menu for the Guides page', async ({ page }) => {
   await page.goto('/'); await settle(page);
   const nav = await page.locator('header .tools a.nav').evaluateAll(a => a.map(x => [x.textContent.trim(), x.getAttribute('href')]));
-  expect(nav).toEqual([['Bible', '#/books'], ['Guides', '#/guide']]);
-  for (const r of ['#/names', '#/translations', '#/words']) await expect(page.locator(`#menu a[href="${r}"]`)).toHaveCount(0);
-  await page.locator('header a.nav[href="#/guide"]').click(); await settle(page);
+  expect(nav).toEqual([['Bible', '/bible/'], ['Guides', '/guides/']]);
+  for (const r of ['/names/', '/translations/', '/words/']) await expect(page.locator(`#menu a[href="${r}"]`)).toHaveCount(0);
+  await page.locator('header a.nav[href="/guides/"]').click(); await settle(page);
   await expect(page.locator('#app h1')).toHaveText('Guides');
-  for (const r of ['#/guides', '#/names', '#/words', '#/translations', '#/english']) await expect(page.locator(`#app a[href="${r}"]`)).toHaveCount(1);
+  for (const r of ['/guides/kingdom-code/', '/names/', '/words/', '/translations/', '/english/']) await expect(page.locator(`#app a[href="${r}"]`)).toHaveCount(1);
 });
 
 test('the Guides page is a short menu: Kingdom Code Guides first, then the reading help', async ({ page }) => {
   await page.goto('/#/guide'); await settle(page);
   const hrefs = await page.locator('#app .wl').evaluateAll(a => a.map(x => x.getAttribute('href')));
-  expect(hrefs).toEqual(['#/guides', '#/names', '#/words', '#/translations', '#/english']);
+  expect(hrefs).toEqual(['/guides/kingdom-code/', '/names/', '/words/', '/translations/', '/english/']);
   await expect(page.locator('#app .gcard')).toHaveCount(0);          // the guides themselves are one page deeper
   await expect(page.locator('#app .wl').first()).toContainText('1 guide');
 });
@@ -151,8 +151,8 @@ test('Kingdom Code Guides lists each guide, its cover and title open the guide, 
   await expect(card).toContainText('PDF \u00b7 48 pages');
   await expect(card).toContainText('and exercise independent judgment, with a Discernment Field Sheet.');
   await expect(card).not.toContainText('six-step');
-  expect(await card.locator('.gcover').getAttribute('href')).toBe('#/guides/the-ungovernable-mind');
-  expect(await card.locator('h3 a').getAttribute('href')).toBe('#/guides/the-ungovernable-mind');
+  expect(await card.locator('.gcover').getAttribute('href')).toBe('/guides/kingdom-code/the-ungovernable-mind/');
+  expect(await card.locator('h3 a').getAttribute('href')).toBe('/guides/kingdom-code/the-ungovernable-mind/');
   const dl = card.locator('a[data-guide]');
   await expect(dl).toHaveText('Download PDF');
   expect(await dl.getAttribute('href')).toBe('guides/the-ungovernable-mind.pdf');
@@ -180,7 +180,7 @@ test('each guide has its own page: the cover, the description, the buttons, and 
   expect(toc[0]).toEqual(['3', 'The Ungovernable Mind']);
   expect(toc.at(-1)).toEqual(['48', 'About Kingdom Code']);
   await expect(page.locator('#app')).not.toContainText('six-step');
-  expect(await page.locator('.back').getAttribute('href')).toBe('#/guides');
+  expect(await page.locator('.back').getAttribute('href')).toBe('/guides/kingdom-code/');
 });
 
 test('an unknown guide shows the not-found page', async ({ page }) => {
@@ -201,14 +201,14 @@ test('the website front page is the Kingdom Code archive: the mission, search, t
   await expect(page.locator('.ahead')).toHaveText('Knowledge worth recovering. Questions worth investigating.');
   await expect(page.locator('.alede')).toContainText('An independent exploration of Scripture, ancient history, Christianity, and the civilizations that shaped our world.');
   await expect(page.locator('#q')).toBeVisible();                                    // search is still first at hand
-  await expect(page.locator('.afeat')).toHaveAttribute('href', '#/guides/the-ungovernable-mind');
+  await expect(page.locator('.afeat')).toHaveAttribute('href', '/guides/kingdom-code/the-ungovernable-mind/');
   const ids = await page.evaluate(() => essayIds().slice(0, 5));
   const shown = await page.locator('.acols .piece .t a').evaluateAll(a => a.map(x => x.dataset.pid));
   expect(shown).toEqual(ids.map(String));                                           // the five newest, in order
   const hrefs = await page.locator('.coll a.cc').evaluateAll(a => a.map(x => x.getAttribute('href')));
-  expect(hrefs).toEqual(['#/books', '#/essays', '#/guides', '#/names', '#/words', '#/translations', '#/english']);
+  expect(hrefs).toEqual(['/bible/', '/essays/', '/guides/kingdom-code/', '/names/', '/words/', '/translations/', '/english/']);
   expect(await page.evaluate(() => document.documentElement.hasAttribute('data-archive'))).toBe(true);   // the front page alone is wide
-  await page.locator('.coll a[href="#/words"]').click(); await settle(page);
+  await page.locator('.coll a[href="/words/"]').click(); await settle(page);
   expect(await page.evaluate(() => document.documentElement.hasAttribute('data-archive'))).toBe(false);
 });
 
@@ -270,8 +270,8 @@ test('the Essays page and the front page list the newest public Substack essays 
   // a public essay with no citations yet is listed, and offers no Sources link; one that cites verses does
   const uncited = await page.evaluate(() => D.PUB.find(id => !hasRefs(id)));
   const withRefs = await page.evaluate(() => Object.keys(P).find(id => hasRefs(id)));
-  await expect(page.locator(`#app .piece:has(a[data-pid="${uncited}"]) a[href^="#/essay/"]`)).toHaveCount(0);
-  await expect(page.locator(`#app .piece:has(a[data-pid="${withRefs}"]) a[href^="#/essay/"]`)).toHaveCount(1);
+  await expect(page.locator(`#app .piece:has(a[data-pid="${uncited}"]) a[href^="/essays/"]`)).toHaveCount(0);
+  await expect(page.locator(`#app .piece:has(a[data-pid="${withRefs}"]) a[href^="/essays/"]`)).toHaveCount(1);
 });
 
 test('the essay page still lists the verses an essay cites, and offers the essay on its platform', async ({ page }) => {

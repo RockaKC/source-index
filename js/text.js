@@ -20,8 +20,8 @@ const chapterText = (b, ch) => (BIBLE[b] && BIBLE[b][ch]) || (T[b] || {})[ch] ||
 let deferTrack = false;               // a loading placeholder is not counted as a visit; the page that replaces it is
 function lazyText(b, ch, back, label, what) {   // chapters nobody cites are not inlined: fetch the text, then show the page
   if (!hasChapter(b, ch) || chapterText(b, ch)) return null;
-  const want = location.hash; deferTrack = true;
-  ensureBook(b).then(() => { if (location.hash === want) route(); })
+  const want = curHash(); deferTrack = true;
+  ensureBook(b).then(() => { if (curHash() === want) route(); })
     .catch(() => { const m = document.getElementById('loadmsg'); if (m) m.innerHTML = 'The Bible text could not load. Check your connection, then <a href="' + want + '">try again</a>.'; });
   return `${backLink(back)}<h1>${esc(label)}</h1><p class="lede" id="loadmsg" role="status">Loading the ${what}\u2026</p>`;
 }

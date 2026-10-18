@@ -36,7 +36,7 @@ test('search results match the recorded baseline', async ({ page }) => {
     got[q] = {
       sug,
       ...(await page.evaluate(() => ({
-        hash: location.hash,
+        hash: curHash(),
         h1: (document.querySelector('h1') || {}).textContent,
         caps: [...document.querySelectorAll('.verse .cap, .lede')].map(x => x.textContent.trim()).slice(0, 4),
         reads: [...document.querySelectorAll('.row .r')].map(x => x.textContent),

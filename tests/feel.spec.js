@@ -165,7 +165,7 @@ test.describe('swiping the drawer', () => {
     await expect.poll(() => isOpen(page)).toBe(false);
     await expect.poll(() => page.evaluate(() => !!(history.state && history.state.kcDrawer))).toBe(false);
     expect(await entries(page)).toBeLessThanOrEqual(before);
-    expect(await page.evaluate(() => location.hash)).toBe('');
+    expect(await page.evaluate(() => curHash())).toBe('');
     await page.click('#menubtn');                                    // and it opens cleanly again, full size
     await expect(page.locator('#drawer')).toBeVisible();
     await page.waitForTimeout(500);
@@ -198,11 +198,11 @@ test.describe('swiping the drawer', () => {
 
   test('a drag that ends on a link does not follow the link', async ({ page }) => {
     await opened(page);
-    const hash = await page.evaluate(() => location.hash);
+    const hash = await page.evaluate(() => curHash());
     const row = await page.locator('#drawer .menu a').first().boundingBox();
     await swipe(page, { from: row.x + 200, dx: -40, pause: 300, gap: 20 });
     await page.waitForTimeout(400);
-    expect(await page.evaluate(() => location.hash)).toBe(hash);
+    expect(await page.evaluate(() => curHash())).toBe(hash);
     expect(await isOpen(page)).toBe(true);
   });
 
@@ -245,7 +245,7 @@ test.describe('swiping the drawer', () => {
     await page.waitForTimeout(500);
     expect(await isOpen(page)).toBe(false);
     await expect.poll(() => page.evaluate(() => !!(history.state && history.state.kcDrawer))).toBe(false);   // no stray history entry left
-    expect(await page.evaluate(() => location.hash)).toBe('');
+    expect(await page.evaluate(() => curHash())).toBe('');
     await swipe(page, { from: 120, dx: 150 });                       // not the edge
     await page.waitForTimeout(300);
     expect(await isOpen(page)).toBe(false);

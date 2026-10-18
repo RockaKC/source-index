@@ -111,8 +111,8 @@ function viewEssay(pid) {
   if (!P[pid]) return viewMissing();
   const [title, url, plat, date] = P[pid];
   if (onSite(pid) && !ESSAYS[pid]) {     // fetch the text, then draw the page again
-    const want = location.hash; deferTrack = true;
-    ensureEssay(pid).then(() => { if (location.hash === want) route(); })
+    const want = curHash(); deferTrack = true;
+    ensureEssay(pid).then(() => { if (curHash() === want) route(); })
       .catch(() => { const m = document.getElementById('loadmsg'); if (m) m.innerHTML = 'The essay could not load. Check your connection, then <a href="' + want + '">try again</a>.'; });
     return `${essayHead(pid)}<p class="lede" id="loadmsg" role="status">Loading the essay\u2026</p>`;
   }
@@ -141,7 +141,7 @@ function viewEssay(pid) {
   ${relHtml}`;
 }
 function ctaFor(pid) {
-  const url = `${BASE}#/essay/${pid}`;
+  const url = absUrl('#/essay/' + pid);
   return {
     html: `<p><strong>Sources for this essay.</strong> Every verse cited here, and every other Kingdom Code essay that quotes it, is in the <a href="${url}">Source Index</a>.</p>`,
     text: `Sources for this essay. Every verse cited here, and every other Kingdom Code essay that quotes it, is in the Source Index: ${url}`
@@ -193,7 +193,7 @@ addRoute('essay', p => viewEssay(+p[1]));
 addRoute('cta', p => viewCta(decodeURIComponent(p.slice(1).join('/'))));
 onPage(() => {
   const cf = document.getElementById('cf');
-  if (cf) cf.addEventListener('submit', e => { e.preventDefault(); location.hash = '#/cta/' + encodeURIComponent(document.getElementById('cq').value.trim()); });
+  if (cf) cf.addEventListener('submit', e => { e.preventDefault(); navigate('#/cta/' + encodeURIComponent(document.getElementById('cq').value.trim())); });
   document.querySelectorAll('[data-cta]').forEach(b => b.addEventListener('click', async () => {
     const c = ctaFor(+b.dataset.cta), ok = await copyRich(c.html, c.text), st = document.querySelector(`[data-st="${b.dataset.cta}"]`);
     if (st) st.textContent = ok ? 'Copied' : 'Copy was blocked. Press and hold the text instead.';

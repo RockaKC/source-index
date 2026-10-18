@@ -31,11 +31,11 @@ test('tapping a verse opens the panel; Escape, the close button and Back all clo
   await page.click(verse(3));
   await page.click('#sheetx');
   await expect(page.locator('#sheet')).toBeHidden();
-  const h = await page.evaluate(() => location.hash);
+  const h = await page.evaluate(() => curHash());
   await page.click(verse(3));
   await page.goBack();
   await expect(page.locator('#sheet')).toBeHidden();
-  expect(await page.evaluate(() => location.hash), 'Back closes the panel and stays on the chapter').toBe(h);
+  expect(await page.evaluate(() => curHash()), 'Back closes the panel and stays on the chapter').toBe(h);
 });
 
 test('selecting text does not open the panel, and the page behind stays still', async ({ page }) => {
@@ -131,7 +131,7 @@ test('a verse tapped right after a panel closes still gets its panel, with one h
   expect(await page.evaluate(() => history.length), 'the panel adds one entry, not a stray extra one').toBe(entries + 1);
   await page.goBack();                                                          // and Back still closes it, once
   await expect(page.locator('#sheet')).toBeHidden();
-  expect(await page.evaluate(() => location.hash)).toBe(`#/read/${b1}/${ch}`);
+  expect(await page.evaluate(() => curHash())).toBe(`#/read/${b1}/${ch}`);
 });
 
 test('copy puts the verse and its source on the clipboard', async ({ page }) => {
@@ -185,7 +185,7 @@ test('the Favorites and Highlights pages list them newest first, with the verse,
   await expect(page.locator('#app .mrow .t')).toContainText('Green');
   await page.click('#app .mrow');
   await settle(page);
-  expect(await page.evaluate(() => location.hash)).toBe(`#/read/${b1}/${ch}/2`);
+  expect(await page.evaluate(() => curHash())).toBe(`#/read/${b1}/${ch}/2`);
   await page.evaluate(() => localStorage.setItem('kc-marks', '{}'));
   await page.evaluate(() => { location.hash = '#/favorites'; });
   await page.reload();

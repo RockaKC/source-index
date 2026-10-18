@@ -32,7 +32,7 @@ function trailGo(dir) {
   const n = TRAIL.list[TRAIL.i + dir];
   if (!n) return;
   TRAIL.i += dir;
-  location.hash = `#/read/${n[0]}/${n[1]}`;
+  navigate(`#/read/${n[0]}/${n[1]}`);
 }
 
 // ---------- the bar and the toolbar ----------

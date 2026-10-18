@@ -71,14 +71,14 @@ test('the menu is a side drawer without the Guide\'s pages, and Back closes it',
   expect(await page.evaluate(() => scrollY), 'the page behind the open drawer does not scroll').toBe(before);
   await page.goBack();
   await expect(drawer).toBeHidden();
-  expect(await page.evaluate(() => location.hash), 'Back closes the drawer and stays on the page').toBe('#/read/1/1');
+  expect(await page.evaluate(() => curHash()), 'Back closes the drawer and stays on the page').toBe('#/read/1/1');
   await page.click('#menubtn');
   await drawer.locator('a[href="#/kc"]').click();
   await settle(page);
   await expect(page.locator('#app h1')).toHaveText('From Kingdom Code');
   await page.goBack();
   await settle(page);
-  expect(await page.evaluate(() => location.hash), 'Back from a drawer page returns to the chapter').toBe('#/read/1/1');
+  expect(await page.evaluate(() => curHash()), 'Back from a drawer page returns to the chapter').toBe('#/read/1/1');
 });
 
 test('About names the app on the app only', async ({ page }) => {
@@ -94,7 +94,7 @@ test('the site\'s About page sends readers to the app download page', async ({ p
   await page.goto('/#/about');
   await settle(page);
   await expect(page.locator('#offline, #install'), 'the old save and install buttons are gone').toHaveCount(0);
-  await page.locator('#app a[href="#/app"]', { hasText: 'Download the app' }).click();
+  await page.locator('#app a[href="/app/"]', { hasText: 'Download the app' }).click();
   await settle(page);
   await expect(page.locator('#app h1')).toHaveText('KC Tewahedo Bible for Android');
   await expect(page.locator('#app a[data-app-download]'))
