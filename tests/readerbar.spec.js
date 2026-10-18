@@ -8,7 +8,7 @@ async function go(page, hash) {
   await page.evaluate(h => { location.hash = h; }, hash);
   await settle(page);
 }
-const hash = page => page.evaluate(() => location.hash);
+const hash = page => page.evaluate(() => curHash());
 
 test('a chapter shows the bar in the header and drops the in-page chapter bar', async ({ page }) => {
   await page.goto(`/app.html#/read/${b1}/${c1[1]}`);

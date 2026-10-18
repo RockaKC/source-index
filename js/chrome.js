@@ -111,6 +111,7 @@ if (drawer) {
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !menu.hidden) { setMenu(false); menuBtn.focus(); } });
 }
 window.addEventListener('hashchange', () => setMenu(false));
+window.addEventListener('kcroute', () => setMenu(false));
 if (CONTACT_EMAIL) { document.getElementById('contact').href = 'mailto:' + CONTACT_EMAIL; document.getElementById('contactli').classList.remove('nolink'); }
 
 // ---------- support window (Ko-fi inside the page) ----------

@@ -28,16 +28,16 @@ function go(q) {
   const r = parseRef(q);
   const wd = !r && findWord(q);
   track(wd ? 'search/word' : r ? 'search/ref' : 'search/title');
-  if (wd) { location.hash = '#/word/' + wd.slug; return; }
+  if (wd) { navigate('#/word/' + wd.slug); return; }
   if (r) {
     if (r.ch && r.v) {
       const rg = r.ve && rangeRef(r.b, r.ch, r.v, r.ve), unm = typedUnverified(r.b, r.ch, r.v);
-      if (rg) { UNMAPPED = unm ? `${r.b}:${rg[0]}:${rg[1]}` : null; location.hash = `#/range/${r.b}/${rg[0]}/${rg[1]}/${rg[2]}`; }
-      else { const m = mapRef(r.b, r.ch, r.v); UNMAPPED = unm ? `${r.b}:${m[0]}:${m[1]}` : null; location.hash = `#/verse/${r.b}/${m[0]}/${m[1]}`; }
+      if (rg) { UNMAPPED = unm ? `${r.b}:${rg[0]}:${rg[1]}` : null; navigate(`#/range/${r.b}/${rg[0]}/${rg[1]}/${rg[2]}`); }
+      else { const m = mapRef(r.b, r.ch, r.v); UNMAPPED = unm ? `${r.b}:${m[0]}:${m[1]}` : null; navigate(`#/verse/${r.b}/${m[0]}/${m[1]}`); }
     }
-    else if (r.ch) { const m = mapRef(r.b, r.ch, null); location.hash = chapterText(r.b, m[0]) ? `#/read/${r.b}/${m[0]}` : `#/book/${D.bookEntry[r.b]}`; }
-    else location.hash = `#/book/${D.bookEntry[r.b]}`;
-  } else location.hash = '#/search/' + encodeURIComponent(q);
+    else if (r.ch) { const m = mapRef(r.b, r.ch, null); navigate(chapterText(r.b, m[0]) ? `#/read/${r.b}/${m[0]}` : `#/book/${D.bookEntry[r.b]}`); }
+    else navigate(`#/book/${D.bookEntry[r.b]}`);
+  } else navigate('#/search/' + encodeURIComponent(q));
 }
 
 // ---------- suggestions ----------
@@ -127,7 +127,7 @@ function initSuggest() {
       stat.textContent = `${plural(opts.length, 'suggestion')} available. Use the up and down arrows to review and Enter to select.`;
     } else { close(); stat.textContent = input.value.trim() ? 'No suggestions.' : ''; }
   };
-  const pick = i => { const o = opts[i]; if (!o) return; close(); stat.textContent = ''; location.hash = o.href; };
+  const pick = i => { const o = opts[i]; if (!o) return; close(); stat.textContent = ''; navigate(o.href); };
   input.addEventListener('input', render);
   input.addEventListener('focus', () => { if (input.value.trim()) render(); });
   input.addEventListener('keydown', e => {

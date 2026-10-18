@@ -12,5 +12,7 @@ const PROFILE = {
   readerTools: false,      // the app's chapter bar, reading toolbar and reading history (js/readerbar.js)
   essayText: true,         // essays with their text in essay-text/ open and read here (js/essays.js)
   archiveHome: true,       // the front page as the Kingdom Code archive, and the Essays page (js/pages.js)
+  cleanUrls: true,         // permanent addresses like /bible/john/3/16/ instead of #/verse/… (js/urls.js), with a page title, description and structured data for each (js/seo.js)
+  origin: 'https://sources.kingdomcodearchive.com',   // the one place the site's public address is written: canonical links, the sitemap, share cards
   kcGuides: true,          // the Guides page lists Kingdom Code's downloadable PDF guides (D.KG, js/guide.js)
 };

@@ -14,9 +14,15 @@ const MIME = {
 
 const handler = root => (req, res) => {
   let url = decodeURIComponent(req.url.split('?')[0]);
+  const bare = !path.extname(url) || url.endsWith('/');     // an address, not a file
   if (url.endsWith('/')) url += 'index.html';
   const file = path.join(root, url);
   if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
+    // A clean address with no saved page (GitHub Pages sends 404.html, a copy of index.html): the page opens and draws itself.
+    const spa = path.join(root, 'index.html');
+    if (bare && file.startsWith(root + path.sep) && fs.existsSync(spa)) {
+      res.writeHead(404, { 'Content-Type': MIME['.html'] }); fs.createReadStream(spa).pipe(res); return;
+    }
     res.writeHead(404); res.end(); return;
   }
   res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream' });

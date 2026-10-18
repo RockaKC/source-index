@@ -54,7 +54,7 @@ test('leaving the note box any way at all keeps what was typed', async ({ page }
   await page.goBack();
   await expect(page.locator('#sheet')).toBeHidden();
   expect((await marks(page))[key(4)].n).toBe('kept by Back');
-  expect(await page.evaluate(() => location.hash)).toBe(`#/read/${b1}/${ch}`);
+  expect(await page.evaluate(() => curHash())).toBe(`#/read/${b1}/${ch}`);
 });
 
 test('editing keeps one note; deleting asks twice; an empty note is no note', async ({ page }) => {
@@ -116,5 +116,5 @@ test('the Notes page lists notes newest first with the verse, shows them as plai
   await expect(page.locator('#app .mrow .vp').last()).toContainText('But the earth', { timeout: 5000 });
   await page.click('#app .mrow >> nth=1');
   await settle(page);
-  expect(await page.evaluate(() => location.hash)).toBe(`#/read/${b1}/${ch}/2`);
+  expect(await page.evaluate(() => curHash())).toBe(`#/read/${b1}/${ch}/2`);
 });
