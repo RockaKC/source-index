@@ -47,7 +47,7 @@ test('after a single visit, the site opens with the server gone', async ({ brows
 
   await page.reload();
   await settle(page);
-  await expect(page.locator('#app h1')).toHaveText('Look up a verse.');
+  await expect(page.locator('#app h1')).toHaveText('Kingdom Code Archive');
   await page.evaluate(() => { location.hash = '#/books'; });
   await settle(page);
   await expect(page.locator('#app h1')).toHaveText('The 81 books');

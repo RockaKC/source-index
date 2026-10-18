@@ -42,8 +42,66 @@ function viewReaderHome() {         // the app's home: the Bible first, the Guid
   <p class="lede" style="margin-top:8px">Essays from the publication behind this app, kept in their own section, apart from the Bible text.</p>
   <p style="margin-top:16px"><a class="btn secondary" href="#/kc">Open From Kingdom Code</a></p>`;
 }
+// The website's front page, laid out as the Kingdom Code archive: the mission and the search first, then the featured guide and the
+// newest essays, the collections as catalog cards with their counts, and the questions to start with.
+const essayIds = () => Object.keys(P).filter(pid => P[pid] && hasRefs(pid)).sort((a, c) => P[c][3].localeCompare(P[a][3]) || c - a);
+function viewEssays() {             // every essay the index cites, newest first, by year
+  const ids = essayIds(), years = [...new Set(ids.map(pid => P[pid][3].slice(0, 4)))];
+  return `
+  ${backLink('#/')}
+  <h1>Essays</h1>
+  <p class="lede">${plural(ids.length, 'Kingdom Code essay')} cited in the index, newest first. Each opens where it was published; Sources lists the verses it quotes.</p>
+  ${years.map(y => `<h2>${y}</h2>${pieceList(ids.filter(pid => P[pid][3].startsWith(y)))}`).join('')}`;
+}
+function archiveHome() {
+  const withText = D.entries.filter(e => e.books.some(b => D.CC[b])).length, extras = D.entries.filter(e => e.extra);
+  const chips = topVerses().map(([b,ch,v]) => `<li><a class="chip" href="#/verse/${b}/${ch}/${v}">${esc(bname(b))} ${ch}:${v}</a></li>`).join('');
+  const qs = D.paths.map(p => `<li><a class="q" href="#/path/${p.id}"><span>${esc(p.q)}</span><i aria-hidden="true">Read</i></a></li>`).join('');
+  const g = (D.KG || [])[0], latest = essayIds().slice(0, 5);
+  const coll = [
+    ['#/books', withText, 'The Bible', `All 81 books of the Ethiopian canon. ${withText} have their text here.`],
+    ['#/essays', essayIds().length, 'Essays', 'Kingdom Code essays, each linked to the verses it quotes.'],
+    g ? ['#/guides', D.KG.length, 'Guides', 'Kingdom Code guides to download and keep.'] : null,
+    D.PP && D.PP.length ? ['#/names', D.PP.length, 'Names', 'Short profiles, with the verses where each appears.'] : null,
+    ['#/words', WORDS.length, 'Words', 'Hebrew and Greek terms from the essays, side by side.'],
+    D.TL ? ['#/translations', 'NT', 'Translations', 'Which New Testament translations let the Greek speak.'] : null,
+    D.EN ? ['#/english', extras.length, 'Outside most Bibles', 'The books not in a Protestant Bible, and where to read them in English.'] : null,
+  ].filter(Boolean);
+  return `
+  <section class="ahero" aria-labelledby="ah-t">
+    <h1 id="ah-t"><span>Kingdom Code</span> <em>Archive</em></h1>
+    <p class="alede">Recovering knowledge, examining history, and investigating the questions others have forgotten, overlooked, or left unanswered.</p>
+    <form class="search" role="search" id="sf">
+      <label class="sr" for="q">Search by verse, word, or title</label>
+      <input id="q" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug" aria-haspopup="listbox" placeholder="Verse, word, or title" autocomplete="off" autocapitalize="none" spellcheck="false" enterkeyhint="search">
+      <button class="btn primary" type="submit">Search</button>
+      <ul class="sug" id="sug" role="listbox" aria-label="Suggestions" hidden></ul>
+      <div class="sr" id="sugstat" role="status" aria-live="polite"></div>
+    </form>
+    <ul class="chips" aria-label="Popular verses">${chips}</ul>
+  </section>
+
+  <div class="acols">
+    ${g ? `<section aria-labelledby="ah-g"><h2 id="ah-g" class="ah2">Featured guide</h2>
+      <a class="afeat" href="#/guides/${esc(g.slug)}"><img src="${esc(g.cover)}" width="1200" height="675" alt="" loading="lazy">
+        <span class="afeat-b"><b>${esc(g.title)}</b><span>${esc(g.sub)}</span><i>${esc(guideMeta(g))}</i></span></a></section>` : ''}
+    <section aria-labelledby="ah-l"><h2 id="ah-l" class="ah2">Latest essays</h2>
+      ${pieceList(latest)}
+      <p class="cap" style="margin-top:12px"><a href="#/essays" style="color:var(--accent)">All ${essayIds().length} essays</a></p></section>
+  </div>
+
+  <h2 class="ah2">The collections</h2>
+  <ul class="coll">${coll.map(([href, n, t, d]) => `<li><a class="cc" href="${href}"><span class="cn">${esc(String(n))}</span><b>${esc(t)}</b><span class="cd">${esc(d)}</span></a></li>`).join('')}</ul>
+
+  ${continueCard()}
+
+  <h2 class="ah2">Start with a question</h2>
+  <div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">${qs}</ul></div>
+`;
+}
 function viewHome() {
   if (PROFILE.home === 'reader') return viewReaderHome();
+  if (PROFILE.archiveHome) return archiveHome();
   const chips = topVerses().map(([b,ch,v]) => `<li><a class="chip" href="#/verse/${b}/${ch}/${v}">${esc(bname(b))} ${ch}:${v}</a></li>`).join('');
   const qs = D.paths.map(p => `<li><a class="q" href="#/path/${p.id}"><span>${esc(p.q)}</span><i aria-hidden="true">Read</i></a></li>`).join('');
   const extras = D.entries.filter(e => e.extra);
@@ -142,6 +200,8 @@ function viewCredits() {
 function viewMissing() { return `${backLink(`#/`)}<h1>Not found</h1><p class="lede">That page is not in the index yet.</p>`; }
 
 addRoute('', () => viewHome());
+if (PROFILE.archiveHome) addRoute('essays', () => viewEssays());
+onPage(p => { if (PROFILE.archiveHome) document.documentElement.toggleAttribute('data-archive', p[0] === ''); });   // the front page alone uses the wide layout
 addRoute('about', () => viewAbout());
 addRoute('app', () => viewApp());
 if (PROFILE.readerTools) {          // the app's search page, opened from the reading bar and the menu

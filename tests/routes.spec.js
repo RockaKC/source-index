@@ -194,3 +194,41 @@ test('the app keeps its own Guide page, without the PDF guides', async ({ page }
   await expect(page.locator('#app h1')).toHaveText('Guide');
   await expect(page.locator('.gcard')).toHaveCount(0);
 });
+
+test('the website front page is the Kingdom Code archive: the mission, search, the featured guide, the newest essays and the collections', async ({ page }) => {
+  await page.goto('/'); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Kingdom Code Archive');
+  await expect(page.locator('.alede')).toContainText('investigating the questions others have forgotten');
+  await expect(page.locator('#q')).toBeVisible();                                    // search is still first at hand
+  await expect(page.locator('.afeat')).toHaveAttribute('href', '#/guides/the-ungovernable-mind');
+  const ids = await page.evaluate(() => essayIds().slice(0, 5));
+  const shown = await page.locator('.acols .piece .t a').evaluateAll(a => a.map(x => x.dataset.pid));
+  expect(shown).toEqual(ids.map(String));                                           // the five newest, in order
+  const hrefs = await page.locator('.coll a.cc').evaluateAll(a => a.map(x => x.getAttribute('href')));
+  expect(hrefs).toEqual(['#/books', '#/essays', '#/guides', '#/names', '#/words', '#/translations', '#/english']);
+  expect(await page.evaluate(() => document.documentElement.hasAttribute('data-archive'))).toBe(true);   // the front page alone is wide
+  await page.locator('.coll a[href="#/words"]').click(); await settle(page);
+  expect(await page.evaluate(() => document.documentElement.hasAttribute('data-archive'))).toBe(false);
+});
+
+test('every collection on the front page opens a real page, and Essays lists every cited essay newest first by year', async ({ page }) => {
+  await page.goto('/'); await settle(page);
+  for (const h of ['#/books', '#/essays', '#/guides', '#/names', '#/words', '#/translations', '#/english']) {
+    await page.evaluate(x => { location.hash = x; }, h); await settle(page);
+    await expect(page.locator('#app h1')).not.toHaveText('Not found');
+  }
+  await page.evaluate(() => { location.hash = '#/essays'; }); await settle(page);
+  const n = await page.evaluate(() => essayIds().length);
+  expect(await page.locator('#app .piece').count()).toBe(n);
+  const years = await page.locator('#app h2').allTextContents();
+  expect(years).toEqual([...years].sort().reverse());
+  const dates = await page.locator('#app .piece .cap').evaluateAll(c => c.length);
+  expect(dates).toBeGreaterThan(100);
+});
+
+test('the app keeps its own home, not the archive', async ({ page }) => {
+  await page.goto('/app.html'); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Read the Bible.');
+  await expect(page.locator('.ahero')).toHaveCount(0);
+  expect(await page.evaluate(() => document.documentElement.hasAttribute('data-archive'))).toBe(false);
+});
