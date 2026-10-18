@@ -11,6 +11,7 @@ const PROFILE = {
   verseTools: true,        // tap a verse for the verse panel: favorite, highlight, copy, share; the Favorites and Highlights pages (js/marks.js)
   appUpdates: true,        // the app's version, and a check for a newer one (js/updates.js)
   readerTools: true,       // the chapter bar in the header, the reading toolbar, reading history, and the search page (js/readerbar.js)
+  essayText: false,        // essays open on the publication, not in the app
   archiveHome: false,      // the website's archive front page
   kcGuides: false,         // the PDF guides are on the website only
 };

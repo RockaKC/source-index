@@ -466,3 +466,16 @@ html[data-archive] .wrap{max-width:1040px}
 @media (hover:hover){.cc:hover{border-color:var(--accent)}}
 .cc:active{transform:scale(.985)}
 @media (min-width:860px){.ahero{padding:var(--s8) var(--s6) var(--s6)}.cc{padding:var(--s3)}}
+
+/* An essay, read on the website */
+.essaymeta{margin:var(--s1) 0 var(--s3)}
+.essaytext{font:400 19px/1.75 var(--serif);max-width:680px}
+.essaytext p{margin:0 0 1.1em}
+.essaytext h2,.essaytext h3,.essaytext h4{margin:1.8em 0 .5em;font-family:var(--serif);line-height:1.3}
+.essaytext h2{font-size:26px}.essaytext h3{font-size:22px}.essaytext h4{font-size:19px}
+.essaytext blockquote{margin:1.3em 0;padding:.1em 0 .1em 1.1em;border-left:3px solid var(--accent);color:var(--ink)}
+.essaytext blockquote p{margin:0 0 .6em}
+.essaytext hr{border:0;margin:2em auto;width:64px;border-top:1px solid var(--line)}
+.essaytext ul,.essaytext ol{margin:0 0 1.1em;padding-left:1.4em}.essaytext li{margin:.25em 0}
+.essaytext a{color:var(--accent)}
+.essayfoot{margin-top:var(--s4)}
