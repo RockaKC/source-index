@@ -18,6 +18,7 @@ function related(pid, n) {
   for (const [b,ch,v] of (REFS[pid] || [])) for (const p of D.verses[b][ch][v]) if (+p !== +pid) score[p] = (score[p] || 0) + 1;
   return Object.keys(score).sort((a,c) => score[c]-score[a] || P[c][5]-P[a][5]).slice(0, n).map(p => [+p, score[p]]);
 }
+const PUB = new Set((D.PUB || []).map(String));   // public Substack essays: listed even before their citations are in
 const ET = D.ET || {};                    // essay id -> words, for the essays whose text is on this website (site profile only)
 const onSite = pid => !!(PROFILE.essayText && ET[pid]);
 const srcLink = pid => !onSite(pid) && hasRefs(pid) ? ` \u00b7 <a href="#/essay/${pid}">Sources</a>` : '';

@@ -231,25 +231,32 @@ def build(con, cur, warn):
         pieces[nid] = [title, url, platform, date, series.get(nid, ""), rank_of[views.get(nid, 0)]]
     D["pieces"] = {str(k): v for k, v in pieces.items()}
 
-    # ---- essay text, for reading on the website ----
-    # Only published Substack posts that are open to everyone, and only essays already on the page. Patreon posts, members-only
-    # posts and drafts never get text here (no audience means no text: patron-only posts must not appear on the free site).
-    essay_md = {}
-    for nid, md in q("""select n.id, n.body_md from nodes n join articles a on a.node_id = n.id
-                        where n.type = 'article' and n.status = 'published' and a.platform = 'substack' and a.audience = 'everyone'
-                          and n.body_md is not null"""):
-        if nid in pieces and len(md.strip()) > 200:
-            essay_md[nid] = md
-    D["ET"] = {str(k): essay_text.words(v) for k, v in sorted(essay_md.items())}
-    site_slugs = {re.sub(r".*/p/", "", pieces[n][1]).split("?")[0].rstrip("/"): n for n in essay_md}
+    # ---- which essays the lists show, and (when switched on) essay text for reading on the website ----
+    # D["PUB"]: the Substack essays open to everyone. The lists show these and every essay that cites verses; they always open on
+    # the platform where they were published. Patreon posts that cite no verse are not listed (the database does not say which are
+    # patron-only).
+    D["PUB"] = sorted(nid for nid, in q("""select n.id from nodes n join articles a on a.node_id = n.id
+                      where n.type = 'article' and n.status = 'published' and a.platform = 'substack' and a.audience = 'everyone'""")
+                      if nid in pieces)
+    essay_md, essay_html = {}, {}
+    # Essay text on the site is OFF for now (essay_text_on_site in curated.json): essays open on their own platforms. Switched on, only
+    # published Substack posts open to everyone get text, and never Patreon posts, members-only posts or drafts.
+    if cur.get("essay_text_on_site"):
+        for nid, md in q("""select n.id, n.body_md from nodes n join articles a on a.node_id = n.id
+                            where n.type = 'article' and n.status = 'published' and a.platform = 'substack' and a.audience = 'everyone'
+                              and n.body_md is not null"""):
+            if nid in pieces and len(md.strip()) > 200:
+                essay_md[nid] = md
+        site_slugs = {re.sub(r".*/p/", "", pieces[n][1]).split("?")[0].rstrip("/"): n for n in essay_md}
 
-    def rewrite(href):                       # links between essays, and to this site, stay on the site
-        m = re.match(r"https?://kingdomcode\.substack\.com/p/([^/?#]+)", href)
-        if m and m.group(1) in site_slugs:
-            return "#/essay/%d" % site_slugs[m.group(1)]
-        m = re.match(r"https?://sources\.kingdomcodearchive\.com/?(#/[^\s]*)?$", href)
-        return (m.group(1) or "#/") if m else None
-    essay_html = {k: essay_text.to_html(v, rewrite) for k, v in essay_md.items()}
+        def rewrite(href):                   # links between essays, and to this site, stay on the site
+            m = re.match(r"https?://kingdomcode\.substack\.com/p/([^/?#]+)", href)
+            if m and m.group(1) in site_slugs:
+                return "#/essay/%d" % site_slugs[m.group(1)]
+            m = re.match(r"https?://sources\.kingdomcodearchive\.com/?(#/[^\s]*)?$", href)
+            return (m.group(1) or "#/") if m else None
+        essay_html = {k: essay_text.to_html(v, rewrite) for k, v in essay_md.items()}
+    D["ET"] = {str(k): essay_text.words(v) for k, v in sorted(essay_md.items())}
 
     # ---- guides and seasonal reads ----
     guides = {}
@@ -498,6 +505,12 @@ def write_bible(bible, house):
 
 
 def write_essay_text(essay_html):
+    if not essay_html:                        # switched off: no essay text is published, and none is left behind
+        if ESSAY_DIR.is_dir():
+            for f in ESSAY_DIR.glob("*.json"):
+                f.unlink()
+            ESSAY_DIR.rmdir()
+        return
     ESSAY_DIR.mkdir(exist_ok=True)
     keep = set()
     for nid, h in essay_html.items():
@@ -569,7 +582,7 @@ def main():
         print("  citations at verses missing from the stored text (shown as hits with no verse text; check the database):")
         for pid, raw, n in info["phantom"]:
             print("      %5d  %-32s %d verse%s   %s" % (pid, raw, n, "" if n == 1 else "s", D["pieces"][str(pid)][0][:40]))
-    print("  essay text for reading on the site: %d essays (Substack, open to everyone, already on the page)" % len(info["essay_html"]))
+    print("  essay text for reading on the site: %d essays%s" % (len(info["essay_html"]), "" if info["essay_html"] else " (switched off: essays open on their platforms)"))
     print("Compared with the data currently in data/site.js:")
     print(summarize(old, D, old_bible, bible))
     for w in sorted(set(warnings)):
