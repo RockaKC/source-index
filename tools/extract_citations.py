@@ -68,7 +68,7 @@ def reference_pattern(alias):
 
 # An essay may give a verse in Septuagint numbering and say so ("Psalm 39:7, Septuagint"), or give the Septuagint number first and the
 # English one after it ("Psalm 88:7 (Psalm 89:6 in English Bibles)"). Such a number is already the house number: it is not mapped again.
-LXX_LABEL = re.compile(r"^[\s,;*_)\]]{0,6}\(?\s*(?:Septuagint|LXX|Brenton)\b", re.I)
+LXX_LABEL = re.compile(r"^[\s,;*_)\]]{0,6}\(?\s*(?:in\s+(?:the\s+)?)?(?:Septuagint|LXX|Brenton)\b", re.I)
 ENG_PAIR = re.compile(r"^\s*\((?:[1-3]\s)?[A-Z][A-Za-z]+(?:\s[A-Za-z]+)?\s+\d+:\d+\s+in\s+(?:many\s+)?English"
                       r"|^[,;]?\s*corresponding to\s+(?:[1-3]\s)?[A-Z][A-Za-z]+\s+\d+:\d+\s+in\s+(?:many\s+)?English")
 
