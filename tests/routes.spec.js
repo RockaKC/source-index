@@ -197,8 +197,9 @@ test('the app keeps its own Guide page, without the PDF guides', async ({ page }
 
 test('the website front page is the Kingdom Code archive: the mission, search, the featured guide, the newest essays and the collections', async ({ page }) => {
   await page.goto('/'); await settle(page);
-  await expect(page.locator('#app h1')).toHaveText('Kingdom Code Archive');
-  await expect(page.locator('.alede')).toContainText('investigating the questions others have forgotten');
+  await expect(page.locator('#app h1')).toHaveText('Kingdom Code');
+  await expect(page.locator('.ahead')).toHaveText('Knowledge worth recovering. Questions worth investigating.');
+  await expect(page.locator('.alede')).toContainText('An independent exploration of Scripture, ancient history, Christianity, and the civilizations that shaped our world.');
   await expect(page.locator('#q')).toBeVisible();                                    // search is still first at hand
   await expect(page.locator('.afeat')).toHaveAttribute('href', '#/guides/the-ungovernable-mind');
   const ids = await page.evaluate(() => essayIds().slice(0, 5));
@@ -233,60 +234,55 @@ test('the app keeps its own home, not the archive', async ({ page }) => {
   expect(await page.evaluate(() => document.documentElement.hasAttribute('data-archive'))).toBe(false);
 });
 
-// ---- essays read on the website ----
+// ---- essays open on the platform where they were published; the site is the source index ----
 const fs = require('fs');
 const path = require('path');
 
-test('essay text is only ever Substack posts open to everyone, as plain safe markup, for essays on the page', () => {
-  const ids = Object.keys(D.ET || {});
-  expect(ids.length).toBeGreaterThan(100);
-  for (const id of ids) {
-    expect(D.pieces[id], `essay ${id} is on the page`).toBeTruthy();
-    expect(D.pieces[id][2], `essay ${id} is a Substack post`).toBe('substack');   // no Patreon text: patron-only posts must not appear
-    const f = path.join(__dirname, '..', 'essay-text', id + '.json');
-    const h = JSON.parse(fs.readFileSync(f, 'utf8')).h;
-    expect(h.length, `essay ${id} has text`).toBeGreaterThan(100);
-    expect(h, `essay ${id} carries no script, frame or event handler`).not.toMatch(/<\s*(script|iframe|object|embed|style)|\son\w+\s*=|javascript:/i);
-    expect(h, `essay ${id} shows no raw Markdown marks`).not.toMatch(/(^|>)\s*#{2,}\s|\*\*\w/);
+test('essay text is switched off: no text in the data, no essay-text folder, and the font and cache rules stay harmless', () => {
+  expect(Object.keys(D.ET || {})).toEqual([]);
+  expect(fs.existsSync(path.join(__dirname, '..', 'essay-text'))).toBe(false);
+});
+
+test('titles in the lists open the essay where it was published, in a new tab, never an essay page on the site', async ({ page }) => {
+  for (const hash of ['#/essays', '#/']) {
+    await page.goto('/' + hash); await settle(page);
+    const links = await page.locator('#app .piece .t a').evaluateAll(a => a.map(x => [x.getAttribute('href'), x.getAttribute('target')]));
+    expect(links.length).toBeGreaterThan(3);
+    for (const [href, target] of links) {
+      expect(href).toMatch(/^https:\/\/(kingdomcode\.substack\.com|www\.patreon\.com)\//);
+      expect(target).toBe('_blank');
+    }
   }
-  const files = fs.readdirSync(path.join(__dirname, '..', 'essay-text')).filter(f => f.endsWith('.json')).map(f => f.replace('.json', ''));
-  expect(files.sort()).toEqual(ids.slice().sort());           // no stray essay file
 });
 
-test('an essay is read on the site: its title, the line under it, the text, where it came from, and the verses it cites', async ({ page }) => {
-  const pid = Object.keys(D.ET).find(id => D.pieces[id][0].startsWith('5 Lies About Torah'));
-  await page.goto('/#/essay/' + pid); await settle(page);
+test('the Essays page and the front page list the newest public Substack essays first, cited or not, each with Sources only when it cites verses', async ({ page }) => {
+  const newest = D.PUB.map(id => D.pieces[id][3]).sort().reverse()[0];
+  await page.goto('/'); await settle(page);
+  const ids = await page.locator('.acols .piece .t a').evaluateAll(a => a.map(x => x.dataset.pid));
+  const dates = ids.map(id => D.pieces[id][3]);
+  expect(dates[0], 'the newest public essay leads the front page').toBe(newest);
+  expect(dates).toEqual([...dates].sort().reverse());
+  await page.evaluate(() => { location.hash = '#/essays'; }); await settle(page);
+  const first = page.locator('#app .piece').first();
+  expect(D.pieces[await first.locator('.t a').getAttribute('data-pid')][3]).toBe(newest);
+  const cited = await page.evaluate(() => Object.keys(P).filter(p => hasRefs(p)).length);
+  expect(await page.locator('#app .piece').count()).toBeGreaterThanOrEqual(cited);
+  // a public essay with no citations yet is listed, and offers no Sources link; one that cites verses does
+  const uncited = await page.evaluate(() => D.PUB.find(id => !hasRefs(id)));
+  const withRefs = await page.evaluate(() => Object.keys(P).find(id => hasRefs(id)));
+  await expect(page.locator(`#app .piece:has(a[data-pid="${uncited}"]) a[href^="#/essay/"]`)).toHaveCount(0);
+  await expect(page.locator(`#app .piece:has(a[data-pid="${withRefs}"]) a[href^="#/essay/"]`)).toHaveCount(1);
+});
+
+test('the essay page still lists the verses an essay cites, and offers the essay on its platform', async ({ page }) => {
+  await page.goto('/'); await settle(page);
+  const pid = await page.evaluate(() => Object.keys(P).find(id => hasRefs(id)));
+  await page.evaluate(h => { location.hash = h; }, '#/essay/' + pid); await settle(page);
   await expect(page.locator('#app h1')).toHaveText(D.pieces[pid][0]);
-  await expect(page.locator('.essaymeta')).toContainText('min read');
-  const text = page.locator('.essaytext');
-  await expect(text).toContainText('The Law Was Just for Israel');
-  expect(await text.locator('h3').count()).toBeGreaterThan(3);
-  expect(await text.locator('blockquote').count()).toBeGreaterThan(3);
-  await expect(text).not.toContainText('###');
-  await expect(page.locator('.essayfoot a')).toHaveAttribute('href', D.pieces[pid][1]);
-  await expect(page.locator('#app')).toContainText('Scripture cited in this essay');
-});
-
-test('titles in the lists open the essay on the site, not on Substack', async ({ page }) => {
-  await page.goto('/#/essays'); await settle(page);
-  const first = page.locator('#app .piece .t a[href^="#/essay/"]').first();      // Patreon posts have no text here and still open on Patreon
-  const pid = await first.getAttribute('data-pid');
-  expect(D.pieces[pid][2]).toBe('substack');
-  expect(await first.getAttribute('target')).toBeNull();
-  const patreon = page.locator('#app .piece .t a[target="_blank"]').first();
-  expect(await patreon.getAttribute('href')).toMatch(/^https:\/\//);
-  await first.click(); await settle(page);
-  await expect(page.locator('.essaytext')).toBeVisible();
-  await page.goBack(); await settle(page);
-  await expect(page.locator('#app h1')).toHaveText('Essays');
-});
-
-test('an essay that cannot load says so, with a way to try again', async ({ page }) => {
-  const pid = Object.keys(D.ET)[0];
-  await page.route('**/essay-text/*.json', r => r.abort());
-  await page.goto('/#/essay/' + pid);
-  await expect(page.locator('#loadmsg')).toContainText('could not load');
-  expect(await page.locator('#loadmsg a').getAttribute('href')).toBe('#/essay/' + pid);
+  await expect(page.locator('#app')).toContainText('Scripture cited');
+  const read = page.locator('#app a.btn.primary').first();
+  expect(await read.getAttribute('target')).toBe('_blank');
+  expect(await read.getAttribute('href')).toBe(D.pieces[pid][1]);
 });
 
 test('the app does not carry essay text: its essay links still open the publication', async ({ page }) => {
@@ -299,34 +295,4 @@ test('the app does not carry essay text: its essay links still open the publicat
   expect(await a.getAttribute('target')).toBe('_blank');
   expect(await a.getAttribute('href')).toMatch(/^https:\/\//);
   expect(asked).toEqual([]);
-});
-
-test('links between essays, and to this site, stay on the site; the held-back posts never appear', async ({ page }) => {
-  const byTitle = t => Object.keys(D.ET).find(id => D.pieces[id][0].startsWith(t));
-  const pid = byTitle('The Christian Code Inside Your Phone');
-  expect(pid, 'the post promoted from a draft is on the site').toBeTruthy();
-  await page.goto('/#/essay/' + pid); await settle(page);
-  const inner = page.locator('.essaytext a[href^="#/"]');
-  expect(await inner.count()).toBeGreaterThan(0);
-  expect(await inner.first().getAttribute('target')).toBeNull();
-  await expect(page.locator('.essaytext a[href*="sources.kingdomcodearchive.com"]')).toHaveCount(0);
-  await expect(page.locator('#app')).toContainText('Scripture cited in this essay');          // its citations came with the draft
-  const titles = Object.values(D.pieces).map(p => p[0]);
-  expect(titles.some(t => t.startsWith('Act Like Men'))).toBe(false);                          // members-only on Substack
-  expect(titles.some(t => t.startsWith('Start Here: The Door Into'))).toBe(false);             // a start page, not an essay
-  expect(byTitle('Who Were the Sons of God'), 'a new essay without citations is read as text').toBeTruthy();
-  await page.goto('/#/essay/' + byTitle('Who Were the Sons of God')); await settle(page);
-  await expect(page.locator('.essaytext')).toBeVisible();
-});
-
-test('the newest essays lead the front page and the Essays page, whether or not their citations are in yet', async ({ page }) => {
-  const newestReadable = Object.keys(D.ET).map(id => D.pieces[id][3]).sort().reverse()[0];
-  await page.goto('/'); await settle(page);
-  const ids = await page.locator('.acols .piece .t a').evaluateAll(a => a.map(x => x.dataset.pid));
-  const dates = ids.map(id => D.pieces[id][3]);
-  expect(dates[0], 'the newest readable essay leads the front page').toBe(newestReadable);
-  expect(dates).toEqual([...dates].sort().reverse());                  // newest first
-  await page.evaluate(() => { location.hash = '#/essays'; }); await settle(page);
-  const first = await page.locator('#app .piece .t a').first().getAttribute('data-pid');
-  expect(D.pieces[first][3]).toBe(newestReadable);
 });
