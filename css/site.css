@@ -436,10 +436,11 @@ dialog.drawer.swiped::backdrop{animation:none}
 /* The website's front page, as the Kingdom Code archive (js/pages.js, archiveHome). Only the front page is wide. */
 html[data-archive] .wrap{max-width:1040px}
 .ahero{margin:var(--s3) 0 var(--s4);padding:var(--s6) var(--s3) var(--s4);border-radius:18px;color:#f1f3f0;
-  background:radial-gradient(120% 140% at 85% 0%,#1d2a1d 0%,#0e100f 55%,#090a0a 100%);border:1px solid #1d231e}
+  background:radial-gradient(120% 140% at 85% 0%,#1d2a1d 0%,#0e100f 55%,#090a0a 100%);border:1px solid rgba(112,184,80,.32)}
 .ahero h1{margin:0;font:700 clamp(30px,8.2vw,72px)/1.04 var(--serif);letter-spacing:-.01em;text-transform:uppercase}
 .ahero h1 em{font-style:normal;color:#70b850}
-.alede{max-width:640px;margin:var(--s3) 0 var(--s4);font:400 clamp(17px,2.4vw,20px)/1.55 var(--serif);color:#c9cfca}
+.ahead{max-width:640px;margin:var(--s3) 0 var(--s2);font:700 clamp(24px,5.4vw,36px)/1.22 var(--sans);letter-spacing:-.01em;color:#f1f3f0}
+.alede{max-width:640px;margin:0 0 var(--s4);font:400 clamp(16px,2.2vw,18px)/1.6 var(--sans);color:#aeb7b0}
 .ahero .search{margin-top:0;max-width:680px}
 .ahero .search input{background:#f6f7f5;color:#14181a;border-color:transparent}
 .ahero .chips{margin-top:var(--s2)}
