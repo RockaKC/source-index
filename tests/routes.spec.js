@@ -81,8 +81,8 @@ test('the translation tier list shows its picture, which loads, before the writt
   await settle(page);
   const img = page.locator('#app .tierfig img');
   await expect(img).toBeVisible();
-  await expect.poll(() => img.evaluate(e => e.complete && e.naturalWidth)).toBe(1536);
-  expect(await img.getAttribute('alt')).toContain('S: BLB, NASB, LSB');
+  await expect.poll(() => img.evaluate(e => e.complete && e.naturalWidth)).toBe(1672);
+  expect(await img.getAttribute('alt')).toContain('S: BLB, NASB 1995, LSB');
   const order = await page.evaluate(() => { const f = document.querySelector('#app .tierfig'), t = document.querySelector('#app .tier'); return f.compareDocumentPosition(t) & Node.DOCUMENT_POSITION_FOLLOWING; });
   expect(order).toBeTruthy();
 });

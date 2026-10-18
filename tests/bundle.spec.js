@@ -51,7 +51,7 @@ test('the tier list picture is in the app and loads from the phone', async ({ pa
   await settle(page);
   const img = page.locator('#app .tierfig img');
   await expect(img).toBeVisible();
-  await expect.poll(() => img.evaluate(e => e.complete && e.naturalWidth)).toBe(1536);
+  await expect.poll(() => img.evaluate(e => e.complete && e.naturalWidth)).toBe(1672);
 });
 
 test('the build stamps the app with the version it is publishing, and the app reads it', async ({ page }) => {
