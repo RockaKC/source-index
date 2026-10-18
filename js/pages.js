@@ -44,13 +44,13 @@ function viewReaderHome() {         // the app's home: the Bible first, the Guid
 }
 // The website's front page, laid out as the Kingdom Code archive: the mission and the search first, then the featured guide and the
 // newest essays, the collections as catalog cards with their counts, and the questions to start with.
-const essayIds = () => Object.keys(P).filter(pid => P[pid] && hasRefs(pid)).sort((a, c) => P[c][3].localeCompare(P[a][3]) || c - a);
+const essayIds = () => Object.keys(P).filter(pid => P[pid] && (hasRefs(pid) || onSite(pid))).sort((a, c) => P[c][3].localeCompare(P[a][3]) || c - a);   // cited in the index, or readable here (a new essay has text before it has citations)
 function viewEssays() {             // every essay the index cites, newest first, by year
   const ids = essayIds(), years = [...new Set(ids.map(pid => P[pid][3].slice(0, 4)))];
   return `
   ${backLink('#/')}
   <h1>Essays</h1>
-  <p class="lede">${plural(ids.length, 'Kingdom Code essay')} cited in the index, newest first. Each opens where it was published; Sources lists the verses it quotes.</p>
+  <p class="lede">${plural(ids.length, 'Kingdom Code essay')}, newest first. Most are read here, with the verses they cite; the rest open where they were published.</p>
   ${years.map(y => `<h2>${y}</h2>${pieceList(ids.filter(pid => P[pid][3].startsWith(y)))}`).join('')}`;
 }
 function archiveHome() {
@@ -60,7 +60,7 @@ function archiveHome() {
   const g = (D.KG || [])[0], latest = essayIds().slice(0, 5);
   const coll = [
     ['#/books', withText, 'The Bible', `All 81 books of the Ethiopian canon. ${withText} have their text here.`],
-    ['#/essays', essayIds().length, 'Essays', 'Kingdom Code essays, each linked to the verses it quotes.'],
+    ['#/essays', essayIds().length, 'Essays', 'Kingdom Code essays, read here, with the verses each one cites.'],
     g ? ['#/guides', D.KG.length, 'Guides', 'Kingdom Code guides to download and keep.'] : null,
     D.PP && D.PP.length ? ['#/names', D.PP.length, 'Names', 'Short profiles, with the verses where each appears.'] : null,
     ['#/words', WORDS.length, 'Words', 'Hebrew and Greek terms from the essays, side by side.'],

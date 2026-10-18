@@ -318,3 +318,15 @@ test('links between essays, and to this site, stay on the site; the held-back po
   await page.goto('/#/essay/' + byTitle('Who Were the Sons of God')); await settle(page);
   await expect(page.locator('.essaytext')).toBeVisible();
 });
+
+test('the newest essays lead the front page and the Essays page, whether or not their citations are in yet', async ({ page }) => {
+  const newestReadable = Object.keys(D.ET).map(id => D.pieces[id][3]).sort().reverse()[0];
+  await page.goto('/'); await settle(page);
+  const ids = await page.locator('.acols .piece .t a').evaluateAll(a => a.map(x => x.dataset.pid));
+  const dates = ids.map(id => D.pieces[id][3]);
+  expect(dates[0], 'the newest readable essay leads the front page').toBe(newestReadable);
+  expect(dates).toEqual([...dates].sort().reverse());                  // newest first
+  await page.evaluate(() => { location.hash = '#/essays'; }); await settle(page);
+  const first = await page.locator('#app .piece .t a').first().getAttribute('data-pid');
+  expect(D.pieces[first][3]).toBe(newestReadable);
+});
