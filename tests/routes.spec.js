@@ -197,7 +197,7 @@ test('the app keeps its own Guide page, without the PDF guides', async ({ page }
 
 test('the website front page is the Kingdom Code archive: the mission, search, the featured guide, the newest essays and the collections', async ({ page }) => {
   await page.goto('/'); await settle(page);
-  await expect(page.locator('#app h1')).toHaveText('The Archive');
+  await expect(page.locator('#app h1')).toHaveText('Kingdom Code Archive');
   await expect(page.locator('.alede')).toContainText('investigating the questions others have forgotten');
   await expect(page.locator('#q')).toBeVisible();                                    // search is still first at hand
   await expect(page.locator('.afeat')).toHaveAttribute('href', '#/guides/the-ungovernable-mind');

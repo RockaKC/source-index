@@ -69,12 +69,11 @@ function archiveHome() {
   ].filter(Boolean);
   return `
   <section class="ahero" aria-labelledby="ah-t">
-    <p class="aeyebrow">Kingdom Code</p>
-    <h1 id="ah-t">The <em>Archive</em></h1>
+    <h1 id="ah-t"><span>Kingdom Code</span> <em>Archive</em></h1>
     <p class="alede">Recovering knowledge, examining history, and investigating the questions others have forgotten, overlooked, or left unanswered.</p>
     <form class="search" role="search" id="sf">
       <label class="sr" for="q">Search by verse, word, or title</label>
-      <input id="q" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug" aria-haspopup="listbox" placeholder="Search the archive" autocomplete="off" autocapitalize="none" spellcheck="false" enterkeyhint="search">
+      <input id="q" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug" aria-haspopup="listbox" placeholder="Verse, word, or title" autocomplete="off" autocapitalize="none" spellcheck="false" enterkeyhint="search">
       <button class="btn primary" type="submit">Search</button>
       <ul class="sug" id="sug" role="listbox" aria-label="Suggestions" hidden></ul>
       <div class="sr" id="sugstat" role="status" aria-live="polite"></div>
