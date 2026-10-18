@@ -35,11 +35,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import stamp_assets  # noqa: E402
+import essay_text  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 CURATED = ROOT / "tools" / "curated.json"
 HTML = ROOT / "index.html"
 DATA_JS = ROOT / "data" / "site.js"         # the page data, loaded by index.html before the app
+ESSAY_DIR = ROOT / "essay-text"             # essay-text/<essay id>.json: the essay as page HTML, read on the website
 BIBLE_DIR = ROOT / "bible"                  # bible/<translation>/<book id>.json
 
 EXPECTED_TABLES = {
@@ -228,6 +230,18 @@ def build(con, cur, warn):
     for nid, title, url, platform, date, _ in pieces_src:
         pieces[nid] = [title, url, platform, date, series.get(nid, ""), rank_of[views.get(nid, 0)]]
     D["pieces"] = {str(k): v for k, v in pieces.items()}
+
+    # ---- essay text, for reading on the website ----
+    # Only published Substack posts that are open to everyone, and only essays already on the page. Patreon posts, members-only
+    # posts and drafts never get text here (no audience means no text: patron-only posts must not appear on the free site).
+    essay_md = {}
+    for nid, md in q("""select n.id, n.body_md from nodes n join articles a on a.node_id = n.id
+                        where n.type = 'article' and n.status = 'published' and a.platform = 'substack' and a.audience = 'everyone'
+                          and n.body_md is not null"""):
+        if nid in pieces and len(md.strip()) > 200:
+            essay_md[nid] = md
+    D["ET"] = {str(k): essay_text.words(v) for k, v in sorted(essay_md.items())}
+    essay_html = {k: essay_text.to_html(v) for k, v in essay_md.items()}
 
     # ---- guides and seasonal reads ----
     guides = {}
@@ -426,7 +440,7 @@ def build(con, cur, warn):
     leaked = (set(pieces) | cited_pieces) & drafts
     if leaked:
         sys.exit("refusing to write: unpublished node ids in the page data: %s" % sorted(leaked)[:10])
-    info = {"skipped_review_citations": skipped["review"],
+    info = {"essay_html": essay_html, "skipped_review_citations": skipped["review"],
             "phantom": sorted((pid, raw, len(vs)) for (pid, raw), vs in phantom.items()),
             "left_out_published": [(r[0], r[1], "no link yet" if not (r[2] or "").strip() else r[5])
                                    for r in rows if r[0] not in pieces and r[5] != "quip"],
@@ -473,6 +487,18 @@ def write_bible(bible, house):
     for d in sorted(BIBLE_DIR.iterdir()):
         if d.is_dir() and not any(d.iterdir()):
             d.rmdir()
+
+
+def write_essay_text(essay_html):
+    ESSAY_DIR.mkdir(exist_ok=True)
+    keep = set()
+    for nid, h in essay_html.items():
+        f = ESSAY_DIR / ("%d.json" % nid)
+        f.write_text(dumps({"h": h}), encoding="utf-8")
+        keep.add(f)
+    for f in ESSAY_DIR.glob("*.json"):
+        if f not in keep:
+            f.unlink()
 
 
 def write_data(D):
@@ -535,6 +561,7 @@ def main():
         print("  citations at verses missing from the stored text (shown as hits with no verse text; check the database):")
         for pid, raw, n in info["phantom"]:
             print("      %5d  %-32s %d verse%s   %s" % (pid, raw, n, "" if n == 1 else "s", D["pieces"][str(pid)][0][:40]))
+    print("  essay text for reading on the site: %d essays (Substack, open to everyone, already on the page)" % len(info["essay_html"]))
     print("Compared with the data currently in data/site.js:")
     print(summarize(old, D, old_bible, bible))
     for w in sorted(set(warnings)):
@@ -545,7 +572,8 @@ def main():
         return
     version = write_data(D)
     write_bible(bible, D["HT"])
-    print("wrote data/site.js (version %s), the stamps in index.html, and bible/ (%d books)" % (version, len(bible)))
+    write_essay_text(info["essay_html"])
+    print("wrote data/site.js (version %s), the stamps in index.html, bible/ (%d books) and essay-text/ (%d essays)" % (version, len(bible), len(info["essay_html"])))
 
 
 if __name__ == "__main__":

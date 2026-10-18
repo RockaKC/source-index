@@ -232,3 +232,71 @@ test('the app keeps its own home, not the archive', async ({ page }) => {
   await expect(page.locator('.ahero')).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.hasAttribute('data-archive'))).toBe(false);
 });
+
+// ---- essays read on the website ----
+const fs = require('fs');
+const path = require('path');
+
+test('essay text is only ever Substack posts open to everyone, as plain safe markup, for essays on the page', () => {
+  const ids = Object.keys(D.ET || {});
+  expect(ids.length).toBeGreaterThan(100);
+  for (const id of ids) {
+    expect(D.pieces[id], `essay ${id} is on the page`).toBeTruthy();
+    expect(D.pieces[id][2], `essay ${id} is a Substack post`).toBe('substack');   // no Patreon text: patron-only posts must not appear
+    const f = path.join(__dirname, '..', 'essay-text', id + '.json');
+    const h = JSON.parse(fs.readFileSync(f, 'utf8')).h;
+    expect(h.length, `essay ${id} has text`).toBeGreaterThan(100);
+    expect(h, `essay ${id} carries no script, frame or event handler`).not.toMatch(/<\s*(script|iframe|object|embed|style)|\son\w+\s*=|javascript:/i);
+    expect(h, `essay ${id} shows no raw Markdown marks`).not.toMatch(/(^|>)\s*#{2,}\s|\*\*\w/);
+  }
+  const files = fs.readdirSync(path.join(__dirname, '..', 'essay-text')).filter(f => f.endsWith('.json')).map(f => f.replace('.json', ''));
+  expect(files.sort()).toEqual(ids.slice().sort());           // no stray essay file
+});
+
+test('an essay is read on the site: its title, the line under it, the text, where it came from, and the verses it cites', async ({ page }) => {
+  const pid = Object.keys(D.ET).find(id => D.pieces[id][0].startsWith('5 Lies About Torah'));
+  await page.goto('/#/essay/' + pid); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText(D.pieces[pid][0]);
+  await expect(page.locator('.essaymeta')).toContainText('min read');
+  const text = page.locator('.essaytext');
+  await expect(text).toContainText('The Law Was Just for Israel');
+  expect(await text.locator('h3').count()).toBeGreaterThan(3);
+  expect(await text.locator('blockquote').count()).toBeGreaterThan(3);
+  await expect(text).not.toContainText('###');
+  await expect(page.locator('.essayfoot a')).toHaveAttribute('href', D.pieces[pid][1]);
+  await expect(page.locator('#app')).toContainText('Scripture cited in this essay');
+});
+
+test('titles in the lists open the essay on the site, not on Substack', async ({ page }) => {
+  await page.goto('/#/essays'); await settle(page);
+  const first = page.locator('#app .piece .t a[href^="#/essay/"]').first();      // Patreon posts have no text here and still open on Patreon
+  const pid = await first.getAttribute('data-pid');
+  expect(D.pieces[pid][2]).toBe('substack');
+  expect(await first.getAttribute('target')).toBeNull();
+  const patreon = page.locator('#app .piece .t a[target="_blank"]').first();
+  expect(await patreon.getAttribute('href')).toMatch(/^https:\/\//);
+  await first.click(); await settle(page);
+  await expect(page.locator('.essaytext')).toBeVisible();
+  await page.goBack(); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Essays');
+});
+
+test('an essay that cannot load says so, with a way to try again', async ({ page }) => {
+  const pid = Object.keys(D.ET)[0];
+  await page.route('**/essay-text/*.json', r => r.abort());
+  await page.goto('/#/essay/' + pid);
+  await expect(page.locator('#loadmsg')).toContainText('could not load');
+  expect(await page.locator('#loadmsg a').getAttribute('href')).toBe('#/essay/' + pid);
+});
+
+test('the app does not carry essay text: its essay links still open the publication', async ({ page }) => {
+  const asked = [];
+  page.on('request', r => { if (r.url().includes('essay-text')) asked.push(r.url()); });
+  await page.goto('/app.html'); await settle(page);
+  await page.evaluate(() => { location.hash = '#/kc'; }); await settle(page);
+  await page.evaluate(() => { location.hash = '#/path/canon'; }); await settle(page);
+  const a = page.locator('#app .piece .t a, #app .feature a').first();
+  expect(await a.getAttribute('target')).toBe('_blank');
+  expect(await a.getAttribute('href')).toMatch(/^https:\/\//);
+  expect(asked).toEqual([]);
+});

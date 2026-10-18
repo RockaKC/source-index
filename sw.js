@@ -4,10 +4,11 @@
    under ./, app.html under its own address) is the offline fallback.
    The page's own files (profiles/*.js, data/site.js, js/*.js, css/*.css): network first, like pages; one saved copy of each,
    kept under its plain address whatever its ?v= stamp.
-   Bible text (bible/<translation>/<book id>.json): served from the saved copy at once, refreshed in the background.
+   Bible text (bible/<translation>/<book id>.json) and essay text (essay-text/<id>.json): served from the saved copy at once,
+   refreshed in the background, so an essay already read opens offline.
    Everything on another origin (analytics, Ko-fi) is left alone.
    Bump SHELL when the caching rules below change. */
-const SHELL = 'kc-shell-v9';
+const SHELL = 'kc-shell-v10';
 const BOOKS = 'kc-books-v2';
 const PRECACHE = ['./', 'profiles/site.js', 'data/site.js', 'css/site.css',
   'js/core.js', 'js/text.js', 'js/words.js', 'js/essays.js', 'js/search.js', 'js/reader.js', 'js/readerbar.js', 'js/marks.js', 'js/backup.js', 'js/guide.js',
@@ -69,6 +70,6 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET' || url.origin !== self.location.origin) return;
   if (req.mode === 'navigate') { e.respondWith(page(req)); return; }
   if (/\/(data\/site\.js|(js|profiles)\/[\w-]+\.js|css\/[\w-]+\.css)$/.test(url.pathname)) { e.respondWith(asset(req)); return; }
-  if (/\/bible\/[a-z]+\/\d+\.json$/.test(url.pathname)) { e.respondWith(saved(req, BOOKS)); return; }
+  if (/\/(bible\/[a-z]+|essay-text)\/\d+\.json$/.test(url.pathname)) { e.respondWith(saved(req, BOOKS)); return; }
   if (/\/(icons\/|manifest\.webmanifest$)/.test(url.pathname)) e.respondWith(saved(req, SHELL));
 });

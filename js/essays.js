@@ -18,12 +18,14 @@ function related(pid, n) {
   for (const [b,ch,v] of (REFS[pid] || [])) for (const p of D.verses[b][ch][v]) if (+p !== +pid) score[p] = (score[p] || 0) + 1;
   return Object.keys(score).sort((a,c) => score[c]-score[a] || P[c][5]-P[a][5]).slice(0, n).map(p => [+p, score[p]]);
 }
-const srcLink = pid => hasRefs(pid) ? ` \u00b7 <a href="#/essay/${pid}">Sources</a>` : '';
+const ET = D.ET || {};                    // essay id -> words, for the essays whose text is on this website (site profile only)
+const onSite = pid => !!(PROFILE.essayText && ET[pid]);
+const srcLink = pid => !onSite(pid) && hasRefs(pid) ? ` \u00b7 <a href="#/essay/${pid}">Sources</a>` : '';
 
 // ---------- piece pieces ----------
 const meta = pid => `${PLAT[P[pid][2]] || esc(P[pid][2])}, ${fmtDate(P[pid][3])}`;
 const seriesCap = pid => P[pid][4] ? `<p class="cap">${esc(P[pid][4])}</p>` : '';
-const link = pid => `href="${esc(P[pid][1])}" target="_blank" rel="noopener" data-pid="${pid}"`;
+const link = pid => onSite(pid) ? `href="#/essay/${pid}" data-pid="${pid}"` : `href="${esc(P[pid][1])}" target="_blank" rel="noopener" data-pid="${pid}"`;   // an essay with its text here opens here
 function feature(pid) {
   return `<div class="card feature">${seriesCap(pid)}
     <h3><a ${link(pid)}>${esc(P[pid][0])}</a></h3>
@@ -85,9 +87,35 @@ function viewPath(id) {
   <h2>Then read</h2>
   ${pieceList(rest)}`;
 }
+// ---------- an essay's text, read on the website ----------
+const ESSAYS = {};                       // essay id -> page HTML, once fetched
+async function ensureEssay(pid) {
+  if (ESSAYS[pid]) return;
+  const r = await fetch(`essay-text/${pid}.json`);
+  if (!r.ok) throw new Error('essay');
+  ESSAYS[pid] = (await r.json()).h;
+}
+function essayHead(pid) {                // the title, the line under it, and (once loaded) the text itself
+  const [title, , , date] = P[pid], mins = Math.max(1, Math.round(ET[pid] / 220));
+  return `${backLink('#/essays')}${seriesCap(pid)}<h1>${esc(title)}</h1>
+  <p class="cap essaymeta">${meta(pid)} \u00b7 ${mins} min read</p>`;
+}
+function essayBody(pid) {
+  const [, url, plat] = P[pid];
+  return `<article class="essaytext">${ESSAYS[pid]}</article>
+  <div class="card essayfoot"><p class="cap" style="margin:0">Originally published on ${PLAT[plat] || esc(plat)}, ${fmtDate(P[pid][3])}.
+    <a href="${esc(url)}" target="_blank" rel="noopener" data-pid="${pid}">Read it there</a>, or subscribe to the publication.</p></div>`;
+}
 function viewEssay(pid) {
   if (!P[pid]) return viewMissing();
   const [title, url, plat, date] = P[pid];
+  if (onSite(pid) && !ESSAYS[pid]) {     // fetch the text, then draw the page again
+    const want = location.hash; deferTrack = true;
+    ensureEssay(pid).then(() => { if (location.hash === want) route(); })
+      .catch(() => { const m = document.getElementById('loadmsg'); if (m) m.innerHTML = 'The essay could not load. Check your connection, then <a href="' + want + '">try again</a>.'; });
+    return `${essayHead(pid)}<p class="lede" id="loadmsg" role="status">Loading the essay\u2026</p>`;
+  }
+  if (onSite(pid) && !hasRefs(pid)) return `${essayHead(pid)}${essayBody(pid)}`;
   if (!hasRefs(pid)) return `${backLink(`#/`)}<h1>${esc(title)}</h1>
     <p class="lede">No Scripture references from this essay are in the index yet.</p>
     <p style="margin-top:24px"><a class="btn primary" ${link(pid)}>Read the essay</a></p>`;
@@ -100,12 +128,13 @@ function viewEssay(pid) {
   const rel = related(pid, 3);
   const relHtml = rel.length ? `<h2>Essays that cite the same verses</h2><div class="card"><ul class="list">${rel.map(([p,n]) => `<li class="piece">${seriesCap(p)}
     <div class="t"><a ${link(p)}>${esc(P[p][0])}</a></div><p class="cap">${plural(n,'shared verse')} \u00b7 ${meta(p)}${srcLink(p)}</p></li>`).join('')}</ul></div>` : '';
+  const reading = onSite(pid);
   return `
-  ${backLink(`#/`)}
+  ${reading ? essayHead(pid) + essayBody(pid) : `${backLink(`#/`)}
   <h1>${esc(title)}</h1>
   <p class="lede">${meta(pid)}. Cites ${plural(refs.length,'verse')} across ${plural(books.length,'book')}.</p>
-  <p style="margin-top:24px"><a class="btn primary" ${link(pid)} aria-label="Read the essay: ${esc(title)}">Read the essay</a></p>
-  <h2>Scripture cited</h2>${groups}
+  <p style="margin-top:24px"><a class="btn primary" ${link(pid)} aria-label="Read the essay: ${esc(title)}">Read the essay</a></p>`}
+  <h2>${reading ? `Scripture cited in this essay</h2><p class="cap" style="margin-top:4px">${plural(refs.length,'verse')} across ${plural(books.length,'book')}.</p><div>` : `Scripture cited</h2>`}${groups}${reading ? '</div>' : ''}
   ${wordsForEssay(pid).length ? `<h2>Words discussed</h2><ul class="chips">${wordsForEssay(pid).map(w => `<li><a class="chip" href="#/word/${w.slug}">${esc(w.title)}</a></li>`).join('')}</ul>` : ''}
   ${texts}
   ${relHtml}`;
