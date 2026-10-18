@@ -10,5 +10,6 @@ const PROFILE = {
   verseTools: false,       // the app's verse panel, favorites and highlights (js/marks.js)
   appUpdates: false,       // the app's version and update check (js/updates.js)
   readerTools: false,      // the app's chapter bar, reading toolbar and reading history (js/readerbar.js)
+  archiveHome: true,       // the front page as the Kingdom Code archive, and the Essays page (js/pages.js)
   kcGuides: true,          // the Guides page lists Kingdom Code's downloadable PDF guides (D.KG, js/guide.js)
 };
