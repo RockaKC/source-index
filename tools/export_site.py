@@ -241,7 +241,15 @@ def build(con, cur, warn):
         if nid in pieces and len(md.strip()) > 200:
             essay_md[nid] = md
     D["ET"] = {str(k): essay_text.words(v) for k, v in sorted(essay_md.items())}
-    essay_html = {k: essay_text.to_html(v) for k, v in essay_md.items()}
+    site_slugs = {re.sub(r".*/p/", "", pieces[n][1]).split("?")[0].rstrip("/"): n for n in essay_md}
+
+    def rewrite(href):                       # links between essays, and to this site, stay on the site
+        m = re.match(r"https?://kingdomcode\.substack\.com/p/([^/?#]+)", href)
+        if m and m.group(1) in site_slugs:
+            return "#/essay/%d" % site_slugs[m.group(1)]
+        m = re.match(r"https?://sources\.kingdomcodearchive\.com/?(#/[^\s]*)?$", href)
+        return (m.group(1) or "#/") if m else None
+    essay_html = {k: essay_text.to_html(v, rewrite) for k, v in essay_md.items()}
 
     # ---- guides and seasonal reads ----
     guides = {}
