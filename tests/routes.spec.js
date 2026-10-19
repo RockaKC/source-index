@@ -140,7 +140,7 @@ test('the Guides page is a short menu: Kingdom Code Guides first, then the readi
   const hrefs = await page.locator('#app .wl').evaluateAll(a => a.map(x => x.getAttribute('href')));
   expect(hrefs).toEqual(['/guides/kingdom-code/', '/names/', '/words/', '/translations/', '/english/']);
   await expect(page.locator('#app .gcard')).toHaveCount(0);          // the guides themselves are one page deeper
-  await expect(page.locator('#app .wl').first()).toContainText('2 guides');
+  await expect(page.locator('#app .wl').first()).toContainText('3 guides');
 });
 
 test('Kingdom Code Guides lists each guide, its cover and title open the guide, and Download saves a real PDF', async ({ page, request }) => {

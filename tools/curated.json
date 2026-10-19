@@ -581,6 +581,83 @@
     }
    ],
    "date": "2026-09-28"
+  },
+  {
+   "slug": "thinking-christian-ai",
+   "title": "The Thinking Christian in the Age of AI",
+   "sub": "Knowledge is abundant. Wisdom still demands discernment.",
+   "about": "A practical biblical framework for using powerful tools with discernment: a five-step method (Receive, Examine, Test, Judge, Act), a worked example on Philippians 4:13, reusable prompts for study, and a source check for when the machine is wrong.",
+   "file": "guides/thinking-christian-ai.pdf",
+   "cover": "img/guides/thinking-christian-ai.webp",
+   "pages": 14,
+   "contents": [
+    {
+     "title": "Who Is Doing the Judging?",
+     "page": 2,
+     "about": "Why a confident AI answer needs examination, and the principle of the guide: use the power, keep the responsibility."
+    },
+    {
+     "title": "What Are You Doing When You Think?",
+     "page": 3,
+     "about": "Knowledge, understanding and wisdom, and how to tell a borrowed conclusion from one you can account for."
+    },
+    {
+     "title": "The Prudent Man Pauses",
+     "page": 4,
+     "about": "Proverbs 14:15 and the discipline of after-thought: what exactly is being claimed, and what kind of evidence it needs."
+    },
+    {
+     "title": "Test What You Receive",
+     "page": 5,
+     "about": "1 Thessalonians 5:20–21 applied to a modern tool: name what could expose an error, and trace claims back to their evidence."
+    },
+    {
+     "title": "Discernment Requires Use",
+     "page": 6,
+     "about": "Hebrews 5:14 and a way to study with AI: read first, write what you understand, then use the tool on the gaps."
+    },
+    {
+     "title": "Wisdom Has a Visible Life",
+     "page": 7,
+     "about": "Proverbs 12:15 and James 3:17: what you intend to do with the answer, and the cost of correction."
+    },
+    {
+     "title": "Put the Machine to Work",
+     "page": 8,
+     "about": "Explain, organize, compare, challenge and locate: five honest uses of AI in study."
+    },
+    {
+     "title": "Watch One Answer Get Tested",
+     "page": 9,
+     "about": "A worked example on Philippians 4:13: name the claim, open Scripture, and read the surrounding words."
+    },
+    {
+     "title": "Follow the Evidence to a Conclusion",
+     "page": 10,
+     "about": "Expose the assumption, test a better reading, judge within the evidence, then act and record."
+    },
+    {
+     "title": "Ask Questions That Do Work",
+     "page": 11,
+     "about": "Reusable prompts for a passage, for your own argument, and for a quotation or historical claim."
+    },
+    {
+     "title": "When the Machine Is Wrong",
+     "page": 12,
+     "about": "What a hallucination is, a three-step source check, and three reasoning failures to watch for."
+    },
+    {
+     "title": "Receive. Examine. Test. Judge. Act.",
+     "page": 13,
+     "about": "The five-step method on one page, and three lines to complete before you close your next AI conversation."
+    },
+    {
+     "title": "Sources and Further Reading",
+     "page": 14,
+     "about": "The translations used, the verses quoted, and documentation on checking AI answers."
+    }
+   ],
+   "date": "2026-10-09"
   }
  ],
  "essay_text_on_site": false,
