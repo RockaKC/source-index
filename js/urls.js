@@ -26,6 +26,10 @@ function pathOf(hash) {
   const tail = q => '/' + q.join('/') + '/';
   if (a === '') return '/';
   if (a === 'essays' && /^\d{4}$/.test(p[1])) return tail(['essays', p[1]]);
+  if (a === 'essays' && p[1] === 'subject' && p[2]) return tail(['essays', 'subjects', p[2]]);
+  if (a === 'essays' && p[1] === 'topic' && p[2]) return tail(['essays', 'topics', p[2]]);
+  if (a === 'essays' && p[1] === 'topics') return tail(['essays', 'topics']);
+  if (a === 'essays' && p[1] === 'collection' && p[2]) return tail(['essays', 'collections', p[2]]);
   if (SIMPLE[a] && p.length === 1) return tail(SIMPLE[a].split('/'));
   if (a === 'book' && ENTRY_SLUG[p[1]]) return tail(['bible', ENTRY_SLUG[p[1]]]);
   if (a === 'read' && BOOK_SLUG[p[1]] && +p[2]) return tail(['bible', BOOK_SLUG[p[1]], +p[2]]) + (p[3] ? '?v=' + encodeURIComponent(p[3]) : '');
@@ -64,6 +68,8 @@ function hashOf(path, search) {
   if (s.length === 2 && a === 'words') return '#/word/' + b;
   if (s.length === 2 && a === 'names') return '#/person/' + b;
   if (s.length === 2 && a === 'questions') return '#/path/' + b;
+  if (a === 'essays' && b === 'topics' && s.length === 2) return '#/essays/topics';
+  if (a === 'essays' && s.length === 3 && c) { if (b === 'subjects') return '#/essays/subject/' + c; if (b === 'topics') return '#/essays/topic/' + c; if (b === 'collections') return '#/essays/collection/' + c; }
   if (s.length === 2 && a === 'essays' && /^\d{4}$/.test(b)) return '#/essays/' + b;
   if (s.length === 2 && a === 'essays') { const id = /^\d+/.exec(b); return id ? '#/essay/' + id[0] : none; }
   if (a === 'search' && s.length >= 2) return '#/search/' + encodeURIComponent(s.slice(1).join('/'));

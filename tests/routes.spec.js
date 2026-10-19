@@ -219,13 +219,12 @@ test('every collection on the front page opens a real page, and Essays lists eve
     await expect(page.locator('#app h1')).not.toHaveText('Not found');
   }
   await page.evaluate(() => { location.hash = '#/essays'; }); await settle(page);
-  expect(await page.locator('#app .piece'), 'the Essays page asks for a year first').toHaveCount(0);
   const n = await page.evaluate(() => essayIds().length);
-  const years = await page.locator('#app .wl b').allTextContents();
+  const years = await page.locator('#app #esb .card .wl b').allTextContents();
   expect(years).toEqual([...years].sort().reverse());
-  const counts = await page.locator('#app .wl .lang').allTextContents();
+  const counts = await page.locator('#app #esb .card .wl .lang').allTextContents();
   expect(counts.reduce((t, c) => t + parseInt(c, 10), 0), 'the year counts add up to every essay').toBe(n);
-  await page.locator('#app .wl').first().click(); await settle(page);
+  await page.locator('#app #esb .card .wl').first().click(); await settle(page);
   expect(new URL(page.url()).pathname).toBe(`/essays/${years[0]}/`);
   await expect(page.locator('#app h1')).toHaveText(`Essays, ${years[0]}`);
   expect(await page.locator('#app .piece').count()).toBe(parseInt(counts[0], 10));

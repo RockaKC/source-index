@@ -92,6 +92,8 @@ async function main() {
     names: D.PP.map(x => ({ t: x.name, line: x.line, p: pathOf('#/person/' + x.slug) })),
     paths: D.paths.map(x => ({ t: x.q, intro: x.intro, p: pathOf('#/path/' + x.id) })),
     entries: D.entries.map(e => ({ t: e.name, p: pathOf('#/book/' + e.id) })),
+    subjects: (typeof LIB !== 'undefined' && LIB ? LIB.cats : []).map(c => ({ t: c.name, line: c.line, p: pathOf('#/essays/subject/' + c.id) })),
+    topics: (typeof LIB !== 'undefined' && LIB ? LIB.tags : []).map(t => ({ t: t.name, line: t.line, p: pathOf('#/essays/topic/' + t.id) })),
     essays: essayIds().map(pid => ({ t: P[pid][0], date: P[pid][3], url: P[pid][1], p: pathOf('#/essay/' + pid) })),
   }));
   const link = (t, p, d) => `- [${t}](${root}${p})${d ? ': ' + String(d).replace(/\s+/g, ' ') : ''}`;
@@ -100,6 +102,8 @@ async function main() {
   const sections = [
     ['Start here', [link('Home', '/'), link('The books of the Bible', '/bible/'), link('Essays and the Scripture each one cites', '/essays/'), link('Questions, with a reading path for each', '/questions/'), link('Words: the Hebrew and Greek behind the text', '/words/'), link('Names', '/names/'), link('Guides', '/guides/'), link('Which Bible translation to read', '/translations/'), link('About', '/about/'), link('Sources and credits', '/credits/')]],
     ['Guides (free PDF downloads)', D.guides.map(g => link(g.t + (g.sub ? ': ' + g.sub : ''), g.p, g.about))],
+    ['Essay subjects', D.subjects.map(s => link(s.t, s.p, s.line))],
+    ['Essay topics', D.topics.map(s => link(s.t, s.p, s.line))],
     ['Early Church (in time order)', D.church.map(f => link(f.t, f.p, f.line))],
     ['Questions', D.paths.map(x => link(x.t, x.p, x.intro))],
     ['Word studies', D.words.map(w => link(w.t, w.p, w.en))],
