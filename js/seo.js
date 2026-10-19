@@ -53,7 +53,7 @@ function seoLd(p, name, desc, url) {
     if (about.length) main.mentions = about.map(c => ({'@type': 'Person', name: c.name, url: SITE_ORIGIN + pathOf(c.href)}));
   } else if (a === 'church' && p[1] && churchFigure(p[1])) {
     const f = churchFigure(p[1]);
-    main = {'@context': 'https://schema.org', '@type': 'Person', name: f.name, description: f.line, url, image: SITE_ORIGIN + '/' + f.image, mainEntityOfPage: url};
+    main = {'@context': 'https://schema.org', '@type': 'Person', name: f.name, alternateName: f.aka, description: f.line, url, image: SITE_ORIGIN + '/' + f.image, mainEntityOfPage: url};
   } else if (a === 'word') {
     main = {'@context': 'https://schema.org', '@type': 'DefinedTerm', name, description: desc, url, inDefinedTermSet: {'@type': 'DefinedTermSet', name: 'Words of the Bible: Hebrew and Greek', url: SITE_ORIGIN + '/words/'}};
   } else if (a === 'guides' && p[1] && kcGuide(p[1])) {
