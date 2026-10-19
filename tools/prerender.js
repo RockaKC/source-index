@@ -87,6 +87,7 @@ async function main() {
 
   const D = await page.evaluate(() => ({
     guides: (PROFILE.kcGuides && D.KG || []).map(g => ({ t: g.title, sub: g.sub, about: g.about, p: pathOf('#/guides/' + g.slug), file: g.file })),
+    church: (PROFILE.earlyChurch && D.EC || []).map(f => ({ t: f.name, line: f.line, p: pathOf('#/church/' + f.slug) })),
     words: D.words.map(w => ({ t: w.title, en: w.en, p: pathOf('#/word/' + w.slug) })),
     names: D.PP.map(x => ({ t: x.name, line: x.line, p: pathOf('#/person/' + x.slug) })),
     paths: D.paths.map(x => ({ t: x.q, intro: x.intro, p: pathOf('#/path/' + x.id) })),
@@ -99,6 +100,7 @@ async function main() {
   const sections = [
     ['Start here', [link('Home', '/'), link('The books of the Bible', '/bible/'), link('Essays and the Scripture each one cites', '/essays/'), link('Questions, with a reading path for each', '/questions/'), link('Words: the Hebrew and Greek behind the text', '/words/'), link('Names', '/names/'), link('Guides', '/guides/'), link('Which Bible translation to read', '/translations/'), link('About', '/about/'), link('Sources and credits', '/credits/')]],
     ['Guides (free PDF downloads)', D.guides.map(g => link(g.t + (g.sub ? ': ' + g.sub : ''), g.p, g.about))],
+    ['Early Church', D.church.map(f => link(f.t, f.p, f.line))],
     ['Questions', D.paths.map(x => link(x.t, x.p, x.intro))],
     ['Word studies', D.words.map(w => link(w.t, w.p, w.en))],
     ['Names', D.names.map(x => link(x.t, x.p, x.line))],

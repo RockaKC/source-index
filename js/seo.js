@@ -27,6 +27,7 @@ function seoCrumbs(p, name) {
   } else if (a === 'word') add('Words', '#/words');
   else if (a === 'person') add('Names', '#/names');
   else if (a === 'guides' && p[1]) { add('Guides', '#/guide'); add('Kingdom Code guides', '#/guides'); }
+  else if (a === 'church') { add('Guides', '#/guide'); if (p[1]) add('Early Church', '#/church'); }
   else if (a === 'guides') add('Guides', '#/guide');
   else if (a === 'essay' || (a === 'essays' && p[1])) add('Essays', '#/essays');
   else if (a === 'path') add('Questions', '#/kc');
@@ -48,6 +49,9 @@ function seoLd(p, name, desc, url) {
     const e = P[p[1]];
     main = {'@context': 'https://schema.org', '@type': 'Article', headline: e[0], description: desc, url, mainEntityOfPage: url, inLanguage: 'en', datePublished: e[3] || undefined,
       author: org, publisher: org, isBasedOn: e[1], isAccessibleForFree: true};
+  } else if (a === 'church' && p[1] && churchFigure(p[1])) {
+    const f = churchFigure(p[1]);
+    main = {'@context': 'https://schema.org', '@type': 'Person', name: f.name, description: f.line, url, image: SITE_ORIGIN + '/' + f.image, mainEntityOfPage: url};
   } else if (a === 'word') {
     main = {'@context': 'https://schema.org', '@type': 'DefinedTerm', name, description: desc, url, inDefinedTermSet: {'@type': 'DefinedTermSet', name: 'Words of the Bible: Hebrew and Greek', url: SITE_ORIGIN + '/words/'}};
   } else if (a === 'guides' && p[1] && kcGuide(p[1])) {
@@ -77,9 +81,9 @@ function seoPage(p) {
   const keep = p[0] === 'read' ? [p[0], p[1], p[2]] : p;               // a chapter opened at one verse is the chapter's page
   const path = pathOf('#/' + keep.join('/')) || '/';
   const url = SITE_ORIGIN + path;
-  const guide = p[0] === 'guides' && p[1] && kcGuide(p[1]);
+  const guide = p[0] === 'guides' && p[1] && kcGuide(p[1]), fig = p[0] === 'church' && p[1] && churchFigure(p[1]);
   return {hash, title, desc, url, noindex: NOINDEX.has(p[0]) || !ROUTES.has(p[0]), type: p[0] === 'essay' ? 'article' : 'website',
-    image: SITE_ORIGIN + '/' + (guide ? guide.cover : SEO_IMAGE), ld: seoLd(keep, h1.trim() || PROFILE.name, desc, url)};
+    image: SITE_ORIGIN + '/' + (guide ? guide.cover : fig ? fig.image : SEO_IMAGE), ld: seoLd(keep, h1.trim() || PROFILE.name, desc, url)};
 }
 
 function seoTag(sel, make) {
@@ -111,13 +115,14 @@ function applySeo(p) {
 function seoRoutes() {
   const out = [], add = (hash, lastmod, priority) => { if (ROUTES.has(hash.replace(/^#\/?/, '').split('/')[0]) && pathOf(hash)) out.push({hash, lastmod, priority}); };
   add('#/', null, 1.0);
-  ['books', 'essays', 'kc', 'guide', 'guides', 'words', 'names', 'translations', 'english', 'about', 'app', 'credits'].forEach(r => add('#/' + r, null, 0.8));
+  ['books', 'essays', 'kc', 'guide', 'church', 'guides', 'words', 'names', 'translations', 'english', 'about', 'app', 'credits'].forEach(r => add('#/' + r, null, 0.8));
   D.entries.forEach(e => add('#/book/' + e.id, null, 0.7));
   Object.keys(D.CC).forEach(b => D.CC[b].forEach(ch => add(`#/read/${b}/${ch}`, null, 0.6)));
   Object.keys(D.verses).forEach(b => Object.keys(D.verses[b]).forEach(ch => Object.keys(D.verses[b][ch]).forEach(v => add(`#/verse/${b}/${ch}/${v}`, null, 0.5))));
   D.words.forEach(w => add('#/word/' + w.slug, null, 0.7));
   D.PP.forEach(x => add('#/person/' + x.slug, null, 0.7));
   (PROFILE.kcGuides && D.KG || []).forEach(g => add('#/guides/' + g.slug, g.date, 0.8));
+  (PROFILE.earlyChurch && D.EC || []).forEach(f => add('#/church/' + f.slug, null, 0.7));
   D.paths.forEach(x => add('#/path/' + x.id, null, 0.7));
   [...new Set(essayIds().map(pid => P[pid][3].slice(0, 4)))].forEach(y => add('#/essays/' + y, null, 0.7));
   essayIds().forEach(pid => add('#/essay/' + pid, P[pid][3], 0.6));

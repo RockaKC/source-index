@@ -1457,5 +1457,22 @@
     "22": "The manuscript ends here, mid-sentence."
    }
   }
- }
+ },
+ "early_church": [
+  {
+   "slug": "ignatius-of-antioch",
+   "name": "Ignatius of Antioch",
+   "line": "Bishop of Antioch, martyred in Rome in the early second century.",
+   "dates": "Died about AD 110",
+   "image": "img/early-church/ignatius-of-antioch.webp",
+   "width": 800,
+   "height": 1000,
+   "alt": "Icon of Saint Ignatius of Antioch, an elderly bishop with a long grey beard in white vestments with black crosses, holding a book.",
+   "overview": [
+    "Ignatius was bishop of Antioch in Syria, the city where the disciples were first called Christians (Acts 11:26). He is also called Theophoros, “God-bearer.” Early writers, among them Origen and Eusebius, remember him as bishop of Antioch in the line of Peter.",
+    "Under the emperor Trajan, about AD 110, he was arrested and taken under guard to Rome to die in the arena. The exact year is uncertain. On the road, churches of Asia Minor sent delegations to meet him, and he wrote seven letters: to the churches in Ephesus, Magnesia, Tralles, Rome, Philadelphia and Smyrna, and to Polycarp, bishop of Smyrna. Longer versions of the letters were later forged in his name. The seven in their shorter form are the ones accepted as his.",
+    "They are among the earliest Christian writings outside the New Testament. Ignatius insists that Jesus Christ was truly born, truly suffered and truly rose, against teachers who said He only seemed to have a body. He calls believers to unity around their bishop, with the presbyters and deacons. His letter to the Smyrnaeans is the earliest surviving use of the phrase “the catholic church.” In his letter to the Romans he begs them not to save him from martyrdom. He was put to death in Rome."
+   ]
+  }
+ ]
 }

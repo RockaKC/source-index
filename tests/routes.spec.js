@@ -132,13 +132,13 @@ test('the site: Guides is in the header where Words was, and Names and Translati
   for (const r of ['/names/', '/translations/', '/words/']) await expect(page.locator(`#menu a[href="${r}"]`)).toHaveCount(0);
   await page.locator('header a.nav[href="/guides/"]').click(); await settle(page);
   await expect(page.locator('#app h1')).toHaveText('Guides');
-  for (const r of ['/guides/kingdom-code/', '/names/', '/words/', '/translations/', '/english/']) await expect(page.locator(`#app a[href="${r}"]`)).toHaveCount(1);
+  for (const r of ['/guides/kingdom-code/', '/guides/early-church/', '/names/', '/words/', '/translations/', '/english/']) await expect(page.locator(`#app a[href="${r}"]`)).toHaveCount(1);
 });
 
 test('the Guides page is a short menu: Kingdom Code Guides first, then the reading help', async ({ page }) => {
   await page.goto('/#/guide'); await settle(page);
   const hrefs = await page.locator('#app .wl').evaluateAll(a => a.map(x => x.getAttribute('href')));
-  expect(hrefs).toEqual(['/guides/kingdom-code/', '/names/', '/words/', '/translations/', '/english/']);
+  expect(hrefs).toEqual(['/guides/kingdom-code/', '/guides/early-church/', '/names/', '/words/', '/translations/', '/english/']);
   await expect(page.locator('#app .gcard')).toHaveCount(0);          // the guides themselves are one page deeper
   await expect(page.locator('#app .wl').first()).toContainText('3 guides');
 });
@@ -317,4 +317,25 @@ test('a verse stands on its own, with one separate section listing the essays th
   expect(await page.evaluate(() => document.querySelector('#app .cited').previousElementSibling !== null)).toBe(true);
   await page.goto(`/#/book/${D.bookEntry[cited[0]]}`); await settle(page);
   for (const t of ['From the essays', 'Most cited verses', 'Read in season']) await expect(page.locator('#app')).not.toContainText(t);
+});
+
+test('Early Church: a list of figures, and Ignatius of Antioch with his image and a short overview', async ({ page }) => {
+  await page.goto('/guides/'); await settle(page);
+  await page.locator('#app a.wl', { hasText: 'Early Church' }).click(); await settle(page);
+  expect(new URL(page.url()).pathname).toBe('/guides/early-church/');
+  await expect(page.locator('#app h1')).toHaveText('Early Church');
+  await page.locator('#app a.efig', { hasText: 'Ignatius of Antioch' }).click(); await settle(page);
+  expect(new URL(page.url()).pathname).toBe('/guides/early-church/ignatius-of-antioch/');
+  await expect(page.locator('#app h1')).toHaveText('Ignatius of Antioch');
+  const img = page.locator('#app .efigure img');
+  await expect(img).toBeVisible();
+  expect(await img.evaluate(i => i.complete && i.naturalWidth > 0)).toBe(true);
+  expect(await page.locator('#app .eover p').count()).toBeGreaterThanOrEqual(2);
+  await page.goto('/guides/early-church/nobody/'); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Not found');
+});
+
+test('the app has no Early Church section', async ({ page }) => {
+  await page.goto('/app.html#/guide'); await settle(page);
+  await expect(page.locator('#app')).not.toContainText('Early Church');
 });

@@ -16,7 +16,7 @@ const essaySlug = pid => {                       // the essay's number, then its
 };
 
 const SIMPLE = {books: 'bible', english: 'english', words: 'words', names: 'names', guide: 'guides', guides: 'guides/kingdom-code',
-  translations: 'translations', essays: 'essays', kc: 'questions', about: 'about', app: 'app', credits: 'credits'};
+  translations: 'translations', church: 'guides/early-church', essays: 'essays', kc: 'questions', about: 'about', app: 'app', credits: 'credits'};
 const SIMPLE_BACK = {};
 Object.keys(SIMPLE).forEach(k => { SIMPLE_BACK[SIMPLE[k]] = k; });
 
@@ -33,6 +33,7 @@ function pathOf(hash) {
   if (a === 'range' && BOOK_SLUG[p[1]] && +p[2] && +p[3] && +p[4]) return tail(['bible', BOOK_SLUG[p[1]], +p[2], p[3] + '-' + p[4]]);
   if (a === 'word' && p[1]) return tail(['words', p[1]]);
   if (a === 'person' && p[1]) return tail(['names', p[1]]);
+  if (a === 'church' && p[1]) return tail(['guides', 'early-church', p[1]]);
   if (a === 'guides' && p[1]) return tail(['guides', 'kingdom-code', p[1]]);
   if (a === 'essay' && P[p[1]]) return tail(['essays', essaySlug(p[1])]);
   if (a === 'path' && p[1]) return tail(['questions', p[1]]);
@@ -56,6 +57,7 @@ function hashOf(path, search) {
     const m = s.length === 4 && /^(\d+)-(\d+)$/.exec(d);
     return m ? '#/range/' + bk + '/' + c + '/' + m[1] + '/' + m[2] : none;
   }
+  if (a === 'guides' && b === 'early-church' && s.length === 3) return '#/church/' + c;
   if (a === 'guides' && b === 'kingdom-code') return s.length === 2 ? '#/guides' : s.length === 3 ? '#/guides/' + c : none;
   const joined = s.join('/');
   if (SIMPLE_BACK[joined]) return '#/' + SIMPLE_BACK[joined];

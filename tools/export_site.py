@@ -360,6 +360,16 @@ def build(con, cur, warn):
         if len({g["slug"] for g in guides}) != len(guides):
             sys.exit("kc_guides: a slug is used twice")
         D["KG"] = guides
+    ec = cur.get("early_church")
+    if ec:
+        for f in ec:
+            if not (ROOT / f["image"]).is_file():
+                sys.exit("early_church %s: image %s is missing" % (f["slug"], f["image"]))
+            if not f.get("overview") or not f.get("name") or not f.get("alt"):
+                sys.exit("early_church %s needs a name, an overview and alt text for its image" % f["slug"])
+        if len({f["slug"] for f in ec}) != len(ec):
+            sys.exit("early_church: a slug is used twice")
+        D["EC"] = ec
     D["words"] = cur["words"]
 
     # ---- inlined text for cited chapters (first paint), labels, carried verses, Psalm map ----
