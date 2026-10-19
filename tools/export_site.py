@@ -373,6 +373,10 @@ def build(con, cur, warn):
                     sys.exit("early_church %s: each source needs a title, a note and an https address" % f["slug"])
         if len({f["slug"] for f in ec}) != len(ec):
             sys.exit("early_church: a slug is used twice")
+        for f in ec:
+            if not isinstance(f.get("sort_year"), int):
+                sys.exit("early_church %s needs sort_year: an approximate year (birth, where known), used only to put the figures in time order" % f["slug"])
+        ec = sorted(ec, key=lambda f: f["sort_year"])             # the list is always in time order, whatever order they were added in
         D["EC"] = ec
         # Which essays cite or discuss each figure (tools/connections.py). Only the pairs travel, never the essay text; an essay that is not on
         # the site's lists is left out, and a pair appears once.

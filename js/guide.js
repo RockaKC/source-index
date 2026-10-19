@@ -63,7 +63,7 @@ document.addEventListener('click', e => {
 function guideList() {              // the Guide's sections, for the Guide page and the app's home
   const items = [];
   if (PROFILE.kcGuides && D.KG && D.KG.length) items.push(`<li><a class="wl" href="#/guides"><b>Kingdom Code Guides</b><span class="en">Guides from Kingdom Code, to download and keep.</span><span class="lang">${plural(D.KG.length, 'guide')}</span></a></li>`);
-  if (PROFILE.earlyChurch && D.EC && D.EC.length) items.push(`<li><a class="wl" href="#/church"><b>Early Church</b><span class="en">The first Christian writers and martyrs, in their own century.</span><span class="lang">${plural(D.EC.length, 'figure')}</span></a></li>`);
+  if (PROFILE.earlyChurch && D.EC && D.EC.length) items.push(`<li><a class="wl" href="#/church"><b>Early Church</b><span class="en">The lives, writings, and testimonies of the early Christians, from the apostolic age to the Desert Fathers.</span><span class="lang">${plural(D.EC.length, 'figure')}</span></a></li>`);
   if (D.PP && D.PP.length) items.push(`<li><a class="wl" href="#/names"><b>Names</b><span class="en">Short profiles, with the verses where each appears.</span><span class="lang">${plural(D.PP.length, 'name')}</span></a></li>`);
   items.push(`<li><a class="wl" href="#/words"><b>Words</b><span class="en">Hebrew and Greek terms, side by side.</span><span class="lang">${WORDS.length} words</span></a></li>`);
   if (D.TL) items.push(`<li><a class="wl" href="#/translations"><b>Translations</b><span class="en">Which New Testament translations let the Greek speak, judged by accuracy and closeness to the apostles.</span><span class="lang">Tier list</span></a></li>`);
@@ -116,7 +116,7 @@ function viewEarlyChurch() {
   return `
   ${backLink('#/guide')}
   <h1>Early Church</h1>
-  <p class="lede">The first Christian writers and martyrs, each with a short historical overview.</p>
+  <p class="lede">Explore the lives, writings, and testimonies of the early Christians who shaped the Church, from the apostolic age to the Desert Fathers.</p>
   <ul class="efigs">${D.EC.map(f => `<li><a class="efig" href="#/church/${esc(f.slug)}">
     <img src="${esc(f.image)}" width="${f.width}" height="${f.height}" alt="" loading="lazy">
     <span><b>${esc(f.name)}</b><span class="en">${esc(f.line)}</span><span class="cap">${esc(f.dates)}</span></span></a></li>`).join('')}</ul>`;

@@ -357,3 +357,12 @@ test('Moses the Black shows his other names, and a figure with no writings is ne
   expect(await page.evaluate(() => (D.EL['church/moses-the-black'] || []).some(r => r[1] === 'c'))).toBe(false);
   await expect(page.locator('#app .cited')).toContainText('No Kingdom Code essay features Moses the Black yet.');
 });
+
+test('the Early Church list is in time order, and says what the collection is', async ({ page }) => {
+  await page.goto('/guides/early-church/'); await settle(page);
+  await expect(page.locator('#app .lede')).toHaveText('Explore the lives, writings, and testimonies of the early Christians who shaped the Church, from the apostolic age to the Desert Fathers.');
+  const years = await page.evaluate(() => D.EC.map(f => f.sort_year));
+  expect(years).toEqual([...years].sort((a, b) => a - b));
+  const shown = await page.locator('#app a.efig b').allTextContents();
+  expect(shown).toEqual(await page.evaluate(() => D.EC.map(f => f.name)));
+});
