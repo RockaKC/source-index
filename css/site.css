@@ -484,7 +484,7 @@ html[data-archive] .wrap{max-width:1040px}
    The app has its own version of this above ([data-product=app]). Nothing here moves for a reader who asks for reduced motion. */
 html:not([data-product]){-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 @media (prefers-reduced-motion:no-preference){
-  html:not([data-product]) :is(.btn,.chip,.navbtn,.tab,.cht,.bk,.cc,.afeat,.gcard,.theme,.menubtn,.ibtn,.q,.wl){transition:transform 180ms cubic-bezier(.2,.8,.2,1),background-color 150ms ease-out,border-color 150ms ease-out,color 150ms ease-out,box-shadow 200ms ease-out}
+  html:not([data-product]) :is(.btn,.chip,.navbtn,.tab,.cht,.bk,.cc,.afeat,.gcard,.efig,.theme,.menubtn,.ibtn,.q,.wl){transition:transform 180ms cubic-bezier(.2,.8,.2,1),background-color 150ms ease-out,border-color 150ms ease-out,color 150ms ease-out,box-shadow 200ms ease-out}
   html:not([data-product]) .fadein{animation:page-in 260ms cubic-bezier(.2,.8,.2,1)}
   html:not([data-product]) .menu:not([hidden]){transform-origin:top right;animation:pop-in 160ms cubic-bezier(.2,.8,.2,1)}
   html:not([data-product]) .sug:not([hidden]){animation:pop-in 130ms cubic-bezier(.2,.8,.2,1)}
@@ -512,3 +512,16 @@ html:not([data-product]){-webkit-tap-highlight-color:transparent;touch-action:ma
 /* The Bible's own pages point to essays in one separate section, last on the page */
 .cited{margin-top:var(--s6);padding-top:var(--s3);border-top:1px solid var(--hairline)}
 .cited h2{margin-top:0}
+
+/* Early Church: a list of figures, and one figure's page */
+.efigs{list-style:none;margin:var(--s3) 0 0;padding:0;display:grid;gap:var(--s2)}
+.efig{display:flex;gap:var(--s2);align-items:center;padding:var(--s2);border:1px solid var(--hairline);border-radius:14px;background:var(--surface);text-decoration:none;color:inherit}
+.efig img{flex:none;width:84px;height:105px;object-fit:cover;object-position:top;border-radius:8px;border:1px solid var(--hairline)}
+.efig b{display:block;font:600 20px/26px var(--serif)}
+.efig .en{display:block;margin-top:2px;color:var(--muted)}
+.efig .cap{display:block;margin-top:4px}
+@media (hover:hover){.efig:hover b{color:var(--accent)}}
+.efigure{margin:var(--s3) 0 var(--s1)}
+.efigure img{display:block;width:100%;max-width:360px;height:auto;aspect-ratio:4/5;border-radius:12px;border:1px solid var(--hairline)}
+.eover{max-width:680px;margin-top:var(--s3)}
+.eover p{margin:0 0 1.1em;font:400 18px/1.7 var(--serif)}

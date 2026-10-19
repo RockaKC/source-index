@@ -128,3 +128,14 @@ test('the prerendered site: real files at clean addresses, a sitemap, robots.txt
   expect(JSON.parse(read('prerender-report.json')).problems).toEqual([]);
   fs.rmSync(out, { recursive: true, force: true });
 });
+
+test('the essay call-to-action link names the essay it came from, and the page still opens with it', async ({ page }) => {
+  await page.goto('/'); await settle(page);
+  const [pid, url] = await page.evaluate(() => { const id = essayIds()[0]; return [id, ctaFor(id).text]; });
+  expect(url).toContain(`https://sources.kingdomcodearchive.com/essays/${pid}-`);
+  expect(url).toContain(`?utm_source=substack&utm_campaign=essay-${pid}`);
+  const path = url.slice(url.indexOf('/essays/')).replace(/[\s.]+$/, '');
+  await page.goto(path); await settle(page);
+  await expect(page.locator('#app h1')).not.toHaveText('Not found');
+  expect(await page.evaluate(() => document.querySelector('link[rel="canonical"]').href), 'the canonical address carries no tracking').not.toContain('utm_');
+});

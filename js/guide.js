@@ -63,6 +63,7 @@ document.addEventListener('click', e => {
 function guideList() {              // the Guide's sections, for the Guide page and the app's home
   const items = [];
   if (PROFILE.kcGuides && D.KG && D.KG.length) items.push(`<li><a class="wl" href="#/guides"><b>Kingdom Code Guides</b><span class="en">Guides from Kingdom Code, to download and keep.</span><span class="lang">${plural(D.KG.length, 'guide')}</span></a></li>`);
+  if (PROFILE.earlyChurch && D.EC && D.EC.length) items.push(`<li><a class="wl" href="#/church"><b>Early Church</b><span class="en">The first Christian writers and martyrs, in their own century.</span><span class="lang">${plural(D.EC.length, 'figure')}</span></a></li>`);
   if (D.PP && D.PP.length) items.push(`<li><a class="wl" href="#/names"><b>Names</b><span class="en">Short profiles, with the verses where each appears.</span><span class="lang">${plural(D.PP.length, 'name')}</span></a></li>`);
   items.push(`<li><a class="wl" href="#/words"><b>Words</b><span class="en">Hebrew and Greek terms, side by side.</span><span class="lang">${WORDS.length} words</span></a></li>`);
   if (D.TL) items.push(`<li><a class="wl" href="#/translations"><b>Translations</b><span class="en">Which New Testament translations let the Greek speak, judged by accuracy and closeness to the apostles.</span><span class="lang">Tier list</span></a></li>`);
@@ -109,8 +110,31 @@ function viewKcGuide(slug) {        // one guide: the cover, what it is, what is
   ${toc}`;
 }
 
+// ---------- Early Church (website): a short historical overview of each figure ----------
+const churchFigure = slug => ((PROFILE.earlyChurch && D.EC) || []).find(f => f.slug === slug);
+function viewEarlyChurch() {
+  return `
+  ${backLink('#/guide')}
+  <h1>Early Church</h1>
+  <p class="lede">The first Christian writers and martyrs, each with a short historical overview.</p>
+  <ul class="efigs">${D.EC.map(f => `<li><a class="efig" href="#/church/${esc(f.slug)}">
+    <img src="${esc(f.image)}" width="${f.width}" height="${f.height}" alt="" loading="lazy">
+    <span><b>${esc(f.name)}</b><span class="en">${esc(f.line)}</span><span class="cap">${esc(f.dates)}</span></span></a></li>`).join('')}</ul>`;
+}
+function viewChurchFigure(slug) {
+  const f = churchFigure(slug); if (!f) return viewMissing();
+  return `
+  ${backLink('#/church')}
+  <h1>${esc(f.name)}</h1>
+  <p class="lede">${esc(f.line)}</p>
+  <figure class="efigure"><img src="${esc(f.image)}" width="${f.width}" height="${f.height}" alt="${esc(f.alt)}"></figure>
+  <p class="cap">${esc(f.dates)}</p>
+  <div class="eover">${f.overview.map(p => `<p>${esc(p)}</p>`).join('')}</div>`;
+}
+
 addRoute('guide', () => viewGuide());
 addRoute('translations', () => viewTranslations());
 addRoute('names', () => viewNames());
 addRoute('person', p => viewPerson(p[1]));
+if (PROFILE.earlyChurch) addRoute('church', p => p[1] ? viewChurchFigure(p[1]) : viewEarlyChurch());
 if (PROFILE.kcGuides) addRoute('guides', p => p[1] ? viewKcGuide(p[1]) : viewKcGuides());

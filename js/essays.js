@@ -134,7 +134,7 @@ function viewEssay(pid) {
   ${relHtml}`;
 }
 function ctaFor(pid) {
-  const url = absUrl('#/essay/' + pid);
+  const url = absUrl('#/essay/' + pid) + (CLEAN ? '?utm_source=substack&utm_campaign=essay-' + pid : '');    // the visit report then names the essay that sent the reader
   return {
     html: `<p><strong>Sources for this essay.</strong> Every verse cited here, and every other Kingdom Code essay that quotes it, is in the <a href="${url}">Source Index</a>.</p>`,
     text: `Sources for this essay. Every verse cited here, and every other Kingdom Code essay that quotes it, is in the Source Index: ${url}`
