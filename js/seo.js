@@ -28,7 +28,7 @@ function seoCrumbs(p, name) {
   else if (a === 'person') add('Names', '#/names');
   else if (a === 'guides' && p[1]) { add('Guides', '#/guide'); add('Kingdom Code guides', '#/guides'); }
   else if (a === 'guides') add('Guides', '#/guide');
-  else if (a === 'essay') add('Essays', '#/essays');
+  else if (a === 'essay' || (a === 'essays' && p[1])) add('Essays', '#/essays');
   else if (a === 'path') add('Questions', '#/kc');
   if (a !== '') out.push([name, pathOf(p.join('/').replace(/^/, '#/')) || '/']);
   return out;
@@ -119,6 +119,7 @@ function seoRoutes() {
   D.PP.forEach(x => add('#/person/' + x.slug, null, 0.7));
   (PROFILE.kcGuides && D.KG || []).forEach(g => add('#/guides/' + g.slug, g.date, 0.8));
   D.paths.forEach(x => add('#/path/' + x.id, null, 0.7));
+  [...new Set(essayIds().map(pid => P[pid][3].slice(0, 4)))].forEach(y => add('#/essays/' + y, null, 0.7));
   essayIds().forEach(pid => add('#/essay/' + pid, P[pid][3], 0.6));
   return out.map(r => Object.assign(r, {path: pathOf(r.hash)}));
 }

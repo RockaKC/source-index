@@ -52,7 +52,7 @@ test('a long press on a button or link raises no menu; the Bible text keeps its 
   expect(await prevented('#rtext p#v3')).toBe(false);
 });
 
-test('a new page arrives with a rise in the app, and the website keeps its plain fade', async ({ page }) => {
+test('a new page arrives with the same short rise in the app and on the website', async ({ page }) => {
   const arriving = () => page.evaluate(() => document.getAnimations().map(a => a.animationName).filter(Boolean));
   await page.goto('/app.html');
   await settle(page);
@@ -61,7 +61,7 @@ test('a new page arrives with a rise in the app, and the website keeps its plain
   await page.goto('/');
   await settle(page);
   await page.evaluate(() => { location.hash = '#/about'; });
-  expect(await arriving()).toContain('fade');
+  expect(await arriving()).toContain('page-in');
 });
 
 test('in the app, a pressed secondary button shrinks too', async ({ page }) => {
@@ -77,16 +77,24 @@ test('in the app, a pressed secondary button shrinks too', async ({ page }) => {
   await page.mouse.up();
 });
 
-test('the website does not shrink under a press', async ({ page }) => {
+test('the website buttons shrink a little under a press, and spring back', async ({ page }) => {
   await page.goto('/');
   await settle(page);
   const btn = page.locator('#app .btn, #app .chip').first();
   const box = await btn.boundingBox();
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
   await page.mouse.down();
-  await page.waitForTimeout(200);
-  expect(await btn.evaluate(e => getComputedStyle(e).transform)).toBe('none');
+  await expect.poll(() => btn.evaluate(e => getComputedStyle(e).transform)).not.toBe('none');
   await page.mouse.up();
+  await expect.poll(() => btn.evaluate(e => getComputedStyle(e).transform), 'it returns to rest').toBe('none');
+});
+
+test('the website asks for no motion when the reader asks for none', async ({ browser }) => {
+  const ctx = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 390, height: 800 } }), page = await ctx.newPage();
+  await page.goto('/'); await settle(page);
+  await page.evaluate(() => { location.hash = '#/about'; }); await settle(page);
+  expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
+  await ctx.close();
 });
 
 test.describe('on a touch screen', () => {

@@ -45,13 +45,27 @@ function viewReaderHome() {         // the app's home: the Bible first, the Guid
 // The website's front page, laid out as the Kingdom Code archive: the mission and the search first, then the featured guide and the
 // newest essays, the collections as catalog cards with their counts, and the questions to start with.
 const essayIds = () => Object.keys(P).filter(pid => P[pid] && (hasRefs(pid) || PUB.has(pid))).sort((a, c) => P[c][3].localeCompare(P[a][3]) || c - a);   // cited in the index, or a public Substack essay (a new one is listed before its citations are in)
-function viewEssays() {             // every essay the index cites, newest first, by year
+function viewEssays(year) {         // the years first, then one year's essays, newest first
   const ids = essayIds(), years = [...new Set(ids.map(pid => P[pid][3].slice(0, 4)))];
+  const inYear = y => ids.filter(pid => P[pid][3].startsWith(y));
+  if (year) {
+    if (!years.includes(year)) return viewMissing();
+    const list = inYear(year);
+    return `
+  ${backLink('#/essays')}
+  <h1>Essays, ${year}</h1>
+  <p class="lede">${plural(list.length, 'Kingdom Code essay')} from ${year}, newest first. Each opens where it was published; Sources lists the verses it quotes.</p>
+  <ul class="chips" aria-label="Other years">${years.filter(y => y !== year).map(y => `<li><a class="chip" href="#/essays/${y}">${y}</a></li>`).join('')}</ul>
+  ${pieceList(list)}`;
+  }
   return `
   ${backLink('#/')}
   <h1>Essays</h1>
-  <p class="lede">${plural(ids.length, 'Kingdom Code essay')}, newest first. Each opens where it was published; Sources lists the verses it quotes.</p>
-  ${years.map(y => `<h2>${y}</h2>${pieceList(ids.filter(pid => P[pid][3].startsWith(y)))}`).join('')}`;
+  <p class="lede">${plural(ids.length, 'Kingdom Code essay')} across ${plural(years.length, 'year')}. Choose a year.</p>
+  <div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">${years.map(y => {
+    const n = inYear(y).length;
+    return `<li><a class="wl" href="#/essays/${y}"><b>${y}</b><span class="en">${esc(P[inYear(y)[0]][0])}</span><span class="lang">${plural(n, 'essay')}</span></a></li>`;
+  }).join('')}</ul></div>`;
 }
 function archiveHome() {
   const withText = D.entries.filter(e => e.books.some(b => D.CC[b])).length, extras = D.entries.filter(e => e.extra);
@@ -201,7 +215,7 @@ function viewCredits() {
 function viewMissing() { return `${backLink(`#/`)}<h1>Not found</h1><p class="lede">That page is not in the index yet.</p>`; }
 
 addRoute('', () => viewHome());
-if (PROFILE.archiveHome) addRoute('essays', () => viewEssays());
+if (PROFILE.archiveHome) addRoute('essays', p => viewEssays(p[1]));
 onPage(p => { if (PROFILE.archiveHome) document.documentElement.toggleAttribute('data-archive', p[0] === ''); });   // the front page alone uses the wide layout
 addRoute('about', () => viewAbout());
 addRoute('app', () => viewApp());

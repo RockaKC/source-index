@@ -138,7 +138,9 @@ function syncTheme() {
 }
 document.getElementById('theme').addEventListener('click', () => {
   const next = isDark() ? 'light' : 'dark';
-  document.documentElement.dataset.theme = next; store.set('kc-theme', next); syncTheme();
+  const root = document.documentElement;
+  root.classList.add('theming'); setTimeout(() => root.classList.remove('theming'), 320);     // the colours glide, once, instead of snapping
+  root.dataset.theme = next; store.set('kc-theme', next); syncTheme();
 });
 if (darkMQ && darkMQ.addEventListener) darkMQ.addEventListener('change', syncTheme);
 syncTheme();
