@@ -219,12 +219,20 @@ test('every collection on the front page opens a real page, and Essays lists eve
     await expect(page.locator('#app h1')).not.toHaveText('Not found');
   }
   await page.evaluate(() => { location.hash = '#/essays'; }); await settle(page);
+  expect(await page.locator('#app .piece'), 'the Essays page asks for a year first').toHaveCount(0);
   const n = await page.evaluate(() => essayIds().length);
-  expect(await page.locator('#app .piece').count()).toBe(n);
-  const years = await page.locator('#app h2').allTextContents();
+  const years = await page.locator('#app .wl b').allTextContents();
   expect(years).toEqual([...years].sort().reverse());
+  const counts = await page.locator('#app .wl .lang').allTextContents();
+  expect(counts.reduce((t, c) => t + parseInt(c, 10), 0), 'the year counts add up to every essay').toBe(n);
+  await page.locator('#app .wl').first().click(); await settle(page);
+  expect(new URL(page.url()).pathname).toBe(`/essays/${years[0]}/`);
+  await expect(page.locator('#app h1')).toHaveText(`Essays, ${years[0]}`);
+  expect(await page.locator('#app .piece').count()).toBe(parseInt(counts[0], 10));
   const dates = await page.locator('#app .piece .cap').evaluateAll(c => c.length);
-  expect(dates).toBeGreaterThan(100);
+  expect(dates).toBeGreaterThan(5);
+  await page.evaluate(() => { location.hash = '#/essays/1999'; }); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Not found');
 });
 
 test('the app keeps its own home, not the archive', async ({ page }) => {
@@ -244,7 +252,8 @@ test('essay text is switched off: no text in the data, no essay-text folder, and
 });
 
 test('titles in the lists open the essay where it was published, in a new tab, never an essay page on the site', async ({ page }) => {
-  for (const hash of ['#/essays', '#/']) {
+  const year = (await page.goto('/') && (await page.evaluate(() => P[essayIds()[0]][3].slice(0, 4))));
+  for (const hash of ['#/essays/' + year, '#/']) {
     await page.goto('/' + hash); await settle(page);
     const links = await page.locator('#app .piece .t a').evaluateAll(a => a.map(x => [x.getAttribute('href'), x.getAttribute('target')]));
     expect(links.length).toBeGreaterThan(3);
@@ -262,16 +271,17 @@ test('the Essays page and the front page list the newest public Substack essays 
   const dates = ids.map(id => D.pieces[id][3]);
   expect(dates[0], 'the newest public essay leads the front page').toBe(newest);
   expect(dates).toEqual([...dates].sort().reverse());
-  await page.evaluate(() => { location.hash = '#/essays'; }); await settle(page);
+  const year = newest.slice(0, 4);
+  await page.evaluate(y => { location.hash = '#/essays/' + y; }, year); await settle(page);
   const first = page.locator('#app .piece').first();
   expect(D.pieces[await first.locator('.t a').getAttribute('data-pid')][3]).toBe(newest);
-  const cited = await page.evaluate(() => Object.keys(P).filter(p => hasRefs(p)).length);
-  expect(await page.locator('#app .piece').count()).toBeGreaterThanOrEqual(cited);
   // a public essay with no citations yet is listed, and offers no Sources link; one that cites verses does
   const uncited = await page.evaluate(() => D.PUB.find(id => !hasRefs(id)));
   const withRefs = await page.evaluate(() => Object.keys(P).find(id => hasRefs(id)));
-  await expect(page.locator(`#app .piece:has(a[data-pid="${uncited}"]) a[href^="/essays/"]`)).toHaveCount(0);
-  await expect(page.locator(`#app .piece:has(a[data-pid="${withRefs}"]) a[href^="/essays/"]`)).toHaveCount(1);
+  for (const [id, links] of [[uncited, 0], [withRefs, 1]]) {
+    await page.evaluate(y => { location.hash = '#/essays/' + y; }, D.pieces[id][3].slice(0, 4)); await settle(page);
+    await expect(page.locator(`#app .piece:has(a[data-pid="${id}"]) a[href^="/essays/"]`)).toHaveCount(links);
+  }
 });
 
 test('the essay page still lists the verses an essay cites, and offers the essay on its platform', async ({ page }) => {
