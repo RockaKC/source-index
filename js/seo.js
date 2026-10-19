@@ -49,6 +49,8 @@ function seoLd(p, name, desc, url) {
     const e = P[p[1]];
     main = {'@context': 'https://schema.org', '@type': 'Article', headline: e[0], description: desc, url, mainEntityOfPage: url, inLanguage: 'en', datePublished: e[3] || undefined,
       author: org, publisher: org, isBasedOn: e[1], isAccessibleForFree: true};
+    const about = PROFILE.connections ? (connections().byEssay.get(String(p[1])) || []).filter(c => c.how !== 'p') : [];
+    if (about.length) main.mentions = about.map(c => ({'@type': 'Person', name: c.name, url: SITE_ORIGIN + pathOf(c.href)}));
   } else if (a === 'church' && p[1] && churchFigure(p[1])) {
     const f = churchFigure(p[1]);
     main = {'@context': 'https://schema.org', '@type': 'Person', name: f.name, description: f.line, url, image: SITE_ORIGIN + '/' + f.image, mainEntityOfPage: url};

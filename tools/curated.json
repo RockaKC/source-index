@@ -1473,7 +1473,20 @@
     "Later writers place his arrest under the emperor Trajan, about AD 110. The exact year is uncertain. His own letters show him a prisoner bound for Rome under a guard of soldiers, and churches of Asia Minor sent delegations to meet him on the road. He wrote seven letters: to the churches in Ephesus, Magnesia, Tralles, Rome, Philadelphia and Smyrna, and to Polycarp, bishop of Smyrna.",
     "Later centuries produced expanded versions and additional letters attributed to him. The seven letters preserved in their shorter, middle recension are generally accepted as authentic. They are among the earliest Christian writings outside the New Testament.",
     "Ignatius insists that Jesus Christ was truly born, truly suffered and truly rose, against teachers who said He only seemed to have a body. He calls believers to unity around their bishop, with the presbyters and deacons. In his letter to the Smyrnaeans (8.2) he writes that wherever Christ Jesus is, there is the catholic church. It is the earliest surviving use of the phrase, and “catholic” here means universal: the whole church, not a later denomination. In his letter to the Romans he begs them not to save him from martyrdom. He is remembered as having suffered martyrdom in Rome."
-   ]
+   ],
+   "link_terms": {
+    "names": [
+     "Ignatius of Antioch",
+     "Ignatius"
+    ],
+    "works": [
+     "Epistle to the Smyrnaeans",
+     "Letter to the Smyrnaeans",
+     "Epistles of Ignatius",
+     "Letters of Ignatius",
+     "Letter to the Ephesians of Ignatius"
+    ]
+   }
   },
   {
    "slug": "justin-martyr",
@@ -1489,7 +1502,22 @@
     "He remained a philosopher, and taught as a Christian in Rome. Three works are accepted as his: the First Apology, addressed to the emperor Antoninus Pius about AD 155; the Second Apology; and the Dialogue with Trypho, a debate with a Jewish man over the prophets and Christ. Other writings later attached to his name are of doubtful authorship.",
     "In the First Apology he answers the charges of atheism and immorality brought against Christians, and describes their worship. It is the earliest detailed account that survives: baptism, the gathering on Sunday, the reading of “the memoirs of the apostles or the writings of the prophets,” a sermon, prayers, bread and wine, and a collection for orphans, widows and the poor. He also argues that the Word who became Jesus Christ had already been partly at work among the wise before him.",
     "He is remembered as having been condemned and beheaded in Rome about AD 165, under Marcus Aurelius, with several companions. An early account of their trial, the Martyrdom of Justin and his Companions, records their questioning by the prefect Rusticus. From then on he is called Justin Martyr."
-   ]
+   ],
+   "link_terms": {
+    "names": [
+     "Justin Martyr",
+     "Justin the Martyr"
+    ],
+    "short": [
+     "Justin"
+    ],
+    "works": [
+     "First Apology",
+     "Second Apology",
+     "Dialogue with Trypho",
+     "Dialogue with Trypho the Jew"
+    ]
+   }
   },
   {
    "slug": "irenaeus-of-lyons",
@@ -1505,7 +1533,18 @@
     "Two of his works survive. Against Heresies, written about AD 180 in five books, is preserved complete in a Latin translation, with parts in the original Greek. The Demonstration of the Apostolic Preaching, a short summary of the faith, is known only in Armenian and was rediscovered in 1904.",
     "Against Heresies answers the Gnostic teachers, especially the Valentinians, who taught that the creator was a lesser being and the material world a flaw. Irenaeus answers that one God made all things good, that the Son truly became flesh, and that the faith is known from what the apostles taught, handed down openly in the churches and in their succession of bishops, not from secret knowledge. He argues that the church has four Gospels and no more (3.11.8), and he quotes from most of the books of the New Testament.",
     "He also wrote to Victor, bishop of Rome, urging peace with the churches of Asia over the date of Easter. The date and manner of his death are not recorded by early witnesses. Later writers call him a martyr, about AD 202."
-   ]
+   ],
+   "link_terms": {
+    "names": [
+     "Irenaeus",
+     "Irenæus"
+    ],
+    "works": [
+     "Against Heresies",
+     "Adversus Haereses",
+     "Demonstration of the Apostolic Preaching"
+    ]
+   }
   },
   {
    "slug": "tertullian",
@@ -1521,7 +1560,26 @@
     "More than thirty of his works survive. The Apology, about AD 197, addresses Roman governors in defense of Christians, and ends with the saying that the blood of Christians is seed. The Prescription Against Heretics argues that heretics cannot appeal to the Scriptures, which belong to the churches that hold what the apostles handed down: “What indeed has Athens to do with Jerusalem?” (chapter 7). He also wrote Against Marcion, On Baptism, the earliest surviving treatise on the subject, and On Prayer.",
     "In Against Praxeas, about AD 213, he argues that Father, Son and Spirit are distinct and yet one God. He did it in words that shaped Latin theology: trinitas, persona and substantia. His is the earliest surviving use of trinitas in Latin.",
     "In his later works he sided with the Montanists, a movement of prophecy and strict discipline, and criticizes the church for laxity. The year of his death is unknown, after about AD 220."
-   ]
+   ],
+   "link_terms": {
+    "names": [
+     "Tertullian"
+    ],
+    "works": [
+     "On the Apparel of Women",
+     "De Cultu Feminarum",
+     "Against Marcion",
+     "Against Praxeas",
+     "Prescription Against Heretics",
+     "De Praescriptione",
+     "Apologeticum",
+     "Apologeticus",
+     "On Baptism",
+     "On the Flesh of Christ",
+     "On Fasting",
+     "On Idolatry"
+    ]
+   }
   }
  ]
 }
