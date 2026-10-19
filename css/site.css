@@ -508,3 +508,7 @@ html:not([data-product]){-webkit-tap-highlight-color:transparent;touch-action:ma
     html:not([data-product]):not([data-theme=light]) :is(.cc,.bk,.gcard,.afeat):hover{box-shadow:0 8px 22px rgba(0,0,0,.4)}
   }
 }
+
+/* The Bible's own pages point to essays in one separate section, last on the page */
+.cited{margin-top:var(--s6);padding-top:var(--s3);border-top:1px solid var(--hairline)}
+.cited h2{margin-top:0}

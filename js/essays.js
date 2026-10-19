@@ -43,11 +43,12 @@ const rank = ids => ids.slice().sort((a,b) => {
   if (ca > -1 && cb > -1) return ca - cb;
   return P[b][5] - P[a][5];
 });
-function elsewhere(b, ch, shown) {      // essays that cite this chapter but are not already on the page
-  const seen = new Set(shown.map(Number)), out = new Set();
-  Object.values((D.verses[b] || {})[ch] || {}).forEach(ps => ps.forEach(p => { if (!seen.has(+p)) out.add(+p); }));
-  const ids = rank([...out]).slice(0, 3);
-  return ids.length ? `<h2>Elsewhere in ${esc(bname(b))} ${ch}</h2>${pieceList(ids)}` : '';
+// The one place the Bible's own pages point to essays: a separate section, last on the page, listing every essay that cites the verse or passage.
+function citedSection(ids, none, lede, note) {      // note(pid): an extra line before an essay's date, e.g. how many verses of a passage it cites
+  const body = ids.length ? `<div class="card"><ul class="list">${ids.map(pid => `<li class="piece">${seriesCap(pid)}
+    <div class="t"><a ${link(pid)}>${esc(P[pid][0])}</a></div><p class="cap">${note ? note(pid) + ' \u00b7 ' : ''}${meta(pid)}${srcLink(pid)}</p></li>`).join('')}</ul></div>` : '';
+  return `<section class="cited" aria-labelledby="cited-t"><h2 id="cited-t">Cited in Kingdom Code essays</h2>
+    <p class="cap" style="margin-top:4px">${ids.length ? lede : none}</p>${body}</section>`;
 }
 
 function piecesForBook(bs) {
@@ -67,14 +68,6 @@ function readLabel(r) {                 // Psalms: add the English number when i
   let e = null;
   const pe = PE[r[2]]; if (pe) for (let v = r[4]; v < r[4] + 4 && !e; v++) e = pe[`${r[3]}:${v}`];   // a superscription can shift verse 1
   return rangeLabel(r) + (e && e[0] !== r[3] ? ` (${e[0]} in English Bibles)` : '');
-}
-function readList(rs) {
-  rs = rs.slice().sort((a,b) => a[3]-b[3] || a[4]-b[4] || a[0]-b[0] || a[1]-b[1]);
-  return `<div class="card"><ul class="list">${rs.map(r => {
-    const g = D.guides[r[0]];
-    const act = g[1] ? `<a class="btn secondary" href="${esc(g[1])}" target="_blank" rel="noopener" aria-label="Open the guide: ${esc(g[0])}">Open the guide</a>` : `<span class="cap">Returns next winter</span>`;
-    return `<li class="row"><div><div class="r">${esc(readLabel(r))}</div><p class="cap">${esc(g[0])}, day ${r[1]}, ${TRANS[r[7]] || esc(r[7])}</p></div>${act}</li>`;
-  }).join('')}</ul></div>`;
 }
 function viewPath(id) {
   const p = D.paths.find(x => x.id === id); if (!p) return viewMissing();
