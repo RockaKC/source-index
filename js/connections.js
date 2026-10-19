@@ -37,7 +37,7 @@ function featuredSection(key, name) {
   if (!PROFILE.connections) return '';
   const rows = connections().bySubject.get(key) || [], how = new Map(rows.map(r => [r.pid, r.how]));
   return citedSection(rows.map(r => r.pid), `No Kingdom Code essay features ${name} yet.`,
-    `${plural(rows.length, 'Kingdom Code essay')} ${rows.length === 1 ? 'cites or discusses' : 'cite or discuss'} ${esc(name)}. Cited means the essay uses ${esc(name)}’s own writing.`,
+    `${plural(rows.length, 'Kingdom Code essay')} ${rows.length === 1 ? 'cites or discusses' : 'cite or discuss'} ${esc(name)}.${rows.some(r => r.how === 'c') ? ` Cited means the essay uses ${esc(name)}’s own writing.` : ''}`,
     pid => CONN_LABEL[how.get(String(pid))], 'Featured in Kingdom Code');
 }
 

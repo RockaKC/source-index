@@ -129,6 +129,7 @@ function viewChurchFigure(slug) {
   <p class="lede">${esc(f.line)}</p>
   <figure class="efigure"><img src="${esc(f.image)}" width="${f.width}" height="${f.height}" alt="${esc(f.alt)}"></figure>
   <p class="cap">${esc(f.dates)}</p>
+  ${(f.aka || []).length ? `<p class="cap">Also known as ${esc(f.aka.join(' and '))}</p>` : ''}
   <div class="eover">${f.overview.map(p => `<p>${esc(p)}</p>`).join('')}</div>
   ${featuredSection('church/' + f.slug, f.name)}
   ${(f.sources || []).length ? `<h2>Primary sources</h2><div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">${f.sources.map(s => `<li><a class="wl" href="${esc(s.url)}" target="_blank" rel="noopener"><b>${esc(s.title)}</b><span class="en">${esc(s.note)}</span></a></li>`).join('')}</ul></div>` : ''}`;

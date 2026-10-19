@@ -340,11 +340,20 @@ test('the app has no Early Church section', async ({ page }) => {
   await expect(page.locator('#app')).not.toContainText('Early Church');
 });
 
-test('Early Church lists Ignatius, Justin Martyr, Irenaeus and Tertullian in order, each with a loading image and a short overview', async ({ page }) => {
+test('Early Church lists Ignatius, Justin Martyr, Irenaeus, Tertullian and Moses the Black in order, each with a loading image and a short overview', async ({ page }) => {
   await page.goto('/guides/early-church/'); await settle(page);
-  await expect(page.locator('#app a.efig')).toHaveText([/Ignatius of Antioch/, /Justin Martyr/, /Irenaeus of Lyons/, /Tertullian/]);
+  await expect(page.locator('#app a.efig')).toHaveText([/Ignatius of Antioch/, /Justin Martyr/, /Irenaeus of Lyons/, /Tertullian/, /Moses the Black/]);
   await page.goto('/guides/early-church/justin-martyr/'); await settle(page);
   await expect(page.locator('#app h1')).toHaveText('Justin Martyr');
   expect(await page.locator('#app .efigure img').evaluate(i => i.complete && i.naturalWidth > 0)).toBe(true);
   expect(await page.locator('#app .eover p').count()).toBe(4);
+});
+
+test('Moses the Black shows his other names, and a figure with no writings is never "cited"', async ({ page }) => {
+  await page.goto('/guides/early-church/moses-the-black/'); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Moses the Black');
+  await expect(page.locator('#app')).toContainText('Also known as Moses the Ethiopian and Moses the Strong');
+  expect(await page.locator('#app .efigure img').evaluate(i => i.complete && i.naturalWidth > 0)).toBe(true);
+  expect(await page.evaluate(() => (D.EL['church/moses-the-black'] || []).some(r => r[1] === 'c'))).toBe(false);
+  await expect(page.locator('#app .cited')).toContainText('No Kingdom Code essay features Moses the Black yet.');
 });
