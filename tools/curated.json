@@ -446,24 +446,141 @@
   {
    "slug": "the-ungovernable-mind",
    "title": "The Ungovernable Mind",
-   "sub": "A Christian\u2019s Guide to Discernment, Power, and Independent Judgment",
+   "sub": "A Christian’s Guide to Discernment, Power, and Independent Judgment",
    "about": "Why Christ commanded His followers to be wise, discerning, and prepared to navigate the world. How to govern yourself first, understand how power operates, recognize manipulation, resist the crowd, and exercise independent judgment, with a Discernment Field Sheet.",
    "file": "guides/the-ungovernable-mind.pdf",
    "cover": "img/guides/the-ungovernable-mind.webp",
    "pages": 48,
    "contents": [
-    {"title": "The Ungovernable Mind", "page": 3, "about": "Why Christ commanded His followers to be wise, discerning, and prepared to navigate the world."},
-    {"title": "Govern Yourself First", "page": 4, "about": "The discipline of self-examination, intellectual humility, and recognizing the weaknesses that compromise your judgment."},
-    {"title": "Understand How Power Operates", "page": 8, "about": "How authority is established, maintained, and exercised through institutions, alliances, education, and political influence."},
-    {"title": "Recognize Manipulation", "page": 14, "about": "How propaganda, language, emotional pressure, and entertainment shape what people believe."},
-    {"title": "Resist the Crowd", "page": 21, "about": "Why people surrender their judgment to movements, leaders, and collective identities, and how to remain faithful when conformity is demanded."},
-    {"title": "Exercise Independent Judgment", "page": 28, "about": "How to distinguish knowledge from wisdom, examine evidence, and exercise sound judgment in an age of expanding technological power."},
-    {"title": "The Discernment Field Sheet", "page": 37, "about": "A practical worksheet for examining claims, recognizing manipulation, identifying personal biases, and reaching informed conclusions."},
-    {"title": "The Ungovernable Christian", "page": 41, "about": "The responsibility to pursue wisdom, act upon the truth, and remain governed by Christ rather than falsehood."},
-    {"title": "Source Index & Further Reading", "page": 45, "about": "Scripture references, primary historical works, and recommended books underlying the guide."},
-    {"title": "About Kingdom Code", "page": 48, "about": "Our mission, the Source Index, and how to support independent Christian research."}
+    {
+     "title": "The Ungovernable Mind",
+     "page": 3,
+     "about": "Why Christ commanded His followers to be wise, discerning, and prepared to navigate the world."
+    },
+    {
+     "title": "Govern Yourself First",
+     "page": 4,
+     "about": "The discipline of self-examination, intellectual humility, and recognizing the weaknesses that compromise your judgment."
+    },
+    {
+     "title": "Understand How Power Operates",
+     "page": 8,
+     "about": "How authority is established, maintained, and exercised through institutions, alliances, education, and political influence."
+    },
+    {
+     "title": "Recognize Manipulation",
+     "page": 14,
+     "about": "How propaganda, language, emotional pressure, and entertainment shape what people believe."
+    },
+    {
+     "title": "Resist the Crowd",
+     "page": 21,
+     "about": "Why people surrender their judgment to movements, leaders, and collective identities, and how to remain faithful when conformity is demanded."
+    },
+    {
+     "title": "Exercise Independent Judgment",
+     "page": 28,
+     "about": "How to distinguish knowledge from wisdom, examine evidence, and exercise sound judgment in an age of expanding technological power."
+    },
+    {
+     "title": "The Discernment Field Sheet",
+     "page": 37,
+     "about": "A practical worksheet for examining claims, recognizing manipulation, identifying personal biases, and reaching informed conclusions."
+    },
+    {
+     "title": "The Ungovernable Christian",
+     "page": 41,
+     "about": "The responsibility to pursue wisdom, act upon the truth, and remain governed by Christ rather than falsehood."
+    },
+    {
+     "title": "Source Index & Further Reading",
+     "page": 45,
+     "about": "Scripture references, primary historical works, and recommended books underlying the guide."
+    },
+    {
+     "title": "About Kingdom Code",
+     "page": 48,
+     "about": "Our mission, the Source Index, and how to support independent Christian research."
+    }
    ],
    "date": "2026-10-17"
+  },
+  {
+   "slug": "fall-season-reading-guide",
+   "title": "Fall Season Reading Guide",
+   "sub": "Ninety Days Through the Seventh Month",
+   "about": "A ninety-day reading through the seventh month: thirty days under the Trumpet, thirty at the Atonement, thirty in the Ingathering. One Scripture reading a day, with a short commentary and two questions, and a written examination at days 30, 60 and 90.",
+   "file": "guides/fall-season-reading-guide.pdf",
+   "cover": "img/guides/fall-season-reading-guide.webp",
+   "pages": 105,
+   "contents": [
+    {
+     "title": "What You Are Holding",
+     "page": 3,
+     "about": "A ninety-day reading of the season the church has mostly stopped reading, and why the trumpet, the atonement and the booth come in that order."
+    },
+    {
+     "title": "The Shape of the Seventh Month",
+     "page": 4,
+     "about": "Leviticus 23 puts three feasts in one month: wake up, settle the account, then rejoice."
+    },
+    {
+     "title": "The Counterfeit Harvest",
+     "page": 5,
+     "about": "How the world keeps the feast and drops what it was built on: harvest without the trumpet, joy without atonement, a full barn with a closed gate."
+    },
+    {
+     "title": "The Season in Three Registers",
+     "page": 6,
+     "about": "The calendar, the Ethiopian witness, and the life of the reader."
+    },
+    {
+     "title": "How to Use This Guide",
+     "page": 7,
+     "about": "One passage a day for ninety days, with written examinations at days 30, 60 and 90."
+    },
+    {
+     "title": "What This Season Asks of You",
+     "page": 8,
+     "about": "Attention, confession and generosity."
+    },
+    {
+     "title": "Days 1–30: The Trumpet",
+     "page": 9,
+     "about": "The alarm, the watchman, the accounting and the last trumpet: the reckoning every life will meet."
+    },
+    {
+     "title": "Day 30 Examination: The Account Opened",
+     "page": 40,
+     "about": "Three questions to answer in writing before the Day of Atonement."
+    },
+    {
+     "title": "Days 31–60: The Atonement",
+     "page": 41,
+     "about": "The blood that covers, the confession that names, and the finished work that ends the repeating."
+    },
+    {
+     "title": "Day 60 Examination: The Account Settled",
+     "page": 72,
+     "about": "Written questions on what the thirty days of atonement covered, before you build the booth."
+    },
+    {
+     "title": "Days 61–90: The Ingathering",
+     "page": 73,
+     "about": "The booth, the commanded joy, the portion for the poor, the table for the nations and the eighth day."
+    },
+    {
+     "title": "Day 90 Examination: The Harvest Declared",
+     "page": 104,
+     "about": "Your fall testimony: what the trumpet exposed, what the atonement covered, who is still outside the booth."
+    },
+    {
+     "title": "The Ledger Closed",
+     "page": 105,
+     "about": "The closing word of the ninety days."
+    }
+   ],
+   "date": "2026-09-28"
   }
  ],
  "essay_text_on_site": false,
