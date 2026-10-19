@@ -44,10 +44,10 @@ const rank = ids => ids.slice().sort((a,b) => {
   return P[b][5] - P[a][5];
 });
 // The one place the Bible's own pages point to essays: a separate section, last on the page, listing every essay that cites the verse or passage.
-function citedSection(ids, none, lede, note) {      // note(pid): an extra line before an essay's date, e.g. how many verses of a passage it cites
+function citedSection(ids, none, lede, note, title) {      // note(pid): an extra line before an essay's date, e.g. how many verses of a passage it cites
   const body = ids.length ? `<div class="card"><ul class="list">${ids.map(pid => `<li class="piece">${seriesCap(pid)}
     <div class="t"><a ${link(pid)}>${esc(P[pid][0])}</a></div><p class="cap">${note ? note(pid) + ' \u00b7 ' : ''}${meta(pid)}${srcLink(pid)}</p></li>`).join('')}</ul></div>` : '';
-  return `<section class="cited" aria-labelledby="cited-t"><h2 id="cited-t">Cited in Kingdom Code essays</h2>
+  return `<section class="cited" aria-labelledby="cited-t"><h2 id="cited-t">${title || 'Cited in Kingdom Code essays'}</h2>
     <p class="cap" style="margin-top:4px">${ids.length ? lede : none}</p>${body}</section>`;
 }
 
@@ -130,6 +130,7 @@ function viewEssay(pid) {
   <p style="margin-top:24px"><a class="btn primary" ${link(pid)} aria-label="Read the essay: ${esc(title)}">Read the essay</a></p>`}
   <h2>${reading ? `Scripture cited in this essay</h2><p class="cap" style="margin-top:4px">${plural(refs.length,'verse')} across ${plural(books.length,'book')}.</p><div>` : `Scripture cited</h2>`}${groups}${reading ? '</div>' : ''}
   ${wordsForEssay(pid).length ? `<h2>Words discussed</h2><ul class="chips">${wordsForEssay(pid).map(w => `<li><a class="chip" href="#/word/${w.slug}">${esc(w.title)}</a></li>`).join('')}</ul>` : ''}
+  ${connectionChips(pid)}
   ${texts}
   ${relHtml}`;
 }

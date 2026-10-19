@@ -35,6 +35,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import stamp_assets  # noqa: E402
+import connections  # noqa: E402
 import essay_text  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -373,6 +374,15 @@ def build(con, cur, warn):
         if len({f["slug"] for f in ec}) != len(ec):
             sys.exit("early_church: a slug is used twice")
         D["EC"] = ec
+        # Which essays cite or discuss each figure (tools/connections.py). Only the pairs travel, never the essay text; an essay that is not on
+        # the site's lists is left out, and a pair appears once.
+        links, _ = connections.compute(con, cur)
+        has_refs = {str(pid) for chapters in D["verses"].values() for verses in chapters.values() for pids in verses.values() for pid in pids}
+        shown = (set(map(str, D["PUB"])) | has_refs) & set(D["pieces"])           # the essays the site's lists show
+        D["EL"] = {k: [r for r in v if str(r[0]) in shown] for k, v in links.items()}
+        for k, v in D["EL"].items():
+            if len({r[0] for r in v}) != len(v):
+                sys.exit("connections: an essay appears twice for %s" % k)
     D["words"] = cur["words"]
 
     # ---- inlined text for cited chapters (first paint), labels, carried verses, Psalm map ----
