@@ -479,3 +479,32 @@ html[data-archive] .wrap{max-width:1040px}
 .essaytext ul,.essaytext ol{margin:0 0 1.1em;padding-left:1.4em}.essaytext li{margin:.25em 0}
 .essaytext a{color:var(--accent)}
 .essayfoot{margin-top:var(--s4)}
+
+/* Website polish: every control answers a touch or a hover, pages arrive with one short rise, and what opens, opens softly.
+   The app has its own version of this above ([data-product=app]). Nothing here moves for a reader who asks for reduced motion. */
+html:not([data-product]){-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+@media (prefers-reduced-motion:no-preference){
+  html:not([data-product]) :is(.btn,.chip,.navbtn,.tab,.cht,.bk,.cc,.afeat,.gcard,.theme,.menubtn,.ibtn,.q,.wl){transition:transform 180ms cubic-bezier(.2,.8,.2,1),background-color 150ms ease-out,border-color 150ms ease-out,color 150ms ease-out,box-shadow 200ms ease-out}
+  html:not([data-product]) .fadein{animation:page-in 260ms cubic-bezier(.2,.8,.2,1)}
+  html:not([data-product]) .menu:not([hidden]){transform-origin:top right;animation:pop-in 160ms cubic-bezier(.2,.8,.2,1)}
+  html:not([data-product]) .sug:not([hidden]){animation:pop-in 130ms cubic-bezier(.2,.8,.2,1)}
+  html:not([data-product]) #support[open]{animation:pop-in 200ms cubic-bezier(.2,.8,.2,1)}
+  html:not([data-product]) #support[open]::backdrop{animation:scrim-in 200ms ease-out}
+  html:not([data-product]) #loadmsg{animation:pulse 1.2s ease-in-out infinite}
+  html.theming,html.theming *,html.theming *::before,html.theming *::after{transition:background-color 260ms ease,color 260ms ease,border-color 260ms ease,fill 260ms ease,stroke 260ms ease!important}
+  @media (hover:hover){
+    html:not([data-product]) :is(.cc,.bk,.gcard,.afeat):hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.09)}
+    html[data-theme=dark]:not([data-product]) :is(.cc,.bk,.gcard,.afeat):hover{box-shadow:0 8px 22px rgba(0,0,0,.4)}
+    html:not([data-product]) .chip:hover{transform:translateY(-1px)}
+    html:not([data-product]) .btn.primary:hover{box-shadow:0 6px 16px rgba(28,105,68,.28)}
+  }
+  html:not([data-product]) :is(.btn,.chip,.navbtn,.tab,.cht,.bk,.cc,.afeat,.gcard):active{transform:scale(.98);transition-duration:60ms;box-shadow:none}
+  html:not([data-product]) :is(.theme,.menubtn,.ibtn):active{transform:scale(.9);transition-duration:60ms}
+}
+@keyframes pop-in{from{opacity:0;transform:translateY(-6px) scale(.98)}}
+@keyframes pulse{50%{opacity:.45}}
+@media (prefers-color-scheme:dark){
+  @media (hover:hover) and (prefers-reduced-motion:no-preference){
+    html:not([data-product]):not([data-theme=light]) :is(.cc,.bk,.gcard,.afeat):hover{box-shadow:0 8px 22px rgba(0,0,0,.4)}
+  }
+}
