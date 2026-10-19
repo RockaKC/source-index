@@ -367,6 +367,9 @@ def build(con, cur, warn):
                 sys.exit("early_church %s: image %s is missing" % (f["slug"], f["image"]))
             if not f.get("overview") or not f.get("name") or not f.get("alt"):
                 sys.exit("early_church %s needs a name, an overview and alt text for its image" % f["slug"])
+            for src in f.get("sources", []):
+                if not (src.get("title") and src.get("note") and str(src.get("url", "")).startswith("https://")):
+                    sys.exit("early_church %s: each source needs a title, a note and an https address" % f["slug"])
         if len({f["slug"] for f in ec}) != len(ec):
             sys.exit("early_church: a slug is used twice")
         D["EC"] = ec
