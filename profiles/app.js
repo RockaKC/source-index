@@ -12,6 +12,7 @@ const PROFILE = {
   readerTools: true,       // the chapter bar in the header, the reading toolbar, reading history, and the search page (js/readerbar.js)
   essayText: false,        // essays open on the publication, not in the app
   archiveHome: false,      // the website's archive front page
+  library: false,            // the Essays library: search, subjects, topics, collections (js/library.js, D.LIB)
   connections: false,         // essays and subjects (Early Church, Names) link to each other (js/connections.js)
   earlyChurch: false,      // the Early Church pages are on the website only
   kcGuides: false,         // the PDF guides are on the website only

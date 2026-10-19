@@ -29,7 +29,8 @@ function seoCrumbs(p, name) {
   else if (a === 'guides' && p[1]) { add('Guides', '#/guide'); add('Kingdom Code guides', '#/guides'); }
   else if (a === 'church') { add('Guides', '#/guide'); if (p[1]) add('Early Church', '#/church'); }
   else if (a === 'guides') add('Guides', '#/guide');
-  else if (a === 'essay' || (a === 'essays' && p[1])) add('Essays', '#/essays');
+  else if (a === 'essay' || (a === 'essays' && p[1] && !/^\d{4}$/.test(p[1]))) add('Essays', '#/essays');
+  else if (a === 'essays' && /^\d{4}$/.test(p[1] || '')) add('Essays', '#/essays');
   else if (a === 'path') add('Questions', '#/kc');
   if (a !== '') out.push([name, pathOf(p.join('/').replace(/^/, '#/')) || '/']);
   return out;
@@ -51,6 +52,10 @@ function seoLd(p, name, desc, url) {
       author: org, publisher: org, isBasedOn: e[1], isAccessibleForFree: true};
     const about = PROFILE.connections ? (connections().byEssay.get(String(p[1])) || []).filter(c => c.how !== 'p') : [];
     if (about.length) main.mentions = about.map(c => ({'@type': 'Person', name: c.name, url: SITE_ORIGIN + pathOf(c.href)}));
+  } else if (a === 'essays' && (p[1] === 'subject' || p[1] === 'topic') && typeof LIB !== 'undefined' && LIB) {
+    const ids = libEssays().filter(pid => p[1] === 'subject' ? LIB.ess[pid][0] === p[2] : LIB.ess[pid][1].includes(p[2]));
+    main = {'@context': 'https://schema.org', '@type': 'CollectionPage', name, description: desc, url, inLanguage: 'en', isPartOf: {'@type': 'WebSite', name: PROFILE.name, url: SITE_ORIGIN + '/'}, publisher: org,
+      mainEntity: {'@type': 'ItemList', numberOfItems: ids.length, itemListElement: ids.slice(0, 100).map((pid, i) => ({'@type': 'ListItem', position: i + 1, name: P[pid][0], url: SITE_ORIGIN + pathOf('#/essay/' + pid)}))}};
   } else if (a === 'church' && p[1] && churchFigure(p[1])) {
     const f = churchFigure(p[1]);
     main = {'@context': 'https://schema.org', '@type': 'Person', name: f.name, alternateName: f.aka, description: f.line, url, image: SITE_ORIGIN + '/' + f.image, mainEntityOfPage: url};
@@ -127,6 +132,12 @@ function seoRoutes() {
   (PROFILE.earlyChurch && D.EC || []).forEach(f => add('#/church/' + f.slug, null, 0.7));
   D.paths.forEach(x => add('#/path/' + x.id, null, 0.7));
   [...new Set(essayIds().map(pid => P[pid][3].slice(0, 4)))].forEach(y => add('#/essays/' + y, null, 0.7));
+  if (typeof LIB !== 'undefined' && LIB) {
+    LIB.cats.forEach(c => add('#/essays/subject/' + c.id, null, 0.8));
+    LIB.tags.forEach(t => add('#/essays/topic/' + t.id, null, 0.7));
+    add('#/essays/topics', null, 0.6);
+    LIB.cols.forEach(c => add('#/essays/collection/' + c.id, null, 0.8));
+  }
   essayIds().forEach(pid => add('#/essay/' + pid, P[pid][3], 0.6));
   return out.map(r => Object.assign(r, {path: pathOf(r.hash)}));
 }

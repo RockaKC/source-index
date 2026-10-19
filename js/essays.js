@@ -130,6 +130,7 @@ function viewEssay(pid) {
   <p style="margin-top:24px"><a class="btn primary" ${link(pid)} aria-label="Read the essay: ${esc(title)}">Read the essay</a></p>`}
   <h2>${reading ? `Scripture cited in this essay</h2><p class="cap" style="margin-top:4px">${plural(refs.length,'verse')} across ${plural(books.length,'book')}.</p><div>` : `Scripture cited</h2>`}${groups}${reading ? '</div>' : ''}
   ${wordsForEssay(pid).length ? `<h2>Words discussed</h2><ul class="chips">${wordsForEssay(pid).map(w => `<li><a class="chip" href="#/word/${w.slug}">${esc(w.title)}</a></li>`).join('')}</ul>` : ''}
+  ${libraryChips(pid)}
   ${connectionChips(pid)}
   ${texts}
   ${relHtml}`;
