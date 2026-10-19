@@ -84,8 +84,8 @@ function archiveHome() {
   return `
   <section class="ahero" aria-labelledby="ah-t">
     <h1 id="ah-t">Kingdom <em>Code</em></h1>
-    <p class="ahead">Knowledge worth recovering. Questions worth investigating.</p>
-    <p class="alede">An independent exploration of Scripture, ancient history, Christianity, and the civilizations that shaped our world.</p>
+    <p class="ahead"><span>Recovering ancient wisdom.</span> <span>Investigating history.</span> <span>Understanding Scripture.</span></p>
+    <p class="alede">An independent Christian publication exploring Holy Scripture, early Christianity, ancient civilizations, and the historical records that illuminate our world.</p>
     <form class="search" role="search" id="sf">
       <label class="sr" for="q">Search by verse, word, or title</label>
       <input id="q" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug" aria-haspopup="listbox" placeholder="Verse, word, or title" autocomplete="off" autocapitalize="none" spellcheck="false" enterkeyhint="search">
