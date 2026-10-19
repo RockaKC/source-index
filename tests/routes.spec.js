@@ -339,3 +339,12 @@ test('the app has no Early Church section', async ({ page }) => {
   await page.goto('/app.html#/guide'); await settle(page);
   await expect(page.locator('#app')).not.toContainText('Early Church');
 });
+
+test('Early Church lists Ignatius and Justin Martyr, each with a loading image and a short overview', async ({ page }) => {
+  await page.goto('/guides/early-church/'); await settle(page);
+  await expect(page.locator('#app a.efig')).toHaveText([/Ignatius of Antioch/, /Justin Martyr/]);
+  await page.goto('/guides/early-church/justin-martyr/'); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Justin Martyr');
+  expect(await page.locator('#app .efigure img').evaluate(i => i.complete && i.naturalWidth > 0)).toBe(true);
+  expect(await page.locator('#app .eover p').count()).toBe(4);
+});
