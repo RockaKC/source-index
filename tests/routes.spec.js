@@ -306,3 +306,15 @@ test('the app does not carry essay text: its essay links still open the publicat
   expect(await a.getAttribute('href')).toMatch(/^https:\/\//);
   expect(asked).toEqual([]);
 });
+
+test('a verse stands on its own, with one separate section listing the essays that cite it', async ({ page }) => {
+  const cited = (() => { for (const bk of Object.keys(D.verses)) for (const c of Object.keys(D.verses[bk])) for (const vs of Object.keys(D.verses[bk][c])) if (D.verses[bk][c][vs].length > 1 && D.CC[bk]) return [bk, c, vs]; })();
+  await page.goto(`/#/verse/${cited[0]}/${cited[1]}/${cited[2]}`); await settle(page);
+  for (const t of ['Start here', 'Read in season', 'Also quotes', 'Elsewhere in', 'More from']) await expect(page.locator('#app')).not.toContainText(t);
+  await expect(page.locator('#app .cited')).toHaveCount(1);
+  await expect(page.locator('#app .cited h2')).toHaveText('Cited in Kingdom Code essays');
+  expect(await page.locator('#app .cited .piece').count()).toBe(D.verses[cited[0]][cited[1]][cited[2]].length);
+  expect(await page.evaluate(() => document.querySelector('#app .cited').previousElementSibling !== null)).toBe(true);
+  await page.goto(`/#/book/${D.bookEntry[cited[0]]}`); await settle(page);
+  for (const t of ['From the essays', 'Most cited verses', 'Read in season']) await expect(page.locator('#app')).not.toContainText(t);
+});

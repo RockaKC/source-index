@@ -6,7 +6,6 @@ const PROFILE = {
   name: 'KC Tewahedo Bible',
   home: 'reader',
   essaysInBible: false,
-  seasonal: false,
   analytics: false,
   verseTools: true,        // tap a verse for the verse panel: favorite, highlight, copy, share; the Favorites and Highlights pages (js/marks.js)
   appUpdates: true,        // the app's version, and a check for a newer one (js/updates.js)

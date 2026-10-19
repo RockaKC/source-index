@@ -41,8 +41,6 @@ function viewEnglish() {
 }
 function viewBook(eid) {
   const e = entryOf(eid); if (!e) return viewMissing();
-  const ids = PROFILE.essaysInBible ? rank(piecesForBook(e.books)) : [];
-  const reads = PROFILE.seasonal ? D.reads.filter(r => e.books.includes(r[2])) : [];
   const same = D.entries.filter(x => x.t === e.t);
   const pos = `Number ${same.findIndex(x => x.id === e.id) + 1} of ${same.length} in the ${e.t === 'OT' ? 'Old' : 'New'} Testament list.`;
   const loaded = e.books.filter(b => D.CC[b]);
@@ -51,10 +49,6 @@ function viewBook(eid) {
       return `<li><a class="cht" href="#/read/${b}/${ch}" aria-label="${esc(bname(b))} chapter ${ch}${n ? `, ${plural(n,'cited verse')}` : ''}">${ch}${n ? '<span class="dot" aria-hidden="true"></span>' : ''}</a></li>`;
     }).join('')}</ul>`).join('');
   const anyCited = PROFILE.essaysInBible && loaded.some(b => D.verses[b]);
-  const top = [];
-  for (const b of e.books) { const dv = D.verses[b] || {}; for (const c in dv) for (const v in dv[c]) top.push([b, +c, +v, dv[c][v].length]); }
-  top.sort((a,c) => c[3]-a[3] || a[1]-c[1] || a[2]-c[2]);
-  const topChips = top.slice(0, 5).map(([b,ch,v,n]) => `<li><a class="chip" href="#/verse/${b}/${ch}/${v}" aria-label="${esc(bname(b))} ${ch}:${v}, ${plural(n,'essay')}">${e.books.length > 1 ? esc(bname(b)) + ' ' : ''}${ch}:${v}</a></li>`).join('');
   const psNote = e.books.includes(PSALMS) ? '<p class="cap" style="margin-top:12px">Septuagint numbering. Most English Bibles number most psalms one higher.</p>' : '';
   const reading = loaded.length ? `
     <p style="margin-top:24px"><a class="btn primary" href="#/read/${loaded[0]}/${D.CC[loaded[0]][0]}">Start reading</a></p>
@@ -62,28 +56,19 @@ function viewBook(eid) {
     ${anyCited ? '<p class="cap legend"><span class="dot" aria-hidden="true"></span>Has verses cited in Kingdom Code essays</p>' : ''}${psNote}`
     : `<div class="card" style="margin-top:24px"><p style="margin:0">The text of ${esc(e.name)} isn\u2019t in the index yet. The free reference guide covers every book in the canon.</p>
        <p style="margin:16px 0 0"><a class="btn secondary" href="${esc(D.guide[1])}" target="_blank" rel="noopener">Open the reference guide</a></p></div>`;
-  const essays = ids.length ? `
-    ${topChips ? `<h2>Most cited verses</h2><ul class="chips">${topChips}</ul>` : ''}
-    <h2>From the essays</h2><div style="margin-top:16px">${feature(ids[0])}</div>
-    ${ids.length > 1 ? pieceList(ids.slice(1, 6)) : ''}` : '';
   return `
   ${backLink(`#/books`)}
   <h1>${esc(e.name)}</h1>
   <p class="lede">${pos}${loaded.length ? ' ' + esc(fromLine(loaded[0])) + '.' : ''}</p>
   ${loaded.map(b => noteFor(b)).join('')}
-  ${reading}
-  ${essays}
-  ${reads.length ? `<h2>Read in season</h2>${readList(reads)}` : ''}`;
+  ${reading}`;
 }
 function viewVerse(b, ch, v) {
   if (!D.books[b]) return viewMissing();
   const wait = lazyText(b, ch, `#/book/${D.bookEntry[b]}`, `${bname(b)} ${ch}:${v}`, 'verse'); if (wait) return wait;
   const ids = rank(((D.verses[b] || {})[ch] || {})[v] || []);
-  const ref = ch * 1000 + v;
-  const reads = !PROFILE.seasonal ? [] : D.reads.filter(r => r[2] === b && r[3]*1000 + r[4] <= ref && ref <= r[5]*1000 + r[6]);
   const key = `${b}:${ch}:${v}`, nt = D.notes && D.notes[key];
   const label = `${bname(b)} ${ch}:${v}`;
-  const sib = !PROFILE.essaysInBible ? [] : Object.keys(((D.verses[b] || {})[ch]) || {}).map(Number).sort((a,c) => a-c).filter(x => x !== v);
   const vt = verseText(b, ch, v), eng = engLabel(b, ch, v), cs = 'font:400 13px/18px var(--sans)';
   const text = vt ? `<figure class="verse" style="margin:24px 0 0"><p>${fmtText(b, vt.text)}</p><p class="cap" style="${cs}">${esc(label)}, ${esc(vt.label)}</p>${eng ? `<p class="cap" style="${cs}">${esc(eng)}</p>` : ''}${vt.carried ? `<p class="cap" style="${cs}">Printed together with verse ${vt.carried}.</p>` : ''}</figure>
     <div class="vnav">${verseText(b, ch, v - 1) ? `<a class="navbtn" href="#/verse/${b}/${ch}/${v-1}" aria-label="Previous verse, ${esc(bname(b))} ${ch}:${v-1}">‹ ${ch}:${v-1}</a>` : '<span></span>'}
@@ -91,45 +76,31 @@ function viewVerse(b, ch, v) {
       ${verseText(b, ch, v + 1) ? `<a class="navbtn" href="#/verse/${b}/${ch}/${v+1}" aria-label="Next verse, ${esc(bname(b))} ${ch}:${v+1}">${ch}:${v+1} ›</a>` : '<span></span>'}</div>` : '';
   const note = nt ? `<p class="lede" style="margin-top:16px">${esc(nt.text)}${nt.to ? ` <a href="#/verse/${nt.to.join('/')}" style="color:var(--accent)">${esc(nt.label)}</a>` : ''}</p>` : '';
   if (!ids.length) pendingEvents.push(['miss/verse', `${bname(b)}/${ch}/${v}`]);
-  const main = !PROFILE.essaysInBible ? '' : ids.length
-    ? `<h2>Start here</h2><div style="margin-top:16px">${feature(ids[0])}</div>
-       ${ids.length > 1 ? `<h2>Also quotes this verse</h2>${pieceList(ids.slice(1))}` : ''}`
-    : `<h2>Not in the index yet</h2><div class="card" style="margin-top:16px"><p style="margin:0">No essay in this index quotes this verse yet.</p></div>`;
+  const main = !PROFILE.essaysInBible ? '' : citedSection(ids, 'No Kingdom Code essay cites this verse yet.', `${plural(ids.length, 'Kingdom Code essay')} ${ids.length === 1 ? 'cites' : 'cite'} this verse. Sources lists the other verses each one quotes.`);
   return `
   ${backLink(`#/book/${D.bookEntry[b]}`)}
   <h1>${esc(label)}</h1>
   ${text}${note}${numNote(b, key, !!eng)}
-  ${main}
   ${wordsForVerse(b, ch, v).length ? `<h2>Words in this verse</h2><div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">${wordsForVerse(b, ch, v).map(w => `<li><a class="wl" href="#/word/${w.slug}"><b>${esc(w.title)}</b><span class="en">${esc(w.en)}</span><span class="lang">${esc(w.lang)}</span></a></li>`).join('')}</ul></div>` : ''}
-  ${reads.length ? `<h2>Read in season</h2>${readList(reads)}` : ''}
-  ${PROFILE.essaysInBible ? elsewhere(b, ch, ids) : ''}
-  ${sib.length ? `<h2>More from ${esc(bname(b))} ${ch}</h2><ul class="chips">${sib.map(x => `<li><a class="chip" href="#/verse/${b}/${ch}/${x}" aria-label="${esc(bname(b))} ${ch}:${x}">${ch}:${x}</a></li>`).join('')}</ul>` : ''}`;
+  ${main}`;
 }
 function viewRange(b, ch, vs, ve) {
   if (!D.books[b] || !(ve > vs) || ve - vs > 60) return viewMissing();
   const wait = lazyText(b, ch, `#/book/${D.bookEntry[b]}`, `${bname(b)} ${ch}:${vs}\u2013${ve}`, 'passage'); if (wait) return wait;
-  const score = {}, cited = [];
-  for (let v = vs; v <= ve; v++) { const ps = ((D.verses[b] || {})[ch] || {})[v]; if (!ps) continue; cited.push(v); ps.forEach(p => { score[p] = (score[p] || 0) + 1; }); }
+  const score = {};
+  for (let v = vs; v <= ve; v++) { const ps = ((D.verses[b] || {})[ch] || {})[v]; if (!ps) continue; ps.forEach(p => { score[p] = (score[p] || 0) + 1; }); }
   const ids = rank(Object.keys(score).map(Number)).sort((a,c) => score[c] - score[a]);
   const label = `${bname(b)} ${ch}:${vs}\u2013${ve}`, n = ve - vs + 1;
   if (!ids.length) pendingEvents.push(['miss/verse', `${bname(b)}/${ch}/${vs}-${ve}`]);
-  const withEssays = PROFILE.essaysInBible;
   const card = textCard(b, ch, vs, ve, label);
   const more = n > 4 ? `<p class="cap" style="margin-top:8px">Showing the first 4 of ${n} verses. <a href="#/read/${b}/${ch}/${vs}" style="color:var(--accent)">Read the full passage</a>.</p>` : '';
-  const list = ids.length ? `<ul class="list">${ids.slice(1).map(pid => `<li class="piece">${seriesCap(pid)}
-    <div class="t"><a ${link(pid)}>${esc(P[pid][0])}</a></div><p class="cap">${plural(score[pid],'verse')} in this passage \u00b7 ${meta(pid)}${srcLink(pid)}</p></li>`).join('')}</ul>` : '';
-  const main = !withEssays ? '' : ids.length
-    ? `<h2>Start here</h2><div style="margin-top:16px">${feature(ids[0])}</div><p class="cap" style="margin-top:8px">Cites ${plural(score[ids[0]],'verse')} in this passage.</p>
-       ${ids.length > 1 ? `<h2>Also quote this passage</h2><div class="card">${list}</div>` : ''}`
-    : `<h2>Not in the index yet</h2><div class="card" style="margin-top:16px"><p style="margin:0">No essay in this index quotes a verse in this passage yet.</p></div>`;
-  const chips = withEssays && cited.length ? `<h2>Cited verses in this passage</h2><ul class="chips">${cited.map(v => `<li><a class="chip" href="#/verse/${b}/${ch}/${v}" aria-label="${esc(bname(b))} ${ch}:${v}, ${plural(D.verses[b][ch][v].length,'essay')}">${ch}:${v}</a></li>`).join('')}</ul>` : '';
+  const main = !PROFILE.essaysInBible ? '' : citedSection(ids, 'No Kingdom Code essay cites a verse in this passage yet.',
+    `${plural(ids.length, 'Kingdom Code essay')} ${ids.length === 1 ? 'cites' : 'cite'} a verse in this passage, most verses first.`, pid => `${plural(score[pid], 'verse')} in this passage`);
   return `
   ${backLink(`#/book/${D.bookEntry[b]}`)}
   <h1>${esc(label)}</h1>
   ${card}${more}${numNote(b, `${b}:${ch}:${vs}`, !!engLabel(b, ch, vs))}
-  ${main}
-  ${chips}
-  ${withEssays ? elsewhere(b, ch, ids) : ''}`;
+  ${main}`;
 }
 function viewRead(b, ch, focus) {
   if (!hasChapter(b, ch)) return viewMissing();

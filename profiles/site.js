@@ -5,7 +5,6 @@ const PROFILE = {
   name: 'Kingdom Code Source Index',   // the product's name: page titles and the About page
   home: 'site',            // 'site': search, popular verses, question paths; 'reader': continue reading and the books first
   essaysInBible: true,     // highlight cited verses and list essays on book, chapter, verse and passage pages
-  seasonal: true,          // list the seasonal reading guides on book and verse pages
   analytics: true,         // cookieless visit counts (live domain only; see js/analytics.js)
   verseTools: false,       // the app's verse panel, favorites and highlights (js/marks.js)
   appUpdates: false,       // the app's version and update check (js/updates.js)
