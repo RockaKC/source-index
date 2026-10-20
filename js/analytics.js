@@ -4,7 +4,7 @@
 // ---------- analytics: cookieless visit counts, off until a site is set ----------
 // provider 'goatcounter' (site = your GoatCounter code) or 'umami' (site = website id). Blank = off.
 // Counts only on the live domain, and never when the browser sends Do Not Track or Global Privacy Control.
-const ANALYTICS = {provider: 'goatcounter', site: 'rocka', hosts: ['sources.kingdomcodearchive.com']};
+const ANALYTICS = {provider: 'goatcounter', site: 'rocka', hosts: ['kingdomcodearchive.com']};
 let analyticsOn = false;
 const analyticsQueue = [];
 function initAnalytics() {

@@ -48,6 +48,12 @@ The switches: `name` (the product's name, on the app's About page and as the fal
 
 The two pages must load the same files in the same order after their profile; the tests check it. `app.html` is not linked from the site and asks search engines not to index it: it is the preview of the app until the Android build ships. Installed from the browser, the site keeps its own name, Kingdom Code Source Index (`manifest.webmanifest`); KC Tewahedo Bible is the name of the Android app only.
 
+## The move to kingdomcodearchive.com
+
+The website's address is written once, as `origin` in `profiles/site.js`; canonical links, `sitemap.xml`, `robots.txt`, `llms.txt`, share cards and structured data all read it. Two more places name it: `index.html` (its static canonical link) and `CNAME`; analytics counts only on the hosts listed in `js/analytics.js`. The website was first published at sources.kingdomcodearchive.com.
+
+GitHub Pages serves one custom domain per site and cannot send a 301, and Namecheap's URL redirect record does not carry the path or serve HTTPS, so the old address is kept by a second, tiny Pages site. `node tools/redirect_site.js SITE_DIR OUT_DIR` (SITE_DIR is the prerendered `_site`) writes it: a real file at every old address, each naming the new address as canonical and redirecting at once (query and fragment kept), a `404.html` that does the same for any other address, `sw.js` that removes the old service worker, and a `sitemap.xml` of the old addresses. It refuses to run while `profiles/site.js` still names the old address. Run it once, at the move; the output is published from its own repository and never changes. `tests/redirect.spec.js` covers it.
+
 ## Tests
 
 Every pull request runs the tests on GitHub (`.github/workflows/tests.yml`); a red check means do not merge. To run them locally: `npm install` once, then `npm test` (needs Node 22; `npx playwright install chromium` the first time).

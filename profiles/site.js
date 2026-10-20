@@ -12,7 +12,7 @@ const PROFILE = {
   essayText: true,         // essays with their text in essay-text/ open and read here (js/essays.js)
   archiveHome: true,       // the front page as the Kingdom Code archive, and the Essays page (js/pages.js)
   cleanUrls: true,         // permanent addresses like /bible/john/3/16/ instead of #/verse/… (js/urls.js), with a page title, description and structured data for each (js/seo.js)
-  origin: 'https://sources.kingdomcodearchive.com',   // the one place the site's public address is written: canonical links, the sitemap, share cards
+  origin: 'https://kingdomcodearchive.com',   // the one place the site's public address is written: canonical links, the sitemap, share cards
   library: true,             // the Essays library: search, subjects, topics, collections (js/library.js, D.LIB)
   connections: true,          // essays and subjects (Early Church, Names) link to each other (js/connections.js)
   earlyChurch: true,       // the Early Church section of the Guides page: a short overview of each figure (D.EC, js/guide.js)

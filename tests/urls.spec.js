@@ -67,7 +67,7 @@ test('each page names itself: title, description, canonical address, share card 
   await page.goto('/bible/genesis/1/'); await settle(page);
   let m = await meta();
   expect(m.title).toBe('Genesis 1 | Kingdom Code Source Index');
-  expect(m.canon).toBe('https://sources.kingdomcodearchive.com/bible/genesis/1/');
+  expect(m.canon).toBe('https://kingdomcodearchive.com/bible/genesis/1/');
   expect(m.desc.length).toBeGreaterThan(60); expect(m.desc.length).toBeLessThanOrEqual(160);
   expect(m.robots).toMatch(/^index/);
   expect(m.ld.map(x => x['@type'])).toContain('BreadcrumbList');
@@ -110,15 +110,15 @@ test('the prerendered site: real files at clean addresses, a sitemap, robots.txt
   const read = f => fs.readFileSync(path.join(out, f), 'utf8');
   const chapter = read('bible/genesis/1/index.html');
   expect(chapter, 'the chapter text is in the file itself').toContain('In the beginning');
-  expect(chapter).toContain('<link rel="canonical" href="https://sources.kingdomcodearchive.com/bible/genesis/1/">');
+  expect(chapter).toContain('<link rel="canonical" href="https://kingdomcodearchive.com/bible/genesis/1/">');
   expect(chapter).toContain('application/ld+json');
   expect(chapter).toContain('<base href="/">');
   expect(read('index.html')).toMatch(/<h1[ >]/);
   const map = read('sitemap.xml'), urls = map.match(/<loc>/g).length;
   expect(urls).toBeGreaterThan(2000);
-  expect(map).toContain('<loc>https://sources.kingdomcodearchive.com/bible/genesis/1/</loc>');
+  expect(map).toContain('<loc>https://kingdomcodearchive.com/bible/genesis/1/</loc>');
   const robots = read('robots.txt');
-  expect(robots).toContain('Sitemap: https://sources.kingdomcodearchive.com/sitemap.xml');
+  expect(robots).toContain('Sitemap: https://kingdomcodearchive.com/sitemap.xml');
   for (const bot of ['GPTBot', 'ClaudeBot', 'PerplexityBot', 'Google-Extended']) expect(robots).toContain('User-agent: ' + bot);
   expect(read('llms.txt')).toMatch(/^# Kingdom Code Source Index/);
   expect(read('llms.txt')).toContain('/guides/kingdom-code/the-ungovernable-mind/');
@@ -132,7 +132,7 @@ test('the prerendered site: real files at clean addresses, a sitemap, robots.txt
 test('the essay call-to-action link names the essay it came from, and the page still opens with it', async ({ page }) => {
   await page.goto('/'); await settle(page);
   const [pid, url] = await page.evaluate(() => { const id = essayIds()[0]; return [id, ctaFor(id).text]; });
-  expect(url).toContain(`https://sources.kingdomcodearchive.com/essays/${pid}-`);
+  expect(url).toContain(`https://kingdomcodearchive.com/essays/${pid}-`);
   expect(url).toContain(`?utm_source=substack&utm_campaign=essay-${pid}`);
   const path = url.slice(url.indexOf('/essays/')).replace(/[\s.]+$/, '');
   await page.goto(path); await settle(page);

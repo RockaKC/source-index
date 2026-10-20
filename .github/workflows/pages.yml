@@ -1,6 +1,6 @@
 name: Website
 
-# Publishes the website (sources.kingdomcodearchive.com) to GitHub Pages, with the newest app file beside it at
+# Publishes the website (kingdomcodearchive.com) to GitHub Pages, with the newest app file beside it at
 # download/KC-Tewahedo-Bible.apk, so the site's Download button saves the app from this site and not from GitHub.
 # Runs when main changes, and after every app release (android.yml starts it). The app file is fetched from the
 # latest GitHub Release, never stored in the repo. See tools/README.md, "Website and app download".
