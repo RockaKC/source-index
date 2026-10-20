@@ -603,3 +603,4 @@ html:not([data-product]){-webkit-tap-highlight-color:transparent;touch-action:ma
 @media (hover:hover){.btn.danger:hover{background:#8f1d17}}
 
 .about .aclose{margin-top:var(--s3);font-weight:600;color:var(--accent)}
+.accpreview{margin-top:var(--s2);padding:8px 12px;border:1px dashed var(--line);border-radius:8px}

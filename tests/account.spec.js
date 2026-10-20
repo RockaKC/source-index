@@ -237,7 +237,7 @@ test('the privacy page says what is kept, and Turnstile only when it is used', a
 });
 
 test('with a Turnstile key the check must pass first, and its token goes with the request', async ({ page }) => {
-  const st = await fakeSupabase(page, {config: {url: SB, key: 'sb_publishable_test', turnstileKey: '0x4AAAA-test'}});
+  const st = await fakeSupabase(page, {config: {url: SB, key: 'sb_publishable_test', public: true, turnstileKey: '0x4AAAA-test'}});
   await page.route('https://challenges.cloudflare.com/**', r => r.fulfill({contentType: 'application/javascript',
     body: 'window.turnstile={render:function(el,o){setTimeout(function(){o.callback("tok-123")},900);return "w1"},reset:function(){}};'}));
   await page.goto('/become-a-berean/'); await settle(page);
@@ -258,4 +258,30 @@ test('the account pages fit a phone, and a configured origin moves the emailed l
   await signIn(page, st);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(st.otp[0].redirect).toBe('https://kingdomcodearchive.com/my-library/');
+});
+
+test('until accounts are public they are a private preview, switched on and off by ?berean-preview', async ({ page }) => {
+  await fakeSupabase(page, {config: {url: SB, key: 'sb_publishable_test', public: false}});
+  await page.goto('/'); await settle(page);
+  await expect(page.locator('#acctli')).toHaveCount(0);
+  await page.goto('/essays/'); await settle(page);
+  await expect(page.locator('[data-save]')).toHaveCount(0);
+  await page.goto('/my-library/'); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Not found');
+  await page.goto('/?berean-preview=1'); await settle(page);
+  await expect(page.locator('#acctli a')).toHaveText('Become a Berean');
+  await page.goto('/become-a-berean/'); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Become a Berean.');
+  await expect(page.locator('.accpreview')).toContainText('not open to the public yet');
+  await page.reload(); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Become a Berean.');
+  await page.goto('/?berean-preview=0'); await settle(page);
+  await expect(page.locator('#acctli')).toHaveCount(0);
+});
+
+test('a public launch ignores the preview switch and shows no preview note', async ({ page }) => {
+  await fakeSupabase(page);
+  await page.goto('/become-a-berean/?berean-preview=0'); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Become a Berean.');
+  await expect(page.locator('.accpreview')).toHaveCount(0);
 });

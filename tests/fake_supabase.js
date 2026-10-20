@@ -13,7 +13,7 @@ function sessionFor(email) {
 
 // A fake Supabase: auth (code sign-in, session, sign out) and the `saved` table. Returns its record, so tests can look at what the page sent.
 async function fakeSupabase(page, opts = {}) {
-  const st = {saved: [], otp: [], verify: [], rpc: [], failInsert: false, otpStatus: 200, email: null, config: opts.config || {url: SB, key: 'sb_publishable_test'}};
+  const st = {saved: [], otp: [], verify: [], rpc: [], failInsert: false, otpStatus: 200, email: null, config: opts.config || {url: SB, key: 'sb_publishable_test', public: true}};
   await page.route('**/profiles/site.js*', async route => {
     const res = await route.fetch(), body = (await res.text()).replace('accounts: null,', `accounts: ${JSON.stringify(st.config)},`);
     await route.fulfill({response: res, body});
