@@ -372,12 +372,13 @@ test('the site\'s About page carries the Kingdom Code statement, with a search d
   await expect(page.locator('#app h1')).toHaveText('About');
   const paras = await page.locator('#app .about p').allTextContents();
   expect(paras).toHaveLength(5);
-  expect(paras[0]).toBe('Kingdom Code is an independent Christian publication devoted to Scripture, history, philosophy, and the examination of power.');
-  expect(paras[1]).toContain('the assumptions through which Babylon teaches men to understand the world.');
-  expect(paras[3]).toContain('a man who cannot govern himself will always be vulnerable to those who seek to govern him.');
+  expect(paras[0]).toMatch(/^Babylon's whore rides upon the world\./);
+  expect(paras[1]).toMatch(/^Kingdom Code is an independent Christian publication examining Scripture, history, philosophy, and the machinery of power\./);
+  expect(paras[2]).toContain('To navigate Babylon with the wisdom of Daniel');
+  expect(paras[3]).toBe('To govern ourselves before others govern us.');
   expect(paras[4]).toBe('Our ultimate authority is Jesus Christ and Scripture.');
   await expect(page.locator('#app')).not.toContainText('This app is called');
-  expect(await page.evaluate(() => document.querySelector('meta[name="description"]').content)).toBe('Kingdom Code is an independent Christian publication devoted to Scripture, history, philosophy, and the examination of power.');
+  expect(await page.evaluate(() => document.querySelector('meta[name="description"]').content)).toBe('Kingdom Code is an independent Christian publication examining Scripture, history, philosophy, and the machinery of power.');
   await page.goto('/app.html#/about'); await settle(page);
   await expect(page.locator('#app')).toContainText('This app is called');
   await expect(page.locator('#app')).not.toContainText('Babylon');
