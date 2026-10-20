@@ -134,7 +134,12 @@ function viewAbout() {
   ${navIdx > 0 ? backLink('#/') : ''}
   <h1>About</h1>
   <div class="about">
-    <p>Kingdom Code is an independent, investigative publication for the Body of Christ. Its sole authority is Jesus Christ and Scripture. The index is a growing body of work, regularly updated with new features and improvements.</p>
+    ${PROFILE.id === 'site' ? `<p>We live in an age of unprecedented access to information and remarkable dependence on those who interpret it for us. Institutions manufacture consensus. Culture shapes convictions. Men inherit beliefs they have never examined and defend authorities they have never questioned.</p>
+    <p>Scripture gives us an ancient name for a familiar order: Babylon.</p>
+    <p>Kingdom Code is an independent Christian publication examining Scripture, history, philosophy, power, and the systems that govern modern life. We investigate inherited narratives, question established assumptions, and distinguish what the evidence demonstrates from what authorities merely assert.</p>
+    <p>Our purpose is not rebellion for its own sake, nor skepticism without end. It is the cultivation of discernment, self-government, and independent judgment under the authority of Jesus Christ.</p>
+    <p>We seek to understand Babylon without being conformed to it.</p>
+    <p class="aclose">Our ultimate authority is Jesus Christ and Scripture.</p>` : `<p>Kingdom Code is an independent, investigative publication for the Body of Christ. Its sole authority is Jesus Christ and Scripture. The index is a growing body of work, regularly updated with new features and improvements.</p>`}
     ${PROFILE.id === 'app' ? `<p>This app is called ${esc(PROFILE.name)}. It is an independent Kingdom Code publication, not an official edition of any Church. It follows the 81-book canon of the Ethiopian and Eritrean Orthodox Tewahedo Churches.</p>
     <p>The app is built with Capacitor and its Share and Filesystem plugins, open-source software under the MIT license.</p>
     ${PROFILE.appUpdates ? `<p><span id="about-version"></span><a href="#/updates" style="color:var(--accent)">Check for updates</a></p>` : ''}` : ''}
