@@ -67,3 +67,11 @@ for (const [from, to] of [
     expect(page.url()).toBe(NEW + to);
   });
 }
+
+test('nothing the site ships still names the old address', () => {
+  const files = ['index.html', 'app.html', 'sw.js', 'manifest.webmanifest', 'CNAME', 'profiles/site.js', 'profiles/app.js', 'tools/prerender.js', 'tools/export_site.py']
+    .concat(fs.readdirSync(path.join(root, 'js')).map(f => 'js/' + f));
+  const stale = files.filter(f => fs.readFileSync(path.join(root, f), 'utf8').includes('sources.kingdomcodearchive.com'));
+  expect(stale, 'files that still name sources.kingdomcodearchive.com').toEqual([]);
+  expect(fs.readFileSync(path.join(root, 'CNAME'), 'utf8').trim()).toBe('kingdomcodearchive.com');
+});
