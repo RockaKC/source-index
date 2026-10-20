@@ -81,8 +81,8 @@ async function main() {
 
   fs.writeFileSync(path.join(dir, 'robots.txt'),
     '# Kingdom Code is free to read, and the Source Index is open to search engines and AI assistants alike.\n' +
-    'User-agent: *\nAllow: /\nDisallow: /search/\nDisallow: /cta/\n\n' +
-    AI_CRAWLERS.map(a => `User-agent: ${a}\nAllow: /\nDisallow: /search/\nDisallow: /cta/\n`).join('\n') +
+    'User-agent: *\nAllow: /\nDisallow: /search/\nDisallow: /cta/\nDisallow: /become-a-berean/\nDisallow: /my-library/\n\n' +
+    AI_CRAWLERS.map(a => `User-agent: ${a}\nAllow: /\nDisallow: /search/\nDisallow: /cta/\nDisallow: /become-a-berean/\nDisallow: /my-library/\n`).join('\n') +
     `\nSitemap: ${root}/sitemap.xml\n`);
 
   const D = await page.evaluate(() => ({

@@ -4,7 +4,7 @@ Rules for anyone (or any AI session) working in this repository. Boss, the owner
 
 ## What this repository is
 
-The Kingdom Code Source Index (https://sources.kingdomcodearchive.com, a static site on GitHub Pages) and the KC Tewahedo Bible Android app. One code base, two products, chosen by `profiles/site.js` and `profiles/app.js`. Kingdom Code rests on Jesus Christ and Holy Scripture, in the heritage of the Ethiopian canon. Everything is free to read; nothing is hidden behind a paywall.
+The Kingdom Code Source Index (https://kingdomcodearchive.com, a static site on GitHub Pages) and the KC Tewahedo Bible Android app. One code base, two products, chosen by `profiles/site.js` and `profiles/app.js`. Kingdom Code rests on Jesus Christ and Holy Scripture, in the heritage of the Ethiopian canon. Everything is free to read; nothing is hidden behind a paywall.
 
 ## Source of truth
 

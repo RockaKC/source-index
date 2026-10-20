@@ -527,3 +527,77 @@ html:not([data-product]){-webkit-tap-highlight-color:transparent;touch-action:ma
 .eover p{margin:0 0 1.1em;font:400 18px/1.7 var(--serif)}
 
 .ahead span{display:block}
+
+/* Berean reader accounts: Become a Berean, My Library, Save buttons (js/account.js) */
+.eyebrow{display:flex;align-items:center;justify-content:space-between;margin:var(--s3) 0 var(--s1);font:600 12px/16px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.eyebrow svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}
+.acct h1{margin-top:0}
+.acctnote{max-width:56ch;margin:var(--s2) 0 0;color:var(--muted)}
+.acctform{margin-top:var(--s3);max-width:420px}
+.acctform label{display:block;margin-bottom:6px;font:600 14px/20px var(--sans)}
+.acctform input{width:100%;height:52px;padding:0 var(--s2);border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:400 17px/24px var(--sans);transition:border-color var(--fade),box-shadow var(--fade)}
+.acctform input::placeholder{color:var(--muted)}
+.acctform input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--tint)}
+.acctform .acctnum{font:600 28px/36px var(--sans);letter-spacing:.35em;text-align:center;font-variant-numeric:tabular-nums}
+.acctform h2{margin-top:0}
+.acctform .btn.primary{width:100%;margin-top:var(--s2)}
+.acctform .btn[disabled]{opacity:.55;cursor:default}
+.acctform .cap{margin-top:var(--s2)}
+.acctcaptcha{margin-top:var(--s2);min-height:65px}
+.accterr{min-height:20px;margin:var(--s1) 0 0;font:500 14px/20px var(--sans);color:#b3261e}
+:root[data-theme=dark] .accterr{color:#f2877e}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .accterr{color:#f2877e}}
+.acctlinks{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s3);margin:var(--s2) 0 0}
+.linkbtn{padding:6px 0;border:0;background:none;color:var(--accent);font:500 15px/20px var(--sans);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.linkbtn.danger{color:#b3261e}
+:root[data-theme=dark] .linkbtn.danger{color:#f2877e}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .linkbtn.danger{color:#f2877e}}
+.acctlist{list-style:none;margin:var(--s4) 0 var(--s2);padding:0;display:grid;gap:var(--s2);max-width:56ch}
+.acctlist li{padding-left:var(--s3);position:relative;color:var(--muted)}
+.acctlist li::before{content:"";position:absolute;left:0;top:10px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.acctlist b{color:var(--ink)}
+.savebar{margin:var(--s2) 0 0}
+.savebtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 var(--s2);border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font:500 15px/20px var(--sans);cursor:pointer;transition:background-color var(--fade),border-color var(--fade),color var(--fade)}
+.savebtn svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+.savebtn[aria-pressed=true]{background:var(--tint);border-color:var(--accent);color:var(--accent)}
+.savebtn[aria-pressed=true] svg{fill:currentColor}
+@media (hover:hover){.savebtn:hover{border-color:var(--accent)}}
+.toast{position:fixed;left:50%;bottom:calc(var(--s3) + env(safe-area-inset-bottom,0px));z-index:30;max-width:calc(100vw - 32px);padding:12px 18px;border-radius:10px;background:var(--ink);color:var(--bg);font:500 15px/22px var(--sans);box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;transform:translate(-50%,8px);pointer-events:none;transition:opacity 200ms ease-out,transform 200ms ease-out}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.libhead{margin-top:var(--s3);padding:var(--s3);border-radius:16px;background:linear-gradient(160deg,#16251c,#0e1812);color:#eef3ef;border:1px solid #26382d}
+.libhead .eyebrow{margin-top:0;color:#8fd6ae}
+.libhead h1{margin:var(--s1) 0 var(--s1);color:#fff}
+.libhead p{margin:0;color:#c3cec7;max-width:46ch}
+.libhead .eyebrow{color:#8fd6ae}
+.libwelcome{margin-top:var(--s2)!important;padding-top:var(--s2);border-top:1px solid #2c4034;color:#8fd6ae!important;font-weight:600}
+.libh{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s2);margin-top:var(--s6)}
+.libh .count,#libsaved h3 .count{font:500 14px/20px var(--sans);color:var(--accent)}
+.libguides{list-style:none;margin:var(--s2) 0 0;padding:0;display:grid;gap:var(--s2)}
+.libguide{display:grid;grid-template-columns:112px 1fr;gap:var(--s2);padding:var(--s2);border:1px solid var(--hairline);border-radius:14px;background:var(--surface)}
+.libcover img{display:block;width:100%;height:auto;aspect-ratio:1200/675;object-fit:cover;border-radius:8px;border:1px solid var(--hairline);background:#111}
+.libbody h3{margin:0;font:600 18px/24px var(--serif)}
+.libbody h3 a{text-decoration:none}
+@media (hover:hover){.libbody h3 a:hover{color:var(--accent)}}
+.libbody .gsub{margin:2px 0 0;color:var(--muted);font-size:14px;line-height:20px}
+.libbody .cap{margin-top:4px}
+.libact{display:flex;flex-wrap:wrap;gap:var(--s1);margin:var(--s2) 0 0}
+@media (max-width:520px){.libguide{grid-template-columns:1fr}.libcover{max-width:240px}}
+#libsaved h3{display:flex;align-items:baseline;gap:var(--s1);margin:var(--s3) 0 0;font:600 16px/24px var(--sans)}
+#libsaved h3:first-child{margin-top:var(--s2)}
+.libitems{list-style:none;margin:var(--s1) 0 0;padding:0;border:1px solid var(--hairline);border-radius:12px;background:var(--surface)}
+.libitem{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);padding:12px var(--s2)}
+.libitem + .libitem{border-top:1px solid var(--hairline)}
+.libtext{min-width:0}
+.libtext > a{font:600 17px/24px var(--serif);text-decoration:none}
+@media (hover:hover){.libtext > a:hover{color:var(--accent)}}
+.libtext .cap{display:block;margin-top:2px}
+.libsnip{display:block;margin-top:4px;color:var(--muted);font:400 15px/22px var(--serif);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.libsnip:empty{display:none}
+.libempty p{margin:0}
+.libempty .cap{margin-top:var(--s1)}
+.libacct p{margin:0}
+.libbtns{display:flex;flex-wrap:wrap;gap:var(--s1);margin:var(--s2) 0!important}
+.libacct #libdel{margin:var(--s1) 0 var(--s2)}
+.libwarn{padding:var(--s2);border:1px solid #b3261e;border-radius:10px}
+.btn.danger{background:#b3261e;color:#fff;border:0}
+@media (hover:hover){.btn.danger:hover{background:#8f1d17}}

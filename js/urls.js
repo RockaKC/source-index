@@ -16,7 +16,7 @@ const essaySlug = pid => {                       // the essay's number, then its
 };
 
 const SIMPLE = {books: 'bible', english: 'english', words: 'words', names: 'names', guide: 'guides', guides: 'guides/kingdom-code',
-  translations: 'translations', church: 'guides/early-church', essays: 'essays', kc: 'questions', about: 'about', app: 'app', credits: 'credits'};
+  translations: 'translations', church: 'guides/early-church', essays: 'essays', kc: 'questions', about: 'about', app: 'app', credits: 'credits', berean: 'become-a-berean', mylibrary: 'my-library', privacy: 'privacy'};
 const SIMPLE_BACK = {};
 Object.keys(SIMPLE).forEach(k => { SIMPLE_BACK[SIMPLE[k]] = k; });
 
