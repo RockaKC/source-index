@@ -64,6 +64,7 @@ test('the site: About has no support line or button, and the menu offers Get the
   await expect(page.locator('#app h1')).toHaveText('About');
   await expect(page.locator('#app')).not.toContainText('free to read and share');
   await expect(page.locator('#app [data-support]')).toHaveCount(0);
+  await expect(page.locator('#app')).not.toContainText('Get the app');       // the app has its own page, and the menu
   await expect(page.locator('#menu [data-support]')).toHaveCount(1);        // the menu keeps Support
   const labels = await page.locator('#menu li').evaluateAll(l => l.map(x => x.textContent.trim()));
   expect(labels.at(-1)).toBe('Get the app');

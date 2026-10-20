@@ -138,10 +138,7 @@ function viewAbout() {
     ${PROFILE.id === 'app' ? `<p>This app is called ${esc(PROFILE.name)}. It is an independent Kingdom Code publication, not an official edition of any Church. It follows the 81-book canon of the Ethiopian and Eritrean Orthodox Tewahedo Churches.</p>
     <p>The app is built with Capacitor and its Share and Filesystem plugins, open-source software under the MIT license.</p>
     ${PROFILE.appUpdates ? `<p><span id="about-version"></span><a href="#/updates" style="color:var(--accent)">Check for updates</a></p>` : ''}` : ''}
-  </div>
-  ${PROFILE.id === 'site' ? `<h2>Get the app</h2>
-  <p class="lede" style="margin-top:8px">KC Tewahedo Bible puts the books of the Ethiopian canon on your Android phone, every one readable without a connection. Free, with no account and no ads.</p>
-  <p class="act" style="margin-top:16px"><a class="btn primary" href="#/app">Download the app</a></p>` : ''}`;
+  </div>`;
 }
 // ---------- the Android app's download page ----------
 // The release workflow (.github/workflows/android.yml) publishes every version under this fixed name, so the link

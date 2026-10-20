@@ -90,11 +90,13 @@ test('About names the app on the app only', async ({ page }) => {
   await expect(page.locator('#app')).not.toContainText('This app is called');
 });
 
-test('the site\'s About page sends readers to the app download page', async ({ page }) => {
+test('the site\'s menu sends readers to the app download page, and About no longer advertises it', async ({ page }) => {
   await page.goto('/#/about');
   await settle(page);
   await expect(page.locator('#offline, #install'), 'the old save and install buttons are gone').toHaveCount(0);
-  await page.locator('#app a[href="/app/"]', { hasText: 'Download the app' }).click();
+  await expect(page.locator('#app a[href="/app/"]'), 'About carries no app advert').toHaveCount(0);
+  await page.locator('#menubtn').click();
+  await page.locator('#menu a[href="/app/"]').click();
   await settle(page);
   await expect(page.locator('#app h1')).toHaveText('KC Tewahedo Bible for Android');
   await expect(page.locator('#app a[data-app-download]'))
