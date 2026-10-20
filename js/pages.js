@@ -134,7 +134,11 @@ function viewAbout() {
   ${navIdx > 0 ? backLink('#/') : ''}
   <h1>About</h1>
   <div class="about">
-    <p>Kingdom Code is an independent, investigative publication for the Body of Christ. Its sole authority is Jesus Christ and Scripture. The index is a growing body of work, regularly updated with new features and improvements.</p>
+    ${PROFILE.id === 'site' ? `<p>Babylon's whore rides upon the world. Her influence reaches into kingdoms, institutions, and the minds of men. Few question the order they inherit. Fewer still recognize how deeply it shapes their judgment.</p>
+    <p>Kingdom Code is an independent Christian publication examining Scripture, history, philosophy, and the machinery of power. We investigate established narratives, challenge inherited assumptions, and pursue truths that convenience and consensus would rather leave undisturbed.</p>
+    <p>Our purpose is not rebellion for its own sake, but discernment. To understand the world without being deceived by it. To navigate Babylon with the wisdom of Daniel, neither retreating from its affairs nor surrendering to its ways.</p>
+    <p>To govern ourselves before others govern us.</p>
+    <p class="aclose">Our ultimate authority is Jesus Christ and Scripture.</p>` : `<p>Kingdom Code is an independent, investigative publication for the Body of Christ. Its sole authority is Jesus Christ and Scripture. The index is a growing body of work, regularly updated with new features and improvements.</p>`}
     ${PROFILE.id === 'app' ? `<p>This app is called ${esc(PROFILE.name)}. It is an independent Kingdom Code publication, not an official edition of any Church. It follows the 81-book canon of the Ethiopian and Eritrean Orthodox Tewahedo Churches.</p>
     <p>The app is built with Capacitor and its Share and Filesystem plugins, open-source software under the MIT license.</p>
     ${PROFILE.appUpdates ? `<p><span id="about-version"></span><a href="#/updates" style="color:var(--accent)">Check for updates</a></p>` : ''}` : ''}

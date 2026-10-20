@@ -81,6 +81,8 @@ function seoPage(p) {
   if (p[0] === 'read') {                                // a chapter: which text it is, and how many verses lead to essays
     const cited = Object.keys((D.verses[p[1]] || {})[p[2]] || {}).length, src = text.split(/\.\s/)[0].replace(/\.$/, '');
     desc = seoClip(`${name}. ${src}.${cited ? ` ${plural(cited, 'verse')} here ${cited === 1 ? 'is' : 'are'} cited in Kingdom Code essays, linked from the text.` : ' Read it free in the Kingdom Code Source Index.'}`, 158);
+  } else if (p[0] === 'about') {                        // the publication's own one-line description, not the page's opening lines
+    desc = seoClip('Kingdom Code is an independent Christian publication examining Scripture, history, philosophy, and the machinery of power.', 158);
   } else if (!home) {                                   // every other page: its own name first, so no two pages share a description
     desc = seoClip(text.toLowerCase().startsWith(name.toLowerCase()) ? text : `${name}. ${text}`, 158);
     if (desc.length < 40) desc = seoClip(`${name}. ${SEO_DESC}`, 158);
