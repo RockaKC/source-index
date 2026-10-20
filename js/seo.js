@@ -6,7 +6,7 @@
 const SEO_HOME = 'Kingdom Code Source Index: the Ethiopian canon, verse by verse';
 const SEO_DESC = 'Read the books of the Ethiopian canon, look up any verse, and see the Hebrew and Greek words behind the text. Free to read.';
 const SEO_IMAGE = 'img/og-card.png';
-const NOINDEX = new Set(['search', 'cta', 'missing', 'find']);
+const NOINDEX = new Set(['search', 'cta', 'missing', 'find', 'berean', 'mylibrary']);
 
 function seoClip(s, n) {
   s = String(s || '').replace(/\s+/g, ' ').trim();
@@ -122,7 +122,7 @@ function applySeo(p) {
 function seoRoutes() {
   const out = [], add = (hash, lastmod, priority) => { if (ROUTES.has(hash.replace(/^#\/?/, '').split('/')[0]) && pathOf(hash)) out.push({hash, lastmod, priority}); };
   add('#/', null, 1.0);
-  ['books', 'essays', 'kc', 'guide', 'church', 'guides', 'words', 'names', 'translations', 'english', 'about', 'app', 'credits'].forEach(r => add('#/' + r, null, 0.8));
+  ['books', 'essays', 'kc', 'guide', 'church', 'guides', 'words', 'names', 'translations', 'english', 'about', 'app', 'credits', 'privacy'].forEach(r => add('#/' + r, null, 0.8));
   D.entries.forEach(e => add('#/book/' + e.id, null, 0.7));
   Object.keys(D.CC).forEach(b => D.CC[b].forEach(ch => add(`#/read/${b}/${ch}`, null, 0.6)));
   Object.keys(D.verses).forEach(b => Object.keys(D.verses[b]).forEach(ch => Object.keys(D.verses[b][ch]).forEach(v => add(`#/verse/${b}/${ch}/${v}`, null, 0.5))));

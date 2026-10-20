@@ -48,6 +48,15 @@ The switches: `name` (the product's name, on the app's About page and as the fal
 
 The two pages must load the same files in the same order after their profile; the tests check it. `app.html` is not linked from the site and asks search engines not to index it: it is the preview of the app until the Android build ships. Installed from the browser, the site keeps its own name, Kingdom Code Source Index (`manifest.webmanifest`); KC Tewahedo Bible is the name of the Android app only.
 
+## Berean reader accounts
+
+`js/account.js` (website only; the app loads the file but it does nothing there): **Become a Berean** (`/become-a-berean/`), **My Library** (`/my-library/`), a **Save** button on essays, guides, chapters, verses and passages, and **Privacy** (`/privacy/`). The archive stays open to everyone; an account only gives a reader a private shelf. Everything is off until `profiles/site.js` sets `accounts: {url, key}` (the Supabase Project URL and *publishable* key, both public by design; never the secret or service_role key). Optional: `turnstileKey` (Cloudflare Turnstile site key), `codeLength` (default 7) and `codeMinutes` (default 10), which must match Supabase's email settings.
+
+- **Sign-in** is Supabase Auth with the official `supabase-js` (`vendor/supabase.js`, pinned, see `vendor/README.md`), fetched only on account pages or for a reader who already has a session (`kc-session` in local storage). The reader types their email, receives a one-time code, types it back; the emailed link also works. The emailed link returns to `SITE_ORIGIN + /my-library/`, so it follows `origin` in `profiles/site.js`; list the same address in Supabase, Authentication, URL Configuration.
+- **Data** is one table, `saved(user_id, kind, item_key, created_at)`, and one function, `delete_my_account()`; both in `supabase/schema.sql`. Row-level security lets a reader see and change only their own rows. Keys: a guide's slug, an essay's number, or Scripture in the house numbering (`book:chapter`, `book:chapter:verse`, `book:chapter:first-last`).
+- **Nothing else is stored**: no name, no profile, no mailing list. Account pages are `noindex` and disallowed in `robots.txt`; the privacy page is indexed.
+- **Tests** (`tests/account.spec.js`) simulate Supabase in the browser (`tests/fake_supabase.js`, `page.route`); the site ships no test hook. They cover sign-in with the 7-digit code, the library, saving and removing, signing out, export, deleting the account, Turnstile, the privacy page, and that nothing appears when `accounts` is null.
+
 ## The move to kingdomcodearchive.com
 
 The website's address is written once, as `origin` in `profiles/site.js`; canonical links, `sitemap.xml`, `robots.txt`, `llms.txt`, share cards and structured data all read it. Two more places name it: `index.html` (its static canonical link) and `CNAME`; analytics counts only on the hosts listed in `js/analytics.js`. The website was first published at sources.kingdomcodearchive.com.
