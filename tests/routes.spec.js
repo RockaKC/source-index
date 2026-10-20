@@ -367,17 +367,17 @@ test('the Early Church list is in time order, and says what the collection is', 
   expect(shown).toEqual(await page.evaluate(() => D.EC.map(f => f.name)));
 });
 
-test('the site\'s About page carries the Babylon statement, with a search description of its own; the app keeps its own About', async ({ page }) => {
+test('the site\'s About page carries the Kingdom Code statement, with a search description of its own; the app keeps its own About', async ({ page }) => {
   await page.goto('/about/'); await settle(page);
   await expect(page.locator('#app h1')).toHaveText('About');
   const paras = await page.locator('#app .about p').allTextContents();
-  expect(paras).toHaveLength(6);
-  expect(paras[0]).toMatch(/^We live in an age of unprecedented access to information/);
-  expect(paras[1]).toBe('Scripture gives us an ancient name for a familiar order: Babylon.');
-  expect(paras[4]).toBe('We seek to understand Babylon without being conformed to it.');
-  expect(paras[5]).toBe('Our ultimate authority is Jesus Christ and Scripture.');
+  expect(paras).toHaveLength(5);
+  expect(paras[0]).toBe('Kingdom Code is an independent Christian publication devoted to Scripture, history, philosophy, and the examination of power.');
+  expect(paras[1]).toContain('the assumptions through which Babylon teaches men to understand the world.');
+  expect(paras[3]).toContain('a man who cannot govern himself will always be vulnerable to those who seek to govern him.');
+  expect(paras[4]).toBe('Our ultimate authority is Jesus Christ and Scripture.');
   await expect(page.locator('#app')).not.toContainText('This app is called');
-  expect(await page.evaluate(() => document.querySelector('meta[name="description"]').content)).toMatch(/^Kingdom Code is an independent Christian publication examining Scripture/);
+  expect(await page.evaluate(() => document.querySelector('meta[name="description"]').content)).toBe('Kingdom Code is an independent Christian publication devoted to Scripture, history, philosophy, and the examination of power.');
   await page.goto('/app.html#/about'); await settle(page);
   await expect(page.locator('#app')).toContainText('This app is called');
   await expect(page.locator('#app')).not.toContainText('Babylon');
