@@ -7,7 +7,11 @@
 // Off until profiles/site.js sets accounts: {url, key}; with it blank the site shows nothing of this.
 
 const ACC_CFG = PROFILE.accounts || null;
-const ACC_ON = !!(ACC_CFG && ACC_CFG.url && ACC_CFG.key);
+// While accounts.public is not true the feature is a private preview: it appears only in a browser that opted in by opening any page of the
+// site with ?berean-preview=1 (and out again with ?berean-preview=0). Everyone else sees no trace of it, and the routes do not exist.
+if (ACC_CFG && !ACC_CFG.public) { const m = /[?&]berean-preview=([01])(&|$)/.exec(location.search); if (m) store.set('kc-berean-preview', m[1]); }
+const ACC_ON = !!(ACC_CFG && ACC_CFG.url && ACC_CFG.key && (ACC_CFG.public || store.get('kc-berean-preview') === '1'));
+const accPreview = () => ACC_CFG.public ? '' : '<p class="cap accpreview">Preview: Berean accounts are not open to the public yet.</p>';
 const ACC_CODE = (ACC_CFG && ACC_CFG.codeLength) || 7;              // digits in the emailed code: set in Supabase, Authentication, Email
 const ACC_MINUTES = (ACC_CFG && ACC_CFG.codeMinutes) || 10;         // how long a code lasts: the same setting
 const acc = {user: null, saved: new Map(), ready: false, wait: null, captcha: null};   // saved: 'kind|key' -> when it was saved
@@ -146,6 +150,7 @@ function viewBerean() {
   const t = ACC_CFG.turnstileKey;
   return `
   ${backLink('#/')}
+  ${accPreview()}
   <section class="acct">
     <p class="eyebrow">Kingdom Code</p>
     <h1>Become a Berean.</h1>
@@ -328,6 +333,7 @@ function viewMyLibrary() {
   const guides = (PROFILE.kcGuides && D.KG) || [];
   return `
   ${backLink('#/')}
+  ${accPreview()}
   <section class="libhead">
     <p class="eyebrow">Kingdom Code ${ACC_ICON}</p>
     <h1>My Library</h1>

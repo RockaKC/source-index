@@ -38,6 +38,7 @@ import stamp_assets  # noqa: E402
 import connections  # noqa: E402
 import library  # noqa: E402
 import essay_text  # noqa: E402
+import witness  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 CURATED = ROOT / "tools" / "curated.json"
@@ -45,6 +46,7 @@ HTML = ROOT / "index.html"
 DATA_JS = ROOT / "data" / "site.js"         # the page data, loaded by index.html before the app
 ESSAY_DIR = ROOT / "essay-text"             # essay-text/<essay id>.json: the essay as page HTML, read on the website
 BIBLE_DIR = ROOT / "bible"                  # bible/<translation>/<book id>.json
+WITNESS_DIR = ROOT / "data" / "witness"     # the Daily Witness: data/witness/<study number>.json (tools/witness.py)
 
 EXPECTED_TABLES = {
     "books", "canon_entries", "nodes", "articles", "citations", "verses", "verse_parts",
@@ -540,6 +542,22 @@ def write_bible(bible, house):
             d.rmdir()
 
 
+def write_witness(files):
+    keep = set()
+    if files:
+        WITNESS_DIR.mkdir(parents=True, exist_ok=True)
+        for name, obj in files.items():
+            f = WITNESS_DIR / name
+            f.write_text(dumps(obj), encoding="utf-8")
+            keep.add(f)
+    if WITNESS_DIR.is_dir():
+        for f in WITNESS_DIR.glob("*.json"):
+            if f not in keep:
+                f.unlink()
+        if not any(WITNESS_DIR.iterdir()):
+            WITNESS_DIR.rmdir()
+
+
 def write_essay_text(essay_html):
     if not essay_html:                        # switched off: no essay text is published, and none is left behind
         if ESSAY_DIR.is_dir():
@@ -606,6 +624,10 @@ def main():
     D, bible, info = build(con, cur, warnings.append)
     old = read_current()
     old_bible = read_current_bible()
+    plan = witness.load()
+    wfiles = None
+    if plan:
+        D["W"], wfiles = witness.export(plan, D, bible, listed_essays(D))
 
     print("Source index export from", Path(args.db).name)
     print("  essays on the page: %d (%d cite verses) | verses: %d | chapters: %d"
@@ -619,6 +641,8 @@ def main():
         for pid, raw, n in info["phantom"]:
             print("      %5d  %-32s %d verse%s   %s" % (pid, raw, n, "" if n == 1 else "s", D["pieces"][str(pid)][0][:40]))
     print("  essay text for reading on the site: %d essays%s" % (len(info["essay_html"]), "" if info["essay_html"] else " (switched off: essays open on their platforms)"))
+    if wfiles:
+        print("  Daily Witness: %d studies (%d approved), schedule %s (data/witness/)" % (len(wfiles), sum(e["st"] == "approved" for e in D["W"]["e"]), D["W"]["ws"] or "not started"))
     print("Compared with the data currently in data/site.js:")
     print(summarize(old, D, old_bible, bible))
     for w in sorted(set(warnings)):
@@ -629,6 +653,9 @@ def main():
         return
     version = write_data(D)
     write_bible(bible, D["HT"])
+    write_witness(wfiles)
+    if wfiles:
+        witness.REVIEW.write_text(witness.review(D, D["W"], wfiles, bible), encoding="utf-8")
     write_essay_text(info["essay_html"])
     print("wrote data/site.js (version %s), the stamps in index.html, bible/ (%d books) and essay-text/ (%d essays)" % (version, len(bible), len(info["essay_html"])))
 

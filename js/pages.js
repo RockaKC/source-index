@@ -74,6 +74,8 @@ function archiveHome() {
     <ul class="chips" aria-label="Popular verses">${chips}</ul>
   </section>
 
+  ${typeof witCard === 'function' ? witCard() : ''}
+
   <div class="acols">
     ${g ? `<section aria-labelledby="ah-g"><h2 id="ah-g" class="ah2">Featured guide</h2>
       <a class="afeat" href="#/guides/${esc(g.slug)}"><img src="${esc(g.cover)}" width="1200" height="675" alt="" loading="lazy">

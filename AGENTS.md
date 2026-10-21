@@ -23,6 +23,7 @@ The Kingdom Code Source Index (https://kingdomcodearchive.com, a static site on 
 - **Translation transparency:** be open about the source of a translation, and only about that.
 - **Never claim "81 books" of text.** Say only what the data contains.
 - Early Church overviews and any new prose are drafted for Boss to read before they go live.
+- **The Daily Witness:** every study in `tools/witness.json` stays `draft` until Boss approves it, and every Scripture quotation in a study is written `[[Reference|the words]]` so `tools/witness.py` checks it against the stored text. Never publish placeholder commentary.
 
 ## Rights
 
