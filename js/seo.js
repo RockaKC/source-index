@@ -51,6 +51,12 @@ function seoLd(p, name, desc, url) {
     const e = P[p[1]];
     main = {'@context': 'https://schema.org', '@type': 'Article', headline: e[0], description: desc, url, mainEntityOfPage: url, inLanguage: 'en', datePublished: e[3] || undefined,
       author: org, publisher: org, isBasedOn: e[1], isAccessibleForFree: true};
+    if (typeof onSite === 'function' && onSite(+p[1])) {         // an essay read here: its length, subject and topics, and Scripture it cites
+      main.wordCount = ET[p[1]];
+      const f = typeof LIB !== 'undefined' && LIB && LIB.ess[p[1]];
+      if (f) { main.articleSection = libCat(f[0]).name; main.keywords = f[1].map(t => libTag(t).name).join(', '); }
+      main.citation = spans(REFS[p[1]] || []).slice(0, 50).map(x => ({'@type': 'CreativeWork', name: spanLabel(x), url: SITE_ORIGIN + pathOf(scriptureHash([x.b, x.ch, x.vs, x.ve]))}));
+    }
     const about = PROFILE.connections ? (connections().byEssay.get(String(p[1])) || []).filter(c => c.how !== 'p') : [];
     if (about.length) main.mentions = about.map(c => ({'@type': 'Person', name: c.name, url: SITE_ORIGIN + pathOf(c.href)}));
   } else if (a === 'essays' && (p[1] === 'subject' || p[1] === 'topic') && typeof LIB !== 'undefined' && LIB) {
@@ -84,6 +90,8 @@ function seoPage(p) {
     desc = seoClip(`${name}. ${src}.${cited ? ` ${plural(cited, 'verse')} here ${cited === 1 ? 'is' : 'are'} cited in Kingdom Code essays, linked from the text.` : ' Read it free in the Kingdom Code Source Index.'}`, 158);
   } else if (p[0] === 'about') {                        // the publication's own one-line description, not the page's opening lines
     desc = seoClip('Kingdom Code is an independent Christian publication examining Scripture, history, philosophy, and the machinery of power.', 158);
+  } else if (p[0] === 'essay' && typeof onSite === 'function' && onSite(+p[1])) {      // an essay read here: its opening words (its title is already the page's title)
+    desc = seoClip(text, 158);
   } else if (!home) {                                   // every other page: its own name first, so no two pages share a description
     desc = seoClip(text.toLowerCase().startsWith(name.toLowerCase()) ? text : `${name}. ${text}`, 158);
     if (desc.length < 40) desc = seoClip(`${name}. ${SEO_DESC}`, 158);
@@ -115,6 +123,9 @@ function applySeo(p) {
   seoMeta('property', 'og:title', s.title); seoMeta('property', 'og:description', s.desc); seoMeta('property', 'og:url', s.url);
   seoMeta('property', 'og:type', s.type); seoMeta('property', 'og:site_name', 'Kingdom Code'); seoMeta('property', 'og:image', s.image);
   seoMeta('property', 'og:locale', 'en_US');
+  const art = p[0] === 'essay' && P[p[1]];                             // an essay: when it was first published (not when this page was last built)
+  document.head.querySelectorAll('meta[property^="article:"]').forEach(m => m.remove());
+  if (art && !s.noindex && P[p[1]][3]) seoMeta('property', 'article:published_time', P[p[1]][3]);
   seoMeta('name', 'twitter:card', 'summary_large_image'); seoMeta('name', 'twitter:title', s.title);
   seoMeta('name', 'twitter:description', s.desc); seoMeta('name', 'twitter:image', s.image);
   const ld = seoTag('script#ld', () => { const l = document.createElement('script'); l.id = 'ld'; l.type = 'application/ld+json'; return l; });

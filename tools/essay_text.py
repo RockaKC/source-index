@@ -7,15 +7,20 @@ here are ever produced, so nothing in an essay can inject markup or script into 
 import html
 import re
 
-_LINK = re.compile(r"\[([^\]\n]+)\]\((https?://[^\s)]+)\)")
+_LINK = re.compile(r"\[([^\]\n]+)\]\(((?:https?://|kc-ref:)[^\s)]+)\)")
 _BOLD_ITALIC = re.compile(r"\*\*\*(?=\S)(.+?)(?<=\S)\*\*\*", re.S)
 _BOLD = re.compile(r"\*\*(?=\S)(.+?)(?<=\S)\*\*", re.S)
 _ITALIC = re.compile(r"(?<![\w*])\*(?=[^\s*])(.+?)(?<=[^\s*])\*(?![\w*])", re.S)
+_STRAY = r"(?<![\w*])\*+(?=[^\s*])|(?<=[^\s*])\*+(?![\w*])"    # a run of stars hugging a word on one side only
 _ESCAPED = re.compile(r"\\([\\`*_{}\[\]()#+\-.!>|~])")
 
 
 def _a(m, rewrite):
     href, label = m.group(2), m.group(1)
+    if href.startswith("kc-ref:"):                  # a Scripture reference the author wrote: the same words, now a link (the page fills in the address)
+        key = href[7:]
+        b, ch, vs = (key.replace("-", ":").split(":") + ["0"])[:3]
+        return '<a class="sref" data-ref="%s" href="#/read/%s/%s/%s">%s</a>' % (key, b, ch, vs, label)
     mine = rewrite(href) if rewrite else None            # a link to another essay or page of this site stays on the site
     if mine:
         return '<a href="%s">%s</a>' % (mine.replace('"', "&quot;"), label)
@@ -36,7 +41,7 @@ def inline(text, rewrite=None):
     s = _BOLD_ITALIC.sub(r"<strong><em>\1</em></strong>", s)
     s = _BOLD.sub(r"<strong>\1</strong>", s)
     s = _ITALIC.sub(r"<em>\1</em>", s)
-    s = re.sub(r"(<[^>]*>)|\*+", lambda m: m.group(1) or "", s)    # a stray emphasis mark the source left unpaired is dropped, not shown
+    s = re.sub(r"(<[^>]*>)|" + _STRAY, lambda m: m.group(1) or "", s)    # an emphasis mark the source left unpaired is dropped; a star standing alone (2 * 3) or inside a word is the author's and stays
     return re.sub("\x00(\\d+)\x00", lambda m: keep[int(m.group(1))], s)
 
 
@@ -97,4 +102,67 @@ def to_html(md, rewrite=None):
 
 
 def words(md):
-    return len(re.findall(r"\S+", re.sub(r"[#>*_`\\\[\]()]|-{3,}", " ", md)))
+    return len(tokens(_plain_md(md)))
+
+
+# ---- Scripture references inside the text ----
+_LINKSPAN = re.compile(r"\[[^\]\n]*\]\([^)\s]*\)")
+
+
+def ref_key(house_start, house_end):
+    """The house-numbering key 'book:chapter:verse' or 'book:chapter:first-last' for a citation's verse ids (book*1000000 + chapter*1000 + verse)."""
+    b, ch, vs = house_start // 1000000, house_start // 1000 % 1000, house_start % 1000
+    eb, ech, ve = house_end // 1000000, house_end // 1000 % 1000, house_end % 1000
+    return "%d:%d:%d-%d" % (b, ch, vs, ve) if (eb, ech) == (b, ch) and ve > vs else "%d:%d:%d" % (b, ch, vs)
+
+
+def link_refs(md, refs):
+    """Turn each Scripture reference the author wrote into a link, without changing one character of the text.
+
+    refs: (char_offset, raw, key). A reference is linked only where md really holds `raw` at that offset, outside any existing link,
+    and without overlapping another reference. The link keeps the words as they were: [raw](kc-ref:key)."""
+    spans = [(m.start(), m.end()) for m in _LINKSPAN.finditer(md)]
+    taken, out = [], md
+    for off, raw, key in sorted(refs):
+        if md[off:off + len(raw)] != raw or "\n" in raw or any(c in raw for c in "[]()\\*_`"):
+            continue
+        if any(a < off + len(raw) and off < z for a, z in spans) or any(a < off + len(raw) and off < z for a, z in taken):
+            continue
+        taken.append((off, off + len(raw)))
+    done = {(a, z): key for a, z, key in ((o, o + len(r), k) for o, r, k in refs if (o, o + len(r)) in set(taken))}
+    for a, z in sorted(taken, reverse=True):
+        out = out[:a] + "[%s](kc-ref:%s)" % (md[a:z], done[(a, z)]) + out[z:]
+    return out, len(taken)
+
+
+# ---- the check that the page says exactly what the manuscript says ----
+def _plain_md(md):
+    t = md.replace("\r\n", "\n")
+    t = re.sub(r"(?m)^\s*(?:-{3,}|\*{3,}|_{3,})\s*$", " ", t)                 # rules
+    t = re.sub(r"(?m)^(?:\s*>)+ ?", "", t)                                       # quote marks
+    t = re.sub(r"(?m)^\s*(?:[*+-]|\d+\.)\s+", "", t)                              # list markers (before headings: "### 1. Title" keeps its number)
+    t = re.sub(r"(?m)^\s*#{1,6}\s+", "", t)
+    t = re.sub(r"\[([^\]\n]+)\]\((?:https?://|kc-ref:)[^\s)]+\)", r"\1", t)    # a link is its words
+    t = _ESCAPED.sub(lambda m: m.group(1), t)
+    t = re.sub(_STRAY, "", t)                                                    # emphasis marks (a mark inside a word is kept)
+    return t
+
+
+def _plain_html(h):
+    t = re.sub(r"<br\s*/?>|</(?:p|h\d|li|blockquote|ul|ol)>|<hr>", " ", h)
+    return html.unescape(re.sub(r"<[^>]+>", "", t))
+
+
+def tokens(text):
+    return re.findall(r"\S+", text)
+
+
+def same_words(md, h):
+    """None when the page's words are exactly the manuscript's, in order; otherwise a short description of the first difference."""
+    a, b = tokens(_plain_md(md)), tokens(_plain_html(h))
+    for i, (x, y) in enumerate(zip(a, b)):
+        if x != y:
+            return "word %d: manuscript %r, page %r (…%s)" % (i, x, y, " ".join(a[max(0, i - 4):i + 3]))
+    if len(a) != len(b):
+        return "the manuscript has %d words and the page %d" % (len(a), len(b))
+    return None

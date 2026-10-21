@@ -246,7 +246,7 @@ test('the app keeps its own home, not the archive', async ({ page }) => {
 const fs = require('fs');
 const path = require('path');
 
-test('essay text is switched off: no text in the data, no essay-text folder, and the font and cache rules stay harmless', () => {
+test('no essay text is published until an essay is approved: none in the data, no essay-text folder, and the font and cache rules stay harmless', () => {
   expect(Object.keys(D.ET || {})).toEqual([]);
   expect(fs.existsSync(path.join(__dirname, '..', 'essay-text'))).toBe(false);
 });
