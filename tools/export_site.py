@@ -38,6 +38,7 @@ import stamp_assets  # noqa: E402
 import connections  # noqa: E402
 import library  # noqa: E402
 import essay_text  # noqa: E402
+import daily  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 CURATED = ROOT / "tools" / "curated.json"
@@ -45,6 +46,7 @@ HTML = ROOT / "index.html"
 DATA_JS = ROOT / "data" / "site.js"         # the page data, loaded by index.html before the app
 ESSAY_DIR = ROOT / "essay-text"             # essay-text/<essay id>.json: the essay as page HTML, read on the website
 BIBLE_DIR = ROOT / "bible"                  # bible/<translation>/<book id>.json
+DAILY_DIR = ROOT / "data" / "daily"         # the daily study verse: data/daily/<week>.json, each with its verses' text (tools/daily.py)
 
 EXPECTED_TABLES = {
     "books", "canon_entries", "nodes", "articles", "citations", "verses", "verse_parts",
@@ -540,6 +542,22 @@ def write_bible(bible, house):
             d.rmdir()
 
 
+def write_daily(files):
+    keep = set()
+    if files:
+        DAILY_DIR.mkdir(parents=True, exist_ok=True)
+        for name, obj in files.items():
+            f = DAILY_DIR / name
+            f.write_text(dumps(obj), encoding="utf-8")
+            keep.add(f)
+    if DAILY_DIR.is_dir():
+        for f in DAILY_DIR.glob("*.json"):
+            if f not in keep:
+                f.unlink()
+        if not any(DAILY_DIR.iterdir()):
+            DAILY_DIR.rmdir()
+
+
 def write_essay_text(essay_html):
     if not essay_html:                        # switched off: no essay text is published, and none is left behind
         if ESSAY_DIR.is_dir():
@@ -606,6 +624,8 @@ def main():
     D, bible, info = build(con, cur, warnings.append)
     old = read_current()
     old_bible = read_current_bible()
+    plan = daily.load()
+    daily_data = daily.export(plan, D, bible) if plan else None
 
     print("Source index export from", Path(args.db).name)
     print("  essays on the page: %d (%d cite verses) | verses: %d | chapters: %d"
@@ -619,6 +639,8 @@ def main():
         for pid, raw, n in info["phantom"]:
             print("      %5d  %-32s %d verse%s   %s" % (pid, raw, n, "" if n == 1 else "s", D["pieces"][str(pid)][0][:40]))
     print("  essay text for reading on the site: %d essays%s" % (len(info["essay_html"]), "" if info["essay_html"] else " (switched off: essays open on their platforms)"))
+    if daily_data:
+        print("  daily study verse: %d weeks, %d verse days, %d turn days (data/daily/)" % (len(daily_data) - 1, sum(len(f["days"]) for k, f in daily_data.items() if k != "turn.json"), len(daily_data["turn.json"]["days"])))
     print("Compared with the data currently in data/site.js:")
     print(summarize(old, D, old_bible, bible))
     for w in sorted(set(warnings)):
@@ -629,6 +651,9 @@ def main():
         return
     version = write_data(D)
     write_bible(bible, D["HT"])
+    write_daily(daily_data)
+    if daily_data:
+        (ROOT / "tools" / "daily_plan.md").write_text(daily.review(daily_data, D), encoding="utf-8")
     write_essay_text(info["essay_html"])
     print("wrote data/site.js (version %s), the stamps in index.html, bible/ (%d books) and essay-text/ (%d essays)" % (version, len(bible), len(info["essay_html"])))
 

@@ -1,0 +1,1638 @@
+{
+ "_about": [
+  "The daily study verse. The rhythm follows the seasonal reading guides: a year of four seasons, each season three movements of four weeks, and a closing week;",
+  "each week six verse days and a day of rest; each day one verse (or a few) with a short title that says why it belongs to this week. The order is the argument:",
+  "a movement is a posture (attend, confess, gather), and the weeks within it move from the ground of the matter to its witness to its fulfilment.",
+  "Season start is fixed to the winter solstice (start), then 13 weeks of 7 days each; the last two days of the year (the turn) follow week 52. No state, no streaks: a reader who misses days resumes where the calendar is.",
+  "References use the archive's stored numbering (Septuagint for the Old Testament), as the verse pages do: Psalms 29:6 is Psalm 30:5 in English Bibles. tools/export_site.py checks every reference against the stored text.",
+  "Every title is written to the stored wording of its verse. Any new prose here is drafted for Boss to read before it goes live."
+ ],
+ "start": [
+  12,
+  21
+ ],
+ "seasons": [
+  {
+   "id": "winter",
+   "name": "Winter",
+   "line": "The dark season is holy ground.",
+   "movements": [
+    {
+     "name": "The Dark Ground",
+     "line": "Begin where God began: in the dark, and not alone.",
+     "weeks": [
+      {
+       "name": "Before the Light",
+       "days": [
+        [
+         "Genesis 1:1-2",
+         "Darkness over the deep"
+        ],
+        [
+         "Genesis 1:3-5",
+         "God divides the light from the darkness"
+        ],
+        [
+         "Psalms 138:11-12",
+         "Darkness is not dark to God"
+        ],
+        [
+         "Isaiah 45:3",
+         "Treasures hidden in the dark"
+        ],
+        [
+         "John 1:5",
+         "The light shines in the darkness"
+        ],
+        [
+         "1 John 1:5",
+         "God is light"
+        ]
+       ]
+      },
+      {
+       "name": "Wait for the Lord",
+       "days": [
+        [
+         "Psalms 26:14",
+         "Wait, and be strong"
+        ],
+        [
+         "Psalms 129:6-7",
+         "My soul has hoped in the Lord from the morning watch"
+        ],
+        [
+         "Lamentations 3:25-26",
+         "Good to wait quietly"
+        ],
+        [
+         "Isaiah 40:30-31",
+         "Those who wait on God renew their strength"
+        ],
+        [
+         "Habakkuk 2:3",
+         "The vision waits for its time"
+        ],
+        [
+         "Romans 8:24-25",
+         "Hope unseen, waited for with patience"
+        ]
+       ]
+      },
+      {
+       "name": "The Long Night",
+       "days": [
+        [
+         "Psalms 29:6",
+         "Weeping for a night, joy in the morning"
+        ],
+        [
+         "Psalms 41:6",
+         "Why are you so sad, O my soul?"
+        ],
+        [
+         "Job 35:10",
+         "Where is God, who appoints the night watches?"
+        ],
+        [
+         "Genesis 32:25-27",
+         "Wrestling until daybreak"
+        ],
+        [
+         "Matthew 14:25-27",
+         "He came in the fourth watch"
+        ],
+        [
+         "Acts 16:25",
+         "Singing at midnight"
+        ]
+       ]
+      },
+      {
+       "name": "The Watch",
+       "days": [
+        [
+         "Isaiah 21:11-12",
+         "I watch in the morning and the night"
+        ],
+        [
+         "Habakkuk 2:1",
+         "Standing at the watchpost"
+        ],
+        [
+         "Psalms 62:7",
+         "I remembered you on my bed"
+        ],
+        [
+         "Mark 13:35-37",
+         "Watch, for you do not know the hour"
+        ],
+        [
+         "1 Thessalonians 5:4-5",
+         "Children of the day"
+        ],
+        [
+         "2 Peter 1:19",
+         "Until the morning star rises"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "name": "The Light Comes",
+     "line": "The light does not cancel the dark season. It enters it.",
+     "weeks": [
+      {
+       "name": "The Great Light",
+       "days": [
+        [
+         "Isaiah 9:1",
+         "A great light for those in darkness"
+        ],
+        [
+         "Matthew 4:15-16",
+         "Light dawns on Galilee"
+        ],
+        [
+         "Luke 1:78-79",
+         "The sunrise from on high"
+        ],
+        [
+         "Luke 2:8-10",
+         "Shepherds by night"
+        ],
+        [
+         "John 1:9",
+         "The true light, coming into the world"
+        ],
+        [
+         "John 8:12",
+         "I am the light of the world"
+        ]
+       ]
+      },
+      {
+       "name": "The Star",
+       "days": [
+        [
+         "Numbers 24:17",
+         "A star out of Jacob"
+        ],
+        [
+         "Matthew 2:1-2",
+         "We saw his star"
+        ],
+        [
+         "Matthew 2:10-11",
+         "Overjoyed, they worshiped"
+        ],
+        [
+         "Isaiah 60:1-3",
+         "Be enlightened, for your light has come"
+        ],
+        [
+         "Luke 2:29-32",
+         "A light for the nations"
+        ],
+        [
+         "Revelation 22:16",
+         "The bright morning star"
+        ]
+       ]
+      },
+      {
+       "name": "The Lamp and the Word",
+       "days": [
+        [
+         "Psalms 118:105",
+         "A lamp to my feet"
+        ],
+        [
+         "Proverbs 6:23",
+         "The commandment is a lamp"
+        ],
+        [
+         "Psalms 118:130",
+         "The manifestation of your words enlightens"
+        ],
+        [
+         "Matthew 5:14-16",
+         "A city set on a hill"
+        ],
+        [
+         "Ephesians 5:8",
+         "Once darkness, now light in the Lord"
+        ],
+        [
+         "2 Corinthians 4:6",
+         "Light shines out of darkness"
+        ]
+       ]
+      },
+      {
+       "name": "Fire in the Cold",
+       "days": [
+        [
+         "Exodus 13:21-22",
+         "A pillar of fire by night"
+        ],
+        [
+         "Exodus 3:2-3",
+         "The bush that was not consumed"
+        ],
+        [
+         "1 Kings 19:11-12",
+         "After the fire, the voice of a gentle breeze"
+        ],
+        [
+         "Jeremiah 20:9",
+         "A fire shut up in my bones"
+        ],
+        [
+         "Luke 24:32",
+         "Did not our hearts burn within us?"
+        ],
+        [
+         "Acts 2:3-4",
+         "Tongues as of fire"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "name": "The Hidden Seed",
+     "line": "What looks dormant is being kept.",
+     "weeks": [
+      {
+       "name": "The Seed in the Ground",
+       "days": [
+        [
+         "Genesis 8:22",
+         "Seed and harvest shall not cease"
+        ],
+        [
+         "Ecclesiastes 3:1-2",
+         "A time to plant"
+        ],
+        [
+         "Mark 4:26-29",
+         "The seed grows, he knows not how"
+        ],
+        [
+         "John 12:24",
+         "Unless a grain of wheat falls"
+        ],
+        [
+         "1 Corinthians 15:36-37",
+         "What you sow must die first"
+        ],
+        [
+         "Psalms 125:5-6",
+         "Those who sow in tears"
+        ]
+       ]
+      },
+      {
+       "name": "The Hidden Years",
+       "days": [
+        [
+         "Exodus 2:2-3",
+         "A child hidden for three months"
+        ],
+        [
+         "1 Samuel 16:11-13",
+         "David, still with the sheep"
+        ],
+        [
+         "Luke 2:51-52",
+         "Growing in wisdom at Nazareth"
+        ],
+        [
+         "Isaiah 49:2",
+         "Hidden in the shadow of his hand"
+        ],
+        [
+         "Colossians 3:3",
+         "Your life is hidden with Christ"
+        ],
+        [
+         "Luke 1:80",
+         "In the wilderness until the day"
+        ]
+       ]
+      },
+      {
+       "name": "Refuge",
+       "days": [
+        [
+         "Psalms 45:2-3",
+         "God is our refuge and strength"
+        ],
+        [
+         "Psalms 90:1-2",
+         "Dwelling in the help of the Most High"
+        ],
+        [
+         "Psalms 120:1-2",
+         "My help comes from the Lord"
+        ],
+        [
+         "Proverbs 18:10",
+         "The name of the Lord is of great strength"
+        ],
+        [
+         "Nahum 1:7",
+         "Good to those who wait on him in the day of affliction"
+        ],
+        [
+         "Hebrews 6:18-19",
+         "An anchor of the soul"
+        ]
+       ]
+      },
+      {
+       "name": "Dawn Is Coming",
+       "days": [
+        [
+         "Psalms 29:12-13",
+         "Mourning turned to dancing"
+        ],
+        [
+         "Psalms 89:14",
+         "Satisfied in the morning with your mercy"
+        ],
+        [
+         "Isaiah 58:8",
+         "Your light shall break forth like the dawn"
+        ],
+        [
+         "Malachi 3:20",
+         "The sun of righteousness shall arise"
+        ],
+        [
+         "Mark 16:2",
+         "Very early, when the sun had risen"
+        ],
+        [
+         "Revelation 22:5",
+         "No more night"
+        ]
+       ]
+      }
+     ]
+    }
+   ],
+   "closing": {
+    "name": "The Eighth Day",
+    "line": "What the dark kept, the light now shows.",
+    "days": [
+     [
+      "Ecclesiastes 3:11",
+      "Everything beautiful in its time"
+     ],
+     [
+      "Isaiah 42:16",
+      "Led on a path they have not known"
+     ],
+     [
+      "Psalms 96:11",
+      "Light has sprung up for the righteous"
+     ],
+     [
+      "Zechariah 14:7",
+      "At evening time there shall be light"
+     ],
+     [
+      "John 12:36",
+      "Believe in the light"
+     ],
+     [
+      "Revelation 21:5",
+      "Behold, I am making all things new"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "spring",
+   "name": "Spring",
+   "line": "New growth is most exposed when it is youngest.",
+   "movements": [
+    {
+     "name": "The Sowing",
+     "line": "Plant before you can see the harvest.",
+     "weeks": [
+      {
+       "name": "The Sower",
+       "days": [
+        [
+         "Matthew 13:3-4",
+         "A sower went out to sow"
+        ],
+        [
+         "Luke 8:11-12",
+         "The seed is the word of God"
+        ],
+        [
+         "Isaiah 55:10-11",
+         "The word goes out and does not return empty"
+        ],
+        [
+         "Psalms 1:3",
+         "Planted by streams of water"
+        ],
+        [
+         "Hosea 10:12",
+         "Sow for righteousness; gather the fruit of life"
+        ],
+        [
+         "Galatians 6:9",
+         "Do not grow weary in doing good"
+        ]
+       ]
+      },
+      {
+       "name": "Good Soil",
+       "days": [
+        [
+         "Genesis 2:8-9",
+         "God planted a garden"
+        ],
+        [
+         "Matthew 13:23",
+         "The seed on good soil bears fruit"
+        ],
+        [
+         "Luke 8:15",
+         "An honest and good heart holds the word fast"
+        ],
+        [
+         "Jeremiah 4:3",
+         "Break up fresh ground"
+        ],
+        [
+         "Proverbs 4:23",
+         "Keep your heart with the utmost care"
+        ],
+        [
+         "James 1:21",
+         "Receive with meekness the implanted word"
+        ]
+       ]
+      },
+      {
+       "name": "Small Beginnings",
+       "days": [
+        [
+         "Zechariah 4:10",
+         "Who has despised the small days?"
+        ],
+        [
+         "Matthew 13:31-32",
+         "The mustard seed"
+        ],
+        [
+         "Ezekiel 17:22-23",
+         "A tender twig becomes a cedar"
+        ],
+        [
+         "Job 8:7",
+         "Though your beginning was small"
+        ],
+        [
+         "Luke 16:10",
+         "Faithful in very little"
+        ],
+        [
+         "1 Timothy 4:12",
+         "Let no one despise your youth"
+        ]
+       ]
+      },
+      {
+       "name": "The Rains",
+       "days": [
+        [
+         "Deuteronomy 11:13-14",
+         "Rain in its season"
+        ],
+        [
+         "Joel 2:23",
+         "The early and the latter rain"
+        ],
+        [
+         "Hosea 6:3",
+         "He will come to us as the rain"
+        ],
+        [
+         "Psalms 64:10-11",
+         "You visit the earth and water it"
+        ],
+        [
+         "James 5:7",
+         "The farmer waits for the precious fruit"
+        ],
+        [
+         "Isaiah 44:3",
+         "Water poured on the thirsty land"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "name": "The Guarding",
+     "line": "The young are the most exposed. Watch what is planted.",
+     "weeks": [
+      {
+       "name": "The Vineyard",
+       "days": [
+        [
+         "Isaiah 5:1-2",
+         "A song of my beloved and his vineyard"
+        ],
+        [
+         "Psalms 79:9-10",
+         "A vine brought out of Egypt"
+        ],
+        [
+         "Song of Songs 2:15",
+         "Catch the little foxes"
+        ],
+        [
+         "John 15:1-2",
+         "I am the true vine"
+        ],
+        [
+         "John 15:5",
+         "Apart from me you can do nothing"
+        ],
+        [
+         "Galatians 5:22-23",
+         "The fruit of the Spirit"
+        ]
+       ]
+      },
+      {
+       "name": "Thorns and Weeds",
+       "days": [
+        [
+         "Genesis 3:17-18",
+         "Thorns and thistles"
+        ],
+        [
+         "Matthew 13:24-25",
+         "An enemy sowed weeds among the wheat"
+        ],
+        [
+         "Matthew 13:29-30",
+         "Let both grow together until the harvest"
+        ],
+        [
+         "Mark 4:18-19",
+         "The cares of the world choke the word"
+        ],
+        [
+         "Hebrews 12:15",
+         "No root of bitterness"
+        ],
+        [
+         "Proverbs 24:30-31",
+         "A neglected field, barren and overgrown"
+        ]
+       ]
+      },
+      {
+       "name": "Watch and Pray",
+       "days": [
+        [
+         "Genesis 4:6-7",
+         "Why has your face fallen? Be still"
+        ],
+        [
+         "Matthew 26:41",
+         "The spirit is willing, the flesh is weak"
+        ],
+        [
+         "1 Peter 5:8-9",
+         "Your adversary prowls like a lion"
+        ],
+        [
+         "Ephesians 6:11-13",
+         "Stand against the schemes of the devil"
+        ],
+        [
+         "Luke 22:31-32",
+         "I have prayed for you, that your faith may not fail"
+        ],
+        [
+         "1 Corinthians 10:12-13",
+         "Let anyone who thinks he stands take heed"
+        ]
+       ]
+      },
+      {
+       "name": "Wise as Serpents",
+       "days": [
+        [
+         "Matthew 10:16",
+         "Wise as serpents, innocent as doves"
+        ],
+        [
+         "Proverbs 14:15",
+         "The simple believes everything"
+        ],
+        [
+         "Acts 17:11",
+         "The Bereans examined the Scriptures daily"
+        ],
+        [
+         "1 Thessalonians 5:21",
+         "Test everything; hold fast what is good"
+        ],
+        [
+         "1 John 4:1",
+         "Test the spirits"
+        ],
+        [
+         "Hebrews 5:14",
+         "Trained by practice to discern"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "name": "The Rising",
+     "line": "Life that passes through death.",
+     "weeks": [
+      {
+       "name": "The Lamb",
+       "days": [
+        [
+         "Exodus 12:13",
+         "When I see the blood, I will pass over you"
+        ],
+        [
+         "Exodus 12:26-27",
+         "When your children ask you"
+        ],
+        [
+         "Isaiah 53:7",
+         "Like a lamb led to the slaughter"
+        ],
+        [
+         "John 1:29",
+         "Behold, the Lamb of God"
+        ],
+        [
+         "1 Corinthians 5:7",
+         "Christ, our Passover lamb"
+        ],
+        [
+         "1 Peter 1:18-19",
+         "Ransomed with the precious blood of Christ"
+        ]
+       ]
+      },
+      {
+       "name": "The Cross",
+       "days": [
+        [
+         "Genesis 22:7-8",
+         "Where is the sheep for the offering?"
+        ],
+        [
+         "Psalms 21:2",
+         "My God, why have you forsaken me?"
+        ],
+        [
+         "Isaiah 53:5",
+         "Wounded for our sins"
+        ],
+        [
+         "Luke 23:34",
+         "Father, forgive them"
+        ],
+        [
+         "John 19:30",
+         "It is finished"
+        ],
+        [
+         "Galatians 2:20",
+         "I have been crucified with Christ"
+        ]
+       ]
+      },
+      {
+       "name": "The Empty Tomb",
+       "days": [
+        [
+         "Matthew 28:5-6",
+         "He is not here; he has risen"
+        ],
+        [
+         "Luke 24:5-6",
+         "Why do you seek the living among the dead?"
+        ],
+        [
+         "John 20:15-16",
+         "Mary, in the garden"
+        ],
+        [
+         "John 20:27-29",
+         "My Lord and my God"
+        ],
+        [
+         "Luke 24:45",
+         "He opened their minds to understand the Scriptures"
+        ],
+        [
+         "Acts 2:24",
+         "It was not possible for him to be held by death"
+        ]
+       ]
+      },
+      {
+       "name": "The Firstfruits",
+       "days": [
+        [
+         "Leviticus 23:10-11",
+         "The sheaf of the firstfruits"
+        ],
+        [
+         "1 Corinthians 15:20",
+         "Christ, the firstfruits of those who have fallen asleep"
+        ],
+        [
+         "1 Corinthians 15:42-44",
+         "Sown perishable, raised imperishable"
+        ],
+        [
+         "1 Corinthians 15:55-57",
+         "O death, where is your victory?"
+        ],
+        [
+         "Romans 6:4",
+         "Walking in newness of life"
+        ],
+        [
+         "Colossians 3:1-2",
+         "Set your minds on things above"
+        ]
+       ]
+      }
+     ]
+    }
+   ],
+   "closing": {
+    "name": "The Eighth Day",
+    "line": "The winter is past; what was sown is rising.",
+    "days": [
+     [
+      "Song of Songs 2:11-12",
+      "The winter is past"
+     ],
+     [
+      "Isaiah 43:19",
+      "Behold, I will do new things"
+     ],
+     [
+      "Ezekiel 36:26",
+      "A new heart and a new spirit"
+     ],
+     [
+      "Psalms 103:30",
+      "You renew the face of the ground"
+     ],
+     [
+      "Hosea 14:6-7",
+      "I will be as dew to Israel"
+     ],
+     [
+      "Romans 8:11",
+      "The Spirit who raised Jesus dwells in you"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "summer",
+   "name": "Summer",
+   "line": "Labor without Sabbath becomes bondage, however fruitful it looks.",
+   "movements": [
+    {
+     "name": "The Work",
+     "line": "Work is a gift before it is a burden.",
+     "weeks": [
+      {
+       "name": "Work in the Garden",
+       "days": [
+        [
+         "Genesis 2:15",
+         "Placed in the garden to cultivate and keep it"
+        ],
+        [
+         "Genesis 1:28",
+         "The first commission"
+        ],
+        [
+         "Psalms 103:23",
+         "Man goes out to his work until evening"
+        ],
+        [
+         "Proverbs 6:6-8",
+         "Consider the ant"
+        ],
+        [
+         "Ecclesiastes 9:10",
+         "Whatever your hand finds to do"
+        ],
+        [
+         "Colossians 3:23-24",
+         "Work heartily, as for the Lord"
+        ]
+       ]
+      },
+      {
+       "name": "Diligence",
+       "days": [
+        [
+         "Proverbs 10:4",
+         "The hands of the vigorous make rich"
+        ],
+        [
+         "Proverbs 12:24",
+         "The hand of chosen men shall rule"
+        ],
+        [
+         "Proverbs 13:4",
+         "The hands of the active are diligent"
+        ],
+        [
+         "Proverbs 14:23",
+         "Where there is care, there is abundance"
+        ],
+        [
+         "Proverbs 22:29",
+         "The diligent man attends on kings"
+        ],
+        [
+         "Romans 12:11",
+         "Do not be slothful in zeal"
+        ]
+       ]
+      },
+      {
+       "name": "Faithful Stewards",
+       "days": [
+        [
+         "Genesis 39:2-3",
+         "The Lord was with Joseph, and he prospered"
+        ],
+        [
+         "Deuteronomy 8:17-18",
+         "Remember the Lord, who gives power to get wealth"
+        ],
+        [
+         "Matthew 25:21",
+         "Faithful over a little"
+        ],
+        [
+         "Luke 12:42-43",
+         "The faithful and wise manager"
+        ],
+        [
+         "1 Corinthians 4:2",
+         "Required of stewards: that they be found faithful"
+        ],
+        [
+         "1 Peter 4:10",
+         "Good stewards of God’s varied grace"
+        ]
+       ]
+      },
+      {
+       "name": "Honest Hands",
+       "days": [
+        [
+         "Leviticus 19:35-36",
+         "Just balances and just weights"
+        ],
+        [
+         "Proverbs 11:1",
+         "A false balance is an abomination"
+        ],
+        [
+         "Jeremiah 22:13",
+         "He who builds his house without justice"
+        ],
+        [
+         "Malachi 3:5",
+         "Against those who cheat the hired worker"
+        ],
+        [
+         "James 5:4",
+         "The wages you kept back cry out"
+        ],
+        [
+         "Ephesians 4:28",
+         "Let him labor, doing honest work"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "name": "The Rest",
+     "line": "A people who cannot stop are not free.",
+     "weeks": [
+      {
+       "name": "Remember the Sabbath",
+       "days": [
+        [
+         "Genesis 2:2-3",
+         "God rested on the seventh day"
+        ],
+        [
+         "Exodus 20:8-11",
+         "Remember the Sabbath day"
+        ],
+        [
+         "Exodus 31:16-17",
+         "A sign forever between God and Israel"
+        ],
+        [
+         "Deuteronomy 5:15",
+         "Remember that you were a slave"
+        ],
+        [
+         "Isaiah 58:13-14",
+         "Call the Sabbath a delight"
+        ],
+        [
+         "Mark 2:27",
+         "The Sabbath was made for man"
+        ]
+       ]
+      },
+      {
+       "name": "Come to Me",
+       "days": [
+        [
+         "Matthew 11:28-30",
+         "Come to me, all who labor"
+        ],
+        [
+         "Psalms 22:1-3",
+         "The Lord tends me as a shepherd"
+        ],
+        [
+         "Psalms 126:2",
+         "He gives to his beloved sleep"
+        ],
+        [
+         "Psalms 4:9",
+         "In peace I will lie down and sleep"
+        ],
+        [
+         "Mark 6:31",
+         "Come away by yourselves and rest"
+        ],
+        [
+         "John 14:27",
+         "My peace I give to you"
+        ]
+       ]
+      },
+      {
+       "name": "The Rest That Remains",
+       "days": [
+        [
+         "Hebrews 4:9-10",
+         "A Sabbath rest for the people of God"
+        ],
+        [
+         "Psalms 94:7-8",
+         "Today, if you hear his voice"
+        ],
+        [
+         "Exodus 33:14",
+         "I myself will go before you and give you rest"
+        ],
+        [
+         "Jeremiah 6:16",
+         "Ask for the ancient paths"
+        ],
+        [
+         "Isaiah 30:15",
+         "When you turn and mourn, you shall be saved"
+        ],
+        [
+         "Hebrews 4:1",
+         "Let us fear lest any seem to have failed to reach it"
+        ]
+       ]
+      },
+      {
+       "name": "Release",
+       "days": [
+        [
+         "Leviticus 25:2-4",
+         "The land shall keep a Sabbath"
+        ],
+        [
+         "Leviticus 25:10",
+         "Proclaim a release upon the land"
+        ],
+        [
+         "Deuteronomy 15:1-2",
+         "A release of debts every seventh year"
+        ],
+        [
+         "Isaiah 58:6",
+         "Loose every burden of iniquity"
+        ],
+        [
+         "Isaiah 61:1-2",
+         "Good news to the poor, liberty to the captives"
+        ],
+        [
+         "Luke 4:18-19",
+         "Today this Scripture is fulfilled"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "name": "The Long Day",
+     "line": "Endurance is the work of wisdom.",
+     "weeks": [
+      {
+       "name": "Burden and Heat",
+       "days": [
+        [
+         "Genesis 31:40",
+         "Parched by day, chilled by night"
+        ],
+        [
+         "Psalms 120:5-6",
+         "The sun shall not strike you by day"
+        ],
+        [
+         "Isaiah 40:28-29",
+         "He gives power to the faint"
+        ],
+        [
+         "Matthew 20:12",
+         "The burden of the day and the scorching heat"
+        ],
+        [
+         "Galatians 6:2",
+         "Bear one another’s burdens"
+        ],
+        [
+         "2 Thessalonians 3:13",
+         "Do not grow weary in well-doing"
+        ]
+       ]
+      },
+      {
+       "name": "Wisdom’s House",
+       "days": [
+        [
+         "Proverbs 9:1",
+         "Wisdom has built her house"
+        ],
+        [
+         "Proverbs 9:10",
+         "The fear of the Lord is the beginning of wisdom"
+        ],
+        [
+         "Proverbs 3:5-6",
+         "Trust in God with all your heart"
+        ],
+        [
+         "James 1:5",
+         "If any of you lacks wisdom, let him ask"
+        ],
+        [
+         "Wisdom 7:26",
+         "A reflection of eternal light"
+        ],
+        [
+         "Sirach 1:26",
+         "If you desire wisdom, keep the commandments"
+        ]
+       ]
+      },
+      {
+       "name": "The Race",
+       "days": [
+        [
+         "Hebrews 12:1-2",
+         "Run with endurance the race set before us"
+        ],
+        [
+         "1 Corinthians 9:24-25",
+         "Run so as to obtain the prize"
+        ],
+        [
+         "Philippians 3:13-14",
+         "Forgetting what lies behind"
+        ],
+        [
+         "2 Timothy 2:3-6",
+         "The soldier, the athlete, the farmer"
+        ],
+        [
+         "Psalms 83:6-8",
+         "They go from strength to strength"
+        ],
+        [
+         "2 Timothy 4:7",
+         "I have finished the race"
+        ]
+       ]
+      },
+      {
+       "name": "Trials and Joy",
+       "days": [
+        [
+         "James 1:2-4",
+         "Count it all joy"
+        ],
+        [
+         "Romans 5:3-5",
+         "Suffering produces endurance"
+        ],
+        [
+         "1 Peter 1:6-7",
+         "Faith tested by fire"
+        ],
+        [
+         "Job 23:10",
+         "He has tried me as gold"
+        ],
+        [
+         "Psalms 65:10-12",
+         "Brought out to a place of abundance"
+        ],
+        [
+         "2 Corinthians 4:16-17",
+         "Our light momentary affliction"
+        ]
+       ]
+      }
+     ]
+    }
+   ],
+   "closing": {
+    "name": "The Eighth Day",
+    "line": "The work is done, and the rest remains.",
+    "days": [
+     [
+      "Genesis 1:31",
+      "God saw everything that he had made, and it was very good"
+     ],
+     [
+      "Psalms 89:17",
+      "Establish the work of our hands"
+     ],
+     [
+      "Psalms 127:2",
+      "You shall eat the labors of your hands"
+     ],
+     [
+      "Ecclesiastes 5:11",
+      "The sleep of a servant is sweet"
+     ],
+     [
+      "Matthew 6:33",
+      "Seek first the kingdom of God"
+     ],
+     [
+      "Revelation 14:13",
+      "They rest from their labors, and their deeds follow them"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "fall",
+   "name": "Fall",
+   "line": "What did the year produce, what does it owe, and who will share the bread?",
+   "movements": [
+    {
+     "name": "The Attention",
+     "line": "Hear the alarm while there is time to answer.",
+     "weeks": [
+      {
+       "name": "The Trumpet",
+       "days": [
+        [
+         "Leviticus 23:24",
+         "A memorial of trumpets"
+        ],
+        [
+         "Numbers 10:9-10",
+         "Sounded in remembrance before the Lord"
+        ],
+        [
+         "Psalms 97:6",
+         "With trumpets and the sound of the horn"
+        ],
+        [
+         "Joel 2:1",
+         "Sound the trumpet in Sion"
+        ],
+        [
+         "Zephaniah 1:16",
+         "A day of trumpet blast and battle cry"
+        ],
+        [
+         "1 Corinthians 14:8",
+         "An indistinct sound from the bugle"
+        ]
+       ]
+      },
+      {
+       "name": "Wake Up",
+       "days": [
+        [
+         "Romans 13:11-12",
+         "The hour has come to wake from sleep"
+        ],
+        [
+         "Ephesians 5:14",
+         "Awake, O sleeper"
+        ],
+        [
+         "1 Thessalonians 5:6",
+         "Let us not sleep, but keep awake"
+        ],
+        [
+         "Luke 21:34",
+         "Lest your hearts be weighed down"
+        ],
+        [
+         "Revelation 3:2-3",
+         "Wake up, and strengthen what remains"
+        ],
+        [
+         "Proverbs 6:9-10",
+         "How long will you lie there, O sluggard?"
+        ]
+       ]
+      },
+      {
+       "name": "Count the Year",
+       "days": [
+        [
+         "Psalms 89:12",
+         "Who knows how to number his days?"
+        ],
+        [
+         "Haggai 1:5-6",
+         "Consider your ways"
+        ],
+        [
+         "Proverbs 27:23",
+         "Know the number of your flock"
+        ],
+        [
+         "Luke 14:28",
+         "Counting the cost"
+        ],
+        [
+         "Luke 12:16-19",
+         "The rich man and his full barns"
+        ],
+        [
+         "1 Corinthians 11:28",
+         "Let a person examine himself"
+        ]
+       ]
+      },
+      {
+       "name": "The Reckoning",
+       "days": [
+        [
+         "Ecclesiastes 12:13-14",
+         "The end of the matter"
+        ],
+        [
+         "Romans 14:10-12",
+         "Each of us will give an account"
+        ],
+        [
+         "2 Corinthians 5:10",
+         "We must all appear before the judgment seat"
+        ],
+        [
+         "Matthew 25:19",
+         "The master settles accounts"
+        ],
+        [
+         "Hebrews 4:13",
+         "Naked and exposed to the eyes of him"
+        ],
+        [
+         "Revelation 20:12",
+         "The books were opened"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "name": "The Atonement",
+     "line": "Name it. Bring it. Be cleansed.",
+     "weeks": [
+      {
+       "name": "Confession",
+       "days": [
+        [
+         "Psalms 31:5",
+         "I did not hide my iniquity"
+        ],
+        [
+         "Proverbs 28:13",
+         "He who covers his ungodliness will not prosper"
+        ],
+        [
+         "Luke 15:18-19",
+         "Father, I have sinned"
+        ],
+        [
+         "James 5:16",
+         "Confess your sins to one another"
+        ],
+        [
+         "Nehemiah 1:6-7",
+         "I confess the sins of the people of Israel"
+        ],
+        [
+         "1 John 1:9",
+         "He is faithful and just to forgive"
+        ]
+       ]
+      },
+      {
+       "name": "The Day of Atonement",
+       "days": [
+        [
+         "Leviticus 16:30",
+         "On this day atonement shall be made for you"
+        ],
+        [
+         "Leviticus 16:21-22",
+         "The goat bears all their iniquities"
+        ],
+        [
+         "Leviticus 17:11",
+         "The life of the flesh is in the blood"
+        ],
+        [
+         "Romans 3:25",
+         "Whom God put forward as a propitiation"
+        ],
+        [
+         "Hebrews 9:12",
+         "Once for all, by his own blood"
+        ],
+        [
+         "Hebrews 10:19-22",
+         "Draw near with a true heart"
+        ]
+       ]
+      },
+      {
+       "name": "Mercy",
+       "days": [
+        [
+         "Exodus 34:6-7",
+         "Pitiful and merciful, longsuffering"
+        ],
+        [
+         "Psalms 102:10-12",
+         "As far as the east is from the west"
+        ],
+        [
+         "Micah 7:19",
+         "He will cast all our sins into the depths of the sea"
+        ],
+        [
+         "Isaiah 1:18",
+         "Though your sins be as purple, I will make them white"
+        ],
+        [
+         "Psalms 50:12",
+         "Create in me a clean heart"
+        ],
+        [
+         "Lamentations 3:32",
+         "He will have compassion"
+        ]
+       ]
+      },
+      {
+       "name": "Forgiven, Therefore Forgiving",
+       "days": [
+        [
+         "Genesis 50:19-20",
+         "Joseph forgives his brothers"
+        ],
+        [
+         "Matthew 6:12",
+         "Forgive us our debts"
+        ],
+        [
+         "Matthew 18:21-22",
+         "Seventy times seven"
+        ],
+        [
+         "Luke 6:36-37",
+         "Be merciful, as your Father is merciful"
+        ],
+        [
+         "Ephesians 4:32",
+         "Forgiving one another, as God in Christ forgave you"
+        ],
+        [
+         "Colossians 3:13",
+         "Bear with one another and forgive"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "name": "The Ingathering",
+     "line": "Rejoice, and leave the corners for the poor.",
+     "weeks": [
+      {
+       "name": "The Feast of Booths",
+       "days": [
+        [
+         "Leviticus 23:42-43",
+         "You shall dwell in booths"
+        ],
+        [
+         "Deuteronomy 16:14-15",
+         "You shall be altogether joyful"
+        ],
+        [
+         "Nehemiah 8:10",
+         "The Lord is our strength"
+        ],
+        [
+         "Zechariah 14:16",
+         "The nations go up to keep the Feast of Booths"
+        ],
+        [
+         "John 7:37-38",
+         "On the last day of the feast, Jesus cried out"
+        ],
+        [
+         "John 1:14",
+         "The Word dwelt among us"
+        ]
+       ]
+      },
+      {
+       "name": "The Portion for the Poor",
+       "days": [
+        [
+         "Leviticus 19:9-10",
+         "Leave the edges of your field"
+        ],
+        [
+         "Deuteronomy 24:19",
+         "The sheaf you forgot is for the sojourner"
+        ],
+        [
+         "Ruth 2:15-16",
+         "Pull out some handfuls for her"
+        ],
+        [
+         "Proverbs 19:17",
+         "He who has pity on the poor lends to the Lord"
+        ],
+        [
+         "Isaiah 58:10",
+         "If you pour yourself out for the hungry"
+        ],
+        [
+         "2 Corinthians 9:6-8",
+         "God loves a cheerful giver"
+        ]
+       ]
+      },
+      {
+       "name": "The Table for All",
+       "days": [
+        [
+         "Isaiah 25:6",
+         "A feast of rich food for all peoples"
+        ],
+        [
+         "Psalms 22:5",
+         "You prepare a table before me"
+        ],
+        [
+         "Luke 14:12-14",
+         "Invite the poor, the crippled, the lame, the blind"
+        ],
+        [
+         "Luke 14:23",
+         "That my house may be filled"
+        ],
+        [
+         "Matthew 8:11",
+         "Many will come from east and west"
+        ],
+        [
+         "Acts 2:46",
+         "Breaking bread with glad and generous hearts"
+        ]
+       ]
+      },
+      {
+       "name": "Thanksgiving",
+       "days": [
+        [
+         "Psalms 99:4-5",
+         "Enter his gates with thanksgiving"
+        ],
+        [
+         "Psalms 106:1",
+         "Give thanks to the Lord, for he is good"
+        ],
+        [
+         "Deuteronomy 8:10",
+         "You shall bless the Lord for the good land"
+        ],
+        [
+         "1 Thessalonians 5:18",
+         "Give thanks in all circumstances"
+        ],
+        [
+         "Colossians 3:15-17",
+         "Let the peace of Christ rule in your hearts"
+        ],
+        [
+         "1 Chronicles 29:14",
+         "All things come from you"
+        ]
+       ]
+      }
+     ]
+    }
+   ],
+   "closing": {
+    "name": "The Eighth Day",
+    "line": "The year is gathered, and the corners are left for the poor.",
+    "days": [
+     [
+      "Deuteronomy 26:11",
+      "Rejoice in all the good the Lord has given"
+     ],
+     [
+      "Psalms 64:12",
+      "You crown the year with your bounty"
+     ],
+     [
+      "Isaiah 12:3",
+      "With joy you will draw water from the wells of salvation"
+     ],
+     [
+      "Revelation 7:9-10",
+      "A great multitude from every nation"
+     ],
+     [
+      "Revelation 21:3",
+      "The tabernacle of God is with men"
+     ],
+     [
+      "Zechariah 8:19",
+      "Fasts turned to feasts of joy and gladness"
+     ]
+    ]
+   }
+  }
+ ],
+ "turn": [
+  [
+   "Isaiah 46:4",
+   "To your old age I am he"
+  ],
+  [
+   "Psalms 101:28",
+   "You are the same, and your years have no end"
+  ]
+ ]
+}
