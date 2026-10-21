@@ -101,7 +101,7 @@ test('a word page shows the verse text for the verses it names, each linked to i
 
 test('Pharmakeia names Revelation 18:23 and shows its words', async ({ page }) => {
   await page.goto('/#/word/sorcery'); await settle(page);
-  await expect(page.locator('a.chip[href="/bible/revelation/18/23/"]')).toBeVisible();
+  await expect(page.locator('a.chip[href="/bible/revelation/18/?v=23"]')).toBeVisible();
   await expect(page.locator('figure.verse').first()).toContainText('in your sorcery all the nations were deceived');
 });
 
@@ -246,7 +246,7 @@ test('the app keeps its own home, not the archive', async ({ page }) => {
 const fs = require('fs');
 const path = require('path');
 
-test('essay text is switched off: no text in the data, no essay-text folder, and the font and cache rules stay harmless', () => {
+test('no essay text is published until an essay is approved: none in the data, no essay-text folder, and the font and cache rules stay harmless', () => {
   expect(Object.keys(D.ET || {})).toEqual([]);
   expect(fs.existsSync(path.join(__dirname, '..', 'essay-text'))).toBe(false);
 });

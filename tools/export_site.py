@@ -28,6 +28,7 @@ tools/curated.json.
 import argparse
 import collections
 import json
+import os
 import re
 import sqlite3
 import sys
@@ -249,14 +250,18 @@ def build(con, cur, warn):
                       where n.type = 'article' and n.status = 'published' and a.platform = 'substack' and a.audience = 'everyone'""")
                       if nid in pieces)
     essay_md, essay_html = {}, {}
-    # Essay text on the site is OFF for now (essay_text_on_site in curated.json): essays open on their own platforms. Switched on, only
-    # published Substack posts open to everyone get text, and never Patreon posts, members-only posts or drafts.
-    if cur.get("essay_text_on_site"):
+    # Essay text on the site is published essay by essay: only the ids listed in curated.json as essay_text_ids get text (KC_ESSAY_IDS=1,2,3 adds
+    # ids for a preview build in a scratch copy, never in the repository). Only published Substack posts open to everyone qualify, never Patreon posts,
+    # members-only posts or drafts. The text is the database's Markdown exactly; every page is checked word for word against it.
+    want = {int(x) for x in cur.get("essay_text_ids", [])} | {int(x) for x in os.environ.get("KC_ESSAY_IDS", "").split(",") if x.strip()}
+    if want:
         for nid, md in q("""select n.id, n.body_md from nodes n join articles a on a.node_id = n.id
                             where n.type = 'article' and n.status = 'published' and a.platform = 'substack' and a.audience = 'everyone'
                               and n.body_md is not null"""):
-            if nid in pieces and len(md.strip()) > 200:
+            if nid in want and nid in pieces and len(md.strip()) > 200:
                 essay_md[nid] = md
+        if want - set(essay_md):
+            raise SystemExit("essay_text_ids names essays that are not published public Substack posts with text: %s" % sorted(want - set(essay_md)))
         site_slugs = {re.sub(r".*/p/", "", pieces[n][1]).split("?")[0].rstrip("/"): n for n in essay_md}
 
         def rewrite(href):                   # links between essays, and to this site, stay on the site
@@ -265,7 +270,18 @@ def build(con, cur, warn):
                 return "#/essay/%d" % site_slugs[m.group(1)]
             m = re.match(r"https?://sources\.kingdomcodearchive\.com/?(#/[^\s]*)?$", href)
             return (m.group(1) or "#/") if m else None
-        essay_html = {k: essay_text.to_html(v, rewrite) for k, v in essay_md.items()}
+        linked = {}
+        for k, md in essay_md.items():       # each Scripture reference the author wrote becomes a link; the words themselves are untouched
+            refs = [(off, raw, essay_text.ref_key(hs, he)) for off, raw, hs, he in q(
+                """select char_offset, raw, house_start, house_end from citations
+                   where node_id = ? and in_text = 1 and house_start is not null and resolution in ('mapped', 'assumed_same')""", k)]
+            linked[k] = essay_text.link_refs(md, refs)
+        essay_html = {k: essay_text.to_html(v[0], rewrite) for k, v in linked.items()}
+        for k, h in essay_html.items():
+            off = essay_text.same_words(essay_md[k], h)
+            if off:
+                raise SystemExit("essay %d: the page does not say what the manuscript says: %s" % (k, off))
+        print("  essay text: %s" % ", ".join("%d (%d words, %d references linked)" % (k, essay_text.words(essay_md[k]), linked[k][1]) for k in sorted(linked)))
     D["ET"] = {str(k): essay_text.words(v) for k, v in sorted(essay_md.items())}
 
     # ---- guides and seasonal reads ----

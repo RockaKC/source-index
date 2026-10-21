@@ -74,10 +74,10 @@ async function main() {
   // 404.html: GitHub Pages sends it for any address with no saved page; the site opens and draws that address itself.
   fs.writeFileSync(path.join(dir, '404.html'), template.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<meta name="robots" content="noindex">'));
 
-  const today = new Date().toISOString().slice(0, 10), root = site.origin;
+  const root = site.origin;
   fs.writeFileSync(path.join(dir, 'sitemap.xml'),
     '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-    done.map(r => `<url><loc>${xml(root + r.path)}</loc><lastmod>${(r.lastmod || today).slice(0, 10)}</lastmod><priority>${r.priority.toFixed(1)}</priority></url>`).join('\n') + '\n</urlset>\n');
+    done.map(r => `<url><loc>${xml(root + r.path)}</loc>${/^\d{4}-\d{2}-\d{2}/.test(r.lastmod || '') ? `<lastmod>${r.lastmod.slice(0, 10)}</lastmod>` : ''}<priority>${r.priority.toFixed(1)}</priority></url>`).join('\n') + '\n</urlset>\n');
 
   fs.writeFileSync(path.join(dir, 'robots.txt'),
     '# Kingdom Code is free to read, and the Source Index is open to search engines and AI assistants alike.\n' +

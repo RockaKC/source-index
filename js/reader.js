@@ -71,10 +71,10 @@ function viewVerse(b, ch, v) {
   const label = `${bname(b)} ${ch}:${v}`;
   const vt = verseText(b, ch, v), eng = engLabel(b, ch, v), cs = 'font:400 13px/18px var(--sans)';
   const text = vt ? `<figure class="verse" style="margin:24px 0 0"><p>${fmtText(b, vt.text)}</p><p class="cap" style="${cs}">${esc(label)}, ${esc(vt.label)}</p>${eng ? `<p class="cap" style="${cs}">${esc(eng)}</p>` : ''}${vt.carried ? `<p class="cap" style="${cs}">Printed together with verse ${vt.carried}.</p>` : ''}</figure>
-    <div class="vnav">${verseText(b, ch, v - 1) ? `<a class="navbtn" href="#/verse/${b}/${ch}/${v-1}" aria-label="Previous verse, ${esc(bname(b))} ${ch}:${v-1}">‹ ${ch}:${v-1}</a>` : '<span></span>'}
+    <div class="vnav">${verseText(b, ch, v - 1) ? `<a class="navbtn" href="${scriptureHash([b, ch, v - 1])}" aria-label="Previous verse, ${esc(bname(b))} ${ch}:${v-1}">‹ ${ch}:${v-1}</a>` : '<span></span>'}
       <a class="btn secondary" href="#/read/${b}/${ch}/${v}">Read ${esc(bname(b))} ${ch}</a>
-      ${verseText(b, ch, v + 1) ? `<a class="navbtn" href="#/verse/${b}/${ch}/${v+1}" aria-label="Next verse, ${esc(bname(b))} ${ch}:${v+1}">${ch}:${v+1} ›</a>` : '<span></span>'}</div>` : '';
-  const note = nt ? `<p class="lede" style="margin-top:16px">${esc(nt.text)}${nt.to ? ` <a href="#/verse/${nt.to.join('/')}" style="color:var(--accent)">${esc(nt.label)}</a>` : ''}</p>` : '';
+      ${verseText(b, ch, v + 1) ? `<a class="navbtn" href="${scriptureHash([b, ch, v + 1])}" aria-label="Next verse, ${esc(bname(b))} ${ch}:${v+1}">${ch}:${v+1} ›</a>` : '<span></span>'}</div>` : '';
+  const note = nt ? `<p class="lede" style="margin-top:16px">${esc(nt.text)}${nt.to ? ` <a href="${scriptureHash(nt.to)}" style="color:var(--accent)">${esc(nt.label)}</a>` : ''}</p>` : '';
   if (!ids.length) pendingEvents.push(['miss/verse', `${bname(b)}/${ch}/${v}`]);
   const main = !PROFILE.essaysInBible ? '' : citedSection(ids, 'No Kingdom Code essay cites this verse yet.', `${plural(ids.length, 'Kingdom Code essay')} ${ids.length === 1 ? 'cites' : 'cite'} this verse. Sources lists the other verses each one quotes.`);
   return `

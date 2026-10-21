@@ -22,7 +22,7 @@ function viewTranslations() {
 }
 function personRef([b, ch, vs, ve]) {
   const label = esc(vrefLabel([b, ch, vs, ve]));
-  return `<li><a class="chip" href="#/${ve > vs ? 'range' : 'verse'}/${b}/${ch}/${vs}${ve > vs ? '/' + ve : ''}">${label}</a></li>`;
+  return `<li><a class="chip" href="${scriptureHash([b, ch, vs, ve])}">${label}</a></li>`;
 }
 function viewNames() {
   const pp = D.PP || []; if (!pp.length) return viewMissing();

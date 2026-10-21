@@ -83,11 +83,15 @@ function viewPath(id) {
 }
 // ---------- an essay's text, read on the website ----------
 const ESSAYS = {};                       // essay id -> page HTML, once fetched
+const srefLinks = h => h.replace(/<a class="sref" data-ref="([\d:-]+)" href="[^"]*"/g, (m, k) => {      // each reference the author wrote goes to its passage
+  const [b, ch, vs, ve] = k.split(/[:-]/).map(Number);
+  return `<a class="sref" data-ref="${k}" href="${scriptureHash([b, ch, vs, ve || vs])}"`;
+});
 async function ensureEssay(pid) {
   if (ESSAYS[pid]) return;
   const r = await fetch(`essay-text/${pid}.json`);
   if (!r.ok) throw new Error('essay');
-  ESSAYS[pid] = (await r.json()).h;
+  ESSAYS[pid] = srefLinks((await r.json()).h);
 }
 function essayHead(pid) {                // the title, the line under it, and (once loaded) the text itself
   const [title, , , date] = P[pid], mins = Math.max(1, Math.round(ET[pid] / 220));
