@@ -13,7 +13,7 @@ const PROFILE = {
   archiveHome: true,       // the front page as the Kingdom Code archive, and the Essays page (js/pages.js)
   cleanUrls: true,         // permanent addresses like /bible/john/3/16/ instead of #/verse/… (js/urls.js), with a page title, description and structured data for each (js/seo.js)
   witness: true,           // The Daily Witness: one passage a day, each a step in a study (js/witness.js, D.W, data/witness/)
-  accounts: null,          // Berean reader accounts (js/account.js): {url, key, public[, turnstileKey, codeLength, codeMinutes]} from Supabase; null keeps the whole feature off, public: false makes it a private preview (?berean-preview=1)
+  accounts: {url: 'https://lsgldbagakgrlndqtyhi.supabase.co', key: 'sb_publishable_z-FWZ0i7E9BfLWN9r7UShA_-FyjRbXz', public: false, codeLength: 7, codeMinutes: 10},        // Berean reader accounts (js/account.js): {url, key, public[, turnstileKey, codeLength, codeMinutes]} from Supabase; null keeps the whole feature off, public: false makes it a private preview (?berean-preview=1)
   origin: 'https://kingdomcodearchive.com',   // the one place the site's public address is written: canonical links, the sitemap, share cards
   library: true,             // the Essays library: search, subjects, topics, collections (js/library.js, D.LIB)
   connections: true,          // essays and subjects (Early Church, Names) link to each other (js/connections.js)

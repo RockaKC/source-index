@@ -285,3 +285,9 @@ test('a public launch ignores the preview switch and shows no preview note', asy
   await expect(page.locator('#app h1')).toHaveText('Become a Berean.');
   await expect(page.locator('.accpreview')).toHaveCount(0);
 });
+
+test('the committed site profile points at the live project but stays a private preview', async () => {
+  const src = require('fs').readFileSync(require('path').join(__dirname, '..', 'profiles', 'site.js'), 'utf8');
+  expect(src).toContain("url: 'https://lsgldbagakgrlndqtyhi.supabase.co'");
+  expect(src).toMatch(/accounts: \{[^}]*public: false/);
+});
