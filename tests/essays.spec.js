@@ -12,7 +12,7 @@ const D = loadData(), ROOT = path.resolve(__dirname, '..');
 // an essay that is filed under a subject and cites a verse, a verse with no page of its own in the same chapter, and the page's pieces
 function pick() {
   for (const pid of D.PUB) {
-    if (!D.LIB || !D.LIB.ess[pid]) continue;
+    if (!D.LIB || !D.LIB.ess[pid] || D.ET[pid]) continue;                  // not one of the real, approved essays
     for (const b in D.verses) for (const ch in D.verses[b]) for (const v in D.verses[b][ch]) {
       if (!D.verses[b][ch][v].map(String).includes(String(pid)) || !(D.CC[b] || []).includes(+ch)) continue;
       let u = 1; while (D.verses[b][ch][u]) u++;
@@ -22,8 +22,9 @@ function pick() {
         ids.forEach(x => { if (x !== String(pid)) score[x] = (score[x] || 0) + 1; });
       }
       const top = Object.keys(score).sort((a, c) => score[c] - score[a] || D.pieces[c][5] - D.pieces[a][5]);
-      if (!top.length) continue;
-      return {pid: String(pid), b: +b, ch: +ch, v: +v, u, pid2: top[0], rest: top.slice(1, 3)};
+      const free = top.filter(x => !D.ET[x]);
+      if (!free.length) continue;
+      return {pid: String(pid), b: +b, ch: +ch, v: +v, u, pid2: free[0], rest: free.slice(1, 3)};
     }
   }
   throw new Error('no essay to test with');
@@ -38,7 +39,7 @@ const BODY2 = '<p>The second made-up essay, which the first one is related to.</
 async function withEssay(page) {                            // two essays are "approved": their word counts are in the data and their files are served
   await page.route('**/data/site.js*', async route => {
     const res = await route.fetch();
-    await route.fulfill({response: res, body: (await res.text()).replace('"ET":{}', `"ET":{"${X.pid}":${WORDS},"${X.pid2}":9}`)});
+    await route.fulfill({response: res, body: (await res.text()).replace(/"ET":\{/, `"ET":{"${X.pid}":${WORDS},"${X.pid2}":9,`).replace(/,\}/, '}')});
   });
   await page.route(`**/essay-text/${X.pid}.json`, route => route.fulfill({contentType: 'application/json', body: JSON.stringify({h: BODY})}));
   await page.route(`**/essay-text/${X.pid2}.json`, route => route.fulfill({contentType: 'application/json', body: JSON.stringify({h: BODY2})}));
@@ -144,8 +145,8 @@ test('the prerendered page of an approved essay holds its whole text, its links 
     fs.cpSync(path.join(ROOT, f), path.join(out, f), {recursive: true});
   }
   const file = path.join(out, 'data', 'site.js');
-  fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace('"ET":{}', `"ET":{"${X.pid}":${WORDS}}`));
-  fs.mkdirSync(path.join(out, 'essay-text')); fs.writeFileSync(path.join(out, 'essay-text', X.pid + '.json'), JSON.stringify({h: BODY}));
+  fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace(/"ET":\{/, `"ET":{"${X.pid}":${WORDS},`));
+  fs.mkdirSync(path.join(out, 'essay-text'), {recursive: true}); fs.writeFileSync(path.join(out, 'essay-text', X.pid + '.json'), JSON.stringify({h: BODY}));
   execFileSync('node', [path.join(ROOT, 'tools', 'prerender.js'), out], {stdio: 'pipe', timeout: 230000});
   const dir = fs.readdirSync(path.join(out, 'essays')).find(d => d.startsWith(X.pid + '-'));
   const html = fs.readFileSync(path.join(out, 'essays', dir, 'index.html'), 'utf8');
