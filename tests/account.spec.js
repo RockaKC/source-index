@@ -91,19 +91,18 @@ test('a rate-limited request, and sending a new code, are handled in plain words
   await expect(page.locator('#acctmail')).toHaveValue('');
 });
 
-test('My Library shows every guide at once, and saved items are kept apart from the guides', async ({ page }) => {
+test('a new account has an empty library with a prompt to explore, and no guide catalog', async ({ page }) => {
   const st = await fakeSupabase(page);
   await signIn(page, st);
-  const guides = D.KG.length;
-  await expect(page.locator('.libguide')).toHaveCount(guides);
-  await expect(page.locator('.libh').first()).toContainText(`${guides} guide${guides === 1 ? '' : 's'} available`);
-  await expect(page.locator('.libempty')).toContainText('Your saved essays and Scripture references will appear here');
-  const first = page.locator('.libguide').first();
-  const file = D.KG.map(g => g.file);
-  const href = await first.locator('a[download]').getAttribute('href');
-  expect(file, 'the public PDF link').toContain(href);
+  await expect(page.locator('.libempty')).toContainText('Your library is empty');
+  await expect(page.locator('.libempty a')).toHaveText(['Essays', 'Scripture', 'Study guides']);
+  await expect(page.locator('#libsaved .libh')).toHaveCount(0);
   await expect(page.locator('#libsaved .libitem')).toHaveCount(0);
+  await expect(page.locator('#app')).not.toContainText('available');
   await expect(page.locator('.libacct')).toContainText('reader@example.com');
+  await page.click('.libempty a:has-text("Study guides")');
+  await expect(page).toHaveURL(/\/guides\/kingdom-code\/$/);     // the public guides stay on their own page
+  await expect(page.locator('#app a[download]')).toHaveCount(D.KG.length);
 });
 
 test('Save and Unsave work on essays, guides, chapters, verses and passages, and My Library lists them', async ({ page }) => {
@@ -129,18 +128,18 @@ test('Save and Unsave work on essays, guides, chapters, verses and passages, and
   await expect.poll(() => st.saved.length).toBe(5);
 
   await page.goto('/my-library/'); await settle(page);
-  await expect(page.locator('#libsaved h3').nth(0)).toContainText('Essays');
-  await expect(page.locator('#libsaved h3').nth(1)).toContainText('Scripture');
-  await expect(page.locator('#libsaved .libitem')).toHaveCount(4);
+  await expect(page.locator('#libsaved .libh')).toHaveText(['Saved Scripture 3', 'Saved Investigations 1', 'Saved Study Guides 1']);
+  await expect(page.locator('#libsaved .libitem')).toHaveCount(5);
+  await expect(page.locator('#libsaved .libitems').nth(0).locator('.libitem')).toHaveCount(3);
+  await expect(page.locator('#libsaved .libitems').nth(1).locator('.libitem')).toHaveCount(1);
+  await expect(page.locator('#libsaved .libitems').nth(2)).toContainText(D.KG.find(g => g.slug === slug).title);
   await expect(page.locator('#libsaved')).toContainText('Genesis 1:1');
   await expect(page.locator('#libsaved')).toContainText('Genesis 1:2–3');
   await expect(page.locator('#libsaved')).toContainText('Genesis 1');
-  await expect(page.locator('.libguide').first().locator('[data-save]')).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('.libguide').first()).toContainText(D.KG.find(g => g.slug === slug).title);   // a saved guide rises to the top
   await expect(page.locator('[data-snip="1:1:1"]')).toContainText('beginning');                         // the verse's opening words
   // unsave from the library
   await page.locator('#libsaved [data-save="verse|1:1:1"]').click();
-  await expect(page.locator('#libsaved .libitem')).toHaveCount(3);
+  await expect(page.locator('#libsaved .libitem')).toHaveCount(4);
   await expect.poll(() => st.saved.some(r => r.item_key === '1:1:1')).toBe(false);
   // the essay page remembers it was saved
   await page.goto(`/essays/${ESSAY}-x/`); await settle(page);
@@ -290,4 +289,46 @@ test('the committed site profile points at the live project but stays a private 
   const src = require('fs').readFileSync(require('path').join(__dirname, '..', 'profiles', 'site.js'), 'utf8');
   expect(src).toContain("url: 'https://lsgldbagakgrlndqtyhi.supabase.co'");
   expect(src).toMatch(/accounts: \{[^}]*public: false/);
+});
+
+test('My Library groups by kind, hides empty groups, drops an unsaved item at once and keeps the rest after a refresh', async ({ page }) => {
+  const st = await fakeSupabase(page);
+  await signIn(page, st);
+  const slug = D.KG[0].slug, title = D.KG[0].title;
+  await page.goto(`/guides/kingdom-code/${slug}/`); await settle(page);
+  await page.locator(`[data-save="guide|${slug}"]`).click();
+  await expect.poll(() => st.saved.length).toBe(1);
+  await page.goto('/my-library/'); await settle(page);
+  await expect(page.locator('#libsaved .libh')).toHaveText(['Saved Study Guides 1']);   // only the group that has something
+  await expect(page.locator('#libsaved')).toContainText(title);
+  await expect(page.locator('#libsaved')).not.toContainText('Your library is empty');
+  await page.reload(); await settle(page);
+  await expect(page.locator('#libsaved .libh')).toHaveText(['Saved Study Guides 1']);   // kept after a refresh (read back from the server)
+  await expect(page.locator('#libsaved [data-save]')).toHaveAttribute('aria-pressed', 'true');
+  // unsaving removes it from the library, and the empty prompt returns; the public guide is untouched
+  await page.locator(`#libsaved [data-save="guide|${slug}"]`).click();
+  await expect(page.locator('#libsaved .libitem')).toHaveCount(0);
+  await expect(page.locator('#libsaved .libh')).toHaveCount(0);
+  await expect(page.locator('.libempty')).toContainText('Your library is empty');
+  await expect.poll(() => st.saved.length).toBe(0);
+  await page.reload(); await settle(page);
+  await expect(page.locator('.libempty')).toBeVisible();
+  await page.goto('/guides/kingdom-code/'); await settle(page);
+  await expect(page.locator('#app a[download]')).toHaveCount(D.KG.length);
+  await expect(page.locator('#app')).toContainText(title);
+});
+
+test('the library lays out in a phone width in light and dark', async ({ page }) => {
+  const st = await fakeSupabase(page);
+  await signIn(page, st);
+  await page.goto('/bible/genesis/1/1/'); await settle(page);
+  await page.locator('[data-save="verse|1:1:1"]').click();
+  await expect.poll(() => st.saved.length).toBe(1);
+  await page.setViewportSize({width: 375, height: 800});
+  for (const scheme of ['light', 'dark']) {
+    await page.emulateMedia({colorScheme: scheme});
+    await page.goto('/my-library/'); await settle(page);
+    await expect(page.locator('#libsaved .libh')).toHaveText(['Saved Scripture 1']);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), scheme + ': no sideways scroll').toBe(true);
+  }
 });
