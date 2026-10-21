@@ -126,7 +126,66 @@ test('the prerendered site: real files at clean addresses, a sitemap, robots.txt
   const essay = D.PUB && D.PUB.length ? fs.readdirSync(path.join(out, 'essays')).find(d => /^\d+-/.test(d)) : null;
   expect(essay, 'essay pages are written').toBeTruthy();
   expect(JSON.parse(read('prerender-report.json')).problems).toEqual([]);
+
+  // every link between pages leads to a file that was saved (a crawler never meets a 404 from inside the site)
+  const exists = h => { const f = path.join(out, h.replace(/^\//, '')); return fs.existsSync(f) && (fs.statSync(f).isFile() || fs.existsSync(path.join(f, 'index.html'))); };
+  const loose = [];
+  for (const m of map.matchAll(/<loc>https:\/\/kingdomcodearchive\.com([^<]*)<\/loc>/g)) {
+    const html = read(m[1].replace(/^\//, '') + 'index.html'), body = html.slice(html.indexOf('<main id="app"'));
+    for (const a of body.matchAll(/<a [^>]*href="(\/[^"#?]*)/g)) if (!exists(a[1])) loose.push(m[1] + ' -> ' + a[1]);
+  }
+  expect(loose.slice(0, 10), `${loose.length} links lead to an address with no saved page`).toEqual([]);
+
+  // the sitemap says a page changed only when the data knows it did: never the day of the build
+  const today = new Date().toISOString().slice(0, 10);
+  expect(map).not.toContain(`<lastmod>${today}</lastmod>`);
+  expect(map).toContain('<loc>https://kingdomcodearchive.com/bible/genesis/1/</loc><priority>');
+  for (const m of map.matchAll(/<lastmod>([^<]*)<\/lastmod>/g)) expect(m[1]).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  const id = Object.keys(D.pieces)[0], when = D.pieces[id][3].slice(0, 10);
+  expect(map).toMatch(new RegExp(`<loc>https://kingdomcodearchive\\.com/essays/${id}-[^<]*</loc><lastmod>${when}</lastmod>`));
   fs.rmSync(out, { recursive: true, force: true });
+});
+
+test('a link to Scripture goes to a saved page: a cited verse, otherwise its chapter at that verse', async ({ page }) => {
+  await page.goto('/'); await settle(page);
+  const r = await page.evaluate(() => {
+    let cited = null, plain = null;
+    for (const b in D.verses) for (const ch in D.verses[b]) for (const v of Object.keys(D.verses[b][ch])) {
+      if (!cited) cited = [+b, +ch, +v];
+      if (!plain && hasChapter(+b, +ch) && !hasVerse(+b, +ch, +v + 1) && verseText(+b, +ch, +v + 1)) plain = [+b, +ch, +v + 1];
+    }
+    return {cited, plain, a: scriptureHash(cited), b: scriptureHash(plain), c: scriptureHash([plain[0], plain[1], plain[2], plain[2] + 2]), d: scriptureHash([cited[0], cited[1], cited[2], cited[2]])};
+  });
+  expect(r.a).toBe(`#/verse/${r.cited.join('/')}`);
+  expect(r.b).toBe(`#/read/${r.plain.join('/')}`);
+  expect(r.c, 'a passage has no saved page of its own').toBe(`#/read/${r.plain.join('/')}`);
+  expect(r.d).toBe(r.a);
+});
+
+test('the verse page, the names and the word studies never link to a page that is not saved', async ({ page }) => {
+  await page.goto('/'); await settle(page);
+  const bad = await page.evaluate(async () => {
+    const out = [], check = (where, href) => { const h = hashOf(href.split('?')[0]), q = href.includes('?v=') ? href : '';
+      const p = h.replace(/^#\/?/, '').split('/');
+      if (p[0] === 'range') out.push(where + ' ' + href);
+      else if (p[0] === 'verse' && !hasVerse(+p[1], +p[2], +p[3])) out.push(where + ' ' + href); };
+    const pages = [];
+    for (const b in D.verses) for (const ch in D.verses[b]) for (const v in D.verses[b][ch]) { pages.push(`#/verse/${b}/${ch}/${v}`); if (pages.length > 60) break; }
+    D.PP.forEach(x => pages.push('#/person/' + x.slug)); D.words.forEach(w => pages.push('#/word/' + w.slug));
+    for (const h of pages) {
+      history.pushState({}, '', pathOf(h)); route();
+      for (let i = 0; i < 60 && document.getElementById('loadmsg'); i++) await new Promise(ok => setTimeout(ok, 50));
+      document.querySelectorAll('#app a[href^="/bible/"]').forEach(a => check(h, a.getAttribute('href')));
+    }
+    return out;
+  });
+  expect(bad).toEqual([]);
+});
+
+test('the app keeps its verse and passage pages for every link', async ({ page }) => {
+  await page.goto('/app.html'); await settle(page);
+  const r = await page.evaluate(() => [scriptureHash([1, 1, 2]), scriptureHash([1, 1, 2, 4])]);
+  expect(r).toEqual(['#/verse/1/1/2', '#/range/1/1/2/4']);
 });
 
 test('the essay call-to-action link names the essay it came from, and the page still opens with it', async ({ page }) => {

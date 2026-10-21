@@ -12,6 +12,13 @@ const BASE = PROFILE.cleanUrls ? (PROFILE.origin || location.origin) + '/' : loc
 const P = D.pieces, entryOf = id => D.entries.find(e => e.id === id);
 
 const hasVerse = (b, ch, v) => !!(D.verses[b] && D.verses[b][ch] && D.verses[b][ch][v]);
+// Where a link to Scripture goes. On the website only a verse that essays cite has a page of its own saved at its address (tools/prerender.js
+// writes no other verse and no passage), so a link to anything else opens its chapter at that verse, which is a saved page too. The app keeps the verse and passage pages.
+function scriptureHash([b, ch, vs, ve]) {
+  const verse = `#/verse/${b}/${ch}/${vs}`, passage = ve > vs;
+  if (!PROFILE.cleanUrls || (!passage && hasVerse(b, ch, vs))) return passage ? `#/range/${b}/${ch}/${vs}/${ve}` : verse;
+  return hasChapter(b, ch) ? `#/read/${b}/${ch}/${vs}` : passage ? `#/range/${b}/${ch}/${vs}/${ve}` : verse;
+}
 const vrefLabel = ([b,ch,vs,ve]) => `${bname(b)} ${ch}:${vs}${ve > vs ? '\u2013' + ve : ''}`;
 
 const MEM = {};

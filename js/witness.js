@@ -45,7 +45,7 @@ function witToday(now = new Date()) {            // {e, exact}: today's study, o
 const witEntry = n => WIT.e.find(e => e.n === n);
 const witVisible = e => !!e && (witPreview() || e.st === 'approved');
 const witRef = r => `${bname(r[0])} ${r[1]}:${r[2]}${r[3] > r[2] ? '–' + r[3] : ''}`;
-const witHash = r => r[3] > r[2] ? `#/range/${r[0]}/${r[1]}/${r[2]}/${r[3]}` : `#/verse/${r[0]}/${r[1]}/${r[2]}`;
+const witHash = scriptureHash;
 const witThread = id => WIT.th.find(t => t.id === id);
 
 // Prose arrives as segments: a string, {i} italics, {r} a link to a verse, {r, q} a quotation the exporter checked against the stored text.

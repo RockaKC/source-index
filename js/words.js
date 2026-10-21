@@ -39,7 +39,7 @@ function viewWord(slug) {
   const w = wordBySlug(slug); if (!w) return viewMissing();
   const pid = w.essay;
   const rows = w.forms.map(f => `<li class="wf"><div class="lg">${esc(f.l)}</div><div><div class="w">${esc(f.t)}</div>${f.s ? `<span class="sc" lang="he">${esc(f.s)}</span>` : ''}<p class="g">${esc(f.g)}</p></div></li>`).join('');
-  const refHref = ([b, ch, vs, ve]) => ve > vs ? `#/range/${b}/${ch}/${vs}/${ve}` : `#/verse/${b}/${ch}/${vs}`;   // any verse with stored text has its own page, quoted by an essay or not
+  const refHref = scriptureHash;
   const vs = w.verses.map(r => hasVerse(r[0], r[1], r[2]) || hasChapter(r[0], r[1])
     ? `<li><a class="chip" href="${refHref(r)}">${esc(vrefLabel(r))}</a></li>`
     : `<li><span class="chip static">${esc(vrefLabel(r))}</span></li>`).join('')
