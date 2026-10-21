@@ -70,7 +70,62 @@ function accRefreshButtons() {
     const on = acc.saved.has(b.dataset.save);
     b.setAttribute('aria-pressed', String(on)); b.querySelector('span').textContent = on ? 'Saved' : 'Save';
   });
+  accMarkVerses();
 }
+
+// ---------- saving any verse from the chapter page ----------
+// Tapping a verse (or its number) opens a small bar under it with Save / Unsave. A cited verse is a link, so its words keep
+// going to the verse page; its number, or Space on the focused link, opens the bar instead.
+let accPage = [];
+const accVerseKey = p => { const m = /^v(\d+)$/.exec(p.id); return m && accPage[0] === 'read' ? `${+accPage[1]}:${+accPage[2]}:${m[1]}` : null; };
+function accVerseClose() {
+  const open = document.querySelector('#app .text p.vsel'); if (!open) return null;
+  open.classList.remove('vsel');
+  const sup = open.querySelector('sup[role=button]'); if (sup) sup.setAttribute('aria-expanded', 'false');
+  const bar = open.nextElementSibling; if (bar && bar.classList.contains('vbar')) bar.remove();
+  return open;
+}
+function accVerseToggle(p) {
+  const key = accVerseKey(p); if (!key) return;
+  const wasOpen = p.classList.contains('vsel'); accVerseClose(); if (wasOpen) return;
+  p.classList.add('vsel');
+  const sup = p.querySelector('sup[role=button]'); if (sup) sup.setAttribute('aria-expanded', 'true');
+  const s = accScripture(key);
+  p.insertAdjacentHTML('afterend', `<div class="vbar" role="group" aria-label="${esc(s.label)}"><span class="vref">${esc(s.label)}</span>${saveButton('verse', key)}</div>`);
+}
+function accMarkVerses() {         // a small dot beside the number of each verse the reader has saved
+  if (accPage[0] !== 'read') return;
+  const have = new Set(), pre = `verse|${+accPage[1]}:${+accPage[2]}:`;
+  for (const k of acc.saved.keys()) if (k.startsWith(pre)) { const [a, z] = k.slice(pre.length).split('-').map(Number); for (let v = a; v <= (z || a); v++) have.add(v); }
+  document.querySelectorAll('#app .text p[id^=v]').forEach(p => p.classList.toggle('vsaved', have.has(+p.id.slice(1))));
+}
+function accWireVerses() {
+  document.querySelectorAll('#app .text p[id^=v]').forEach(p => {
+    if (!accVerseKey(p)) return;
+    const sup = p.querySelector('sup'), a = p.querySelector('a.vv'), n = p.id.slice(1);
+    if (a) a.setAttribute('aria-label', a.getAttribute('aria-label') + ' Press Space to save it.');
+    else { p.classList.add('vp'); if (sup) { sup.setAttribute('tabindex', '0'); sup.setAttribute('role', 'button'); sup.setAttribute('aria-expanded', 'false'); sup.setAttribute('aria-label', `Verse ${n}: save options`); } }
+  });
+  accMarkVerses();
+}
+document.addEventListener('click', e => {
+  if (!ACC_ON || accPage[0] !== 'read') return;
+  const t = e.target; if (t.closest('.vbar')) return;
+  const p = t.closest('#app .text p[id^=v]');
+  if (!p) { accVerseClose(); return; }
+  const link = t.closest('a');
+  if (link && !link.classList.contains('vv')) return;                       // any other link keeps its own job
+  if (link && !t.closest('sup')) return;                                    // a cited verse's words go to its page
+  if (String(window.getSelection()).length) return;                         // the reader is selecting text to copy
+  if (link) e.preventDefault();                                            // (captured first, so the page router never sees the click)
+  accVerseToggle(p);
+}, true);
+document.addEventListener('keydown', e => {
+  if (!ACC_ON || accPage[0] !== 'read') return;
+  if (e.key === 'Escape') { const was = accVerseClose(); if (was) { const sup = was.querySelector('sup[tabindex]') || was.querySelector('a.vv'); if (sup) sup.focus(); } return; }
+  const t = e.target, p = t.closest && t.closest('#app .text p[id^=v]'); if (!p) return;
+  if ((t.matches('sup[role=button]') && (e.key === 'Enter' || e.key === ' ')) || (t.matches('a.vv') && e.key === ' ')) { e.preventDefault(); accVerseToggle(p); }
+});
 
 // ---------- a short message that fades by itself ----------
 let sayTimer = 0;
@@ -387,23 +442,32 @@ function wireLibrary() {
 }
 
 // ---------- the privacy page ----------
+const PRIVACY_UPDATED = '21 October 2026';
 function viewPrivacy() {
   const t = ACC_CFG.turnstileKey;
   return `
   ${backLink('#/')}
   <h1>Privacy</h1>
-  <p class="lede">What Kingdom Code keeps about you, why, and how to remove it.</p>
+  <p class="lede">How Kingdom Code handles your information. You never need an account to read the archive.</p>
+  <p class="cap">Last updated ${PRIVACY_UPDATED}</p>
   <div class="about">
-    <h2>Reading is private</h2>
-    <p>You do not need an account to read anything here. The archive counts visits with cookieless analytics (GoatCounter) that do not identify you, and it is silent if your browser sends Do Not Track or Global Privacy Control.</p>
+    <h2>Reading the archive</h2>
+    <p>Everything in the archive is open to you without an account. We count visits with GoatCounter, a cookieless analytics service, to learn which pages are read. Those counts are not linked to any account, and nothing is counted if your browser sends Do Not Track or Global Privacy Control.</p>
     <h2>If you become a Berean</h2>
-    <p>We keep your <b>email address</b> and the <b>list of items you save</b> (a guide, an essay, a chapter or a verse, and when you saved it). Nothing else: no name, no password, no profile.</p>
-    <p>We use your email only to send you the one-time code you ask for. We do not add you to a mailing list, we do not send newsletters from your account, and we do not sell, rent, or share your data. Following Kingdom Code on Substack is separate.</p>
-    <h2>Who handles it</h2>
-    <p>Your account and saved items are stored by <b>Supabase</b>. The sign-in code is delivered by <b>Resend</b>.${t ? ' <b>Cloudflare Turnstile</b> checks that a visitor is a person when you ask for a code.' : ''} They process your data only to provide these services.</p>
-    <h2>Your control</h2>
-    <p>In <a href="#/mylibrary">My Library</a> you can <b>export</b> everything we hold about you as a file, <b>sign out</b>, and <b>delete your account</b>. Deleting removes your email and every saved item. It cannot be undone.</p>
-    ${CONTACT_EMAIL ? `<p>Questions about your data: <a href="mailto:${esc(CONTACT_EMAIL)}">${esc(CONTACT_EMAIL)}</a>.</p>` : ''}
+    <p>An account holds two things: your <b>email address</b>, and the <b>items you choose to save</b> (a study guide, an essay, a chapter, a verse or a passage) with the date you saved each one. We do not ask for your name, we do not use a password, and we do not build a profile of you.</p>
+    <h2>How we use it</h2>
+    <p>Your email is used to send the one-time code you ask for, so you can sign in. Your saved items are used to show you your own library. That is all. We do not add you to a mailing list, we send no newsletters from your account, we do not use your information for advertising, and we do not sell or rent it. Following Kingdom Code on Substack is separate from your account.</p>
+    <h2>Signing in on your device</h2>
+    <p>After you sign in, your browser keeps you signed in on that device until you sign out. This uses your browser\u2019s storage rather than cookies. Reading settings such as text size, theme and your place in a book also stay in your browser, on your device, and are not sent to us.</p>
+    <h2>Service providers</h2>
+    <p>We rely on a few providers to run accounts. <b>Supabase</b> stores your email address and saved items. <b>Resend</b> delivers the sign-in email.${t ? ' <b>Cloudflare Turnstile</b> checks that a visitor is a person when you ask for a code.' : ''} <b>GoatCounter</b> provides the visit counts described above. Each handles information only to provide its service to us, and each may keep its own limited technical records under its own policies.</p>
+    <h2>How long we keep it</h2>
+    <p>We keep your email and saved items for as long as your account exists. Removing a saved item deletes it. Deleting your account removes your email address and every saved item from our records.</p>
+    <h2>Your choices</h2>
+    <p>In <a href="#/mylibrary">My Library</a> you can <b>export</b> your email and saved items as a file, <b>sign out</b>, and <b>delete your account</b>. Deleting is permanent and cannot be undone, so export first if you want a copy. If you want to change the email on your account, or have a question about your information, write to us.</p>
+    <h2>Changes to this page</h2>
+    <p>If this policy changes, we will update this page and the date at the top.</p>
+    ${CONTACT_EMAIL ? `<p class="privcontact">For privacy inquiries, contact Rocka at <a href="mailto:${esc(CONTACT_EMAIL)}">${esc(CONTACT_EMAIL)}</a>.</p>` : ''}
   </div>`;
 }
 
@@ -412,7 +476,8 @@ if (ACC_ON) {
   addRoute('mylibrary', () => viewMyLibrary());
   addRoute('privacy', () => viewPrivacy());
   onPage(p => {
-    accChrome(); accSaveBar(p);
+    accPage = p; accChrome(); accSaveBar(p);
+    if (p[0] === 'read') accWireVerses();
     if (p[0] === 'berean') wireBerean();
     if (p[0] === 'mylibrary') wireLibrary();
   });

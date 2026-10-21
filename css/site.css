@@ -654,3 +654,12 @@ html:not([data-product]){-webkit-tap-highlight-color:transparent;touch-action:ma
 .chip.cv.t{background:var(--tint);border-color:var(--accent);color:var(--accent);font-weight:600}
 .dw .eyebrow{flex-wrap:wrap;gap:2px 12px}
 .witsoon{margin-top:var(--s4);padding:var(--s2) var(--s3);border:1px solid var(--hairline);border-radius:12px;background:var(--surface);font:500 17px/26px var(--serif)}
+.privcontact{margin-top:var(--s4)!important;padding-top:var(--s2);border-top:1px solid var(--hairline)}
+.text p.vp,.text p[id^=v] sup{-webkit-tap-highlight-color:transparent}
+.text p.vp{cursor:pointer}
+.text sup[role=button],.text p:has(a.vv) sup{cursor:pointer}
+.text p.vsel{background:var(--tint);box-shadow:-6px 0 0 var(--tint),6px 0 0 var(--tint);border-radius:2px}
+.text p.vsaved sup::after{content:"";display:inline-block;width:5px;height:5px;margin-left:2px;border-radius:50%;background:var(--accent);vertical-align:super}
+.vbar{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);margin:-4px 0 12px;padding:6px 6px 6px var(--s2);border:1px solid var(--hairline);border-radius:10px;background:var(--surface);font:500 14px/20px var(--sans)}
+.vbar .vref{color:var(--muted);min-width:0}
+.vbar .savebtn{height:36px}

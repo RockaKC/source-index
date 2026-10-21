@@ -223,16 +223,29 @@ test('Delete my account asks twice, can be cancelled, and removes the account an
   await expect(page.locator('#acctli a')).toHaveText('Become a Berean');
 });
 
-test('the privacy page says what is kept, and Turnstile only when it is used', async ({ page }) => {
+test('the privacy page is a reader-facing policy: sections, providers, deletion, and the contact line', async ({ page }) => {
   await fakeSupabase(page);
   await page.goto('/privacy/'); await settle(page);
   await expect(page.locator('#app h1')).toHaveText('Privacy');
+  await expect(page.locator('#app h2')).toHaveText(['Reading the archive', 'If you become a Berean', 'How we use it', 'Signing in on your device', 'Service providers', 'How long we keep it', 'Your choices', 'Changes to this page']);
   await expect(page.locator('#app')).toContainText('We do not add you to a mailing list');
+  await expect(page.locator('#app')).toContainText('GoatCounter');
+  await expect(page.locator('#app')).toContainText('Do Not Track or Global Privacy Control');
   await expect(page.locator('#app')).toContainText('Supabase');
   await expect(page.locator('#app')).toContainText('Resend');
+  await expect(page.locator('#app')).toContainText('Deleting your account removes your email address and every saved item');
   await expect(page.locator('#app')).not.toContainText('Turnstile');
+  for (const jargon of ['row-level', 'RLS', 'SECURITY DEFINER', 'JWT', 'localStorage', 'GDPR', 'CCPA', 'encrypted']) await expect(page.locator('#app'), jargon).not.toContainText(jargon);
+  const last = page.locator('#app .about p').last();
+  await expect(last).toHaveText('For privacy inquiries, contact Rocka at kingdomcode@proton.me.');
+  await expect(last.locator('a')).toHaveAttribute('href', 'mailto:kingdomcode@proton.me');
   expect(await page.evaluate(() => seoRoutes().some(r => r.path === '/privacy/')), 'the privacy page is in the sitemap').toBe(true);
   expect(await page.evaluate(() => seoRoutes().some(r => /berean|library/.test(r.path))), 'account pages are not').toBe(false);
+  await page.setViewportSize({width: 375, height: 800});
+  for (const scheme of ['light', 'dark']) {
+    await page.emulateMedia({colorScheme: scheme}); await page.reload(); await settle(page);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), scheme + ': no sideways scroll').toBe(true);
+  }
 });
 
 test('with a Turnstile key the check must pass first, and its token goes with the request', async ({ page }) => {
@@ -330,5 +343,104 @@ test('the library lays out in a phone width in light and dark', async ({ page })
     await page.goto('/my-library/'); await settle(page);
     await expect(page.locator('#libsaved .libh')).toHaveText(['Saved Scripture 1']);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), scheme + ': no sideways scroll').toBe(true);
+  }
+});
+
+test('any verse can be saved from the chapter page: tap, keyboard, cited verses, and a saved chapter, all kept after a refresh', async ({ page }) => {
+  const st = await fakeSupabase(page);
+  await signIn(page, st);
+  await page.goto('/bible/genesis/1/'); await settle(page);
+  const verses = page.locator('#app .text p[id^=v]');
+  expect(await verses.count()).toBeGreaterThan(5);
+  await expect(page.locator('.vbar'), 'no permanent buttons beside the verses').toHaveCount(0);
+  await expect(page.locator('#app .text [data-save]')).toHaveCount(0);
+  // tap an uncited verse
+  const plain = page.locator('#app .text p[id^=v]:not(:has(a.vv))').nth(2), id = await plain.getAttribute('id'), n = id.slice(1);
+  await plain.locator('sup').scrollIntoViewIfNeeded();
+  await plain.click({position: {x: 80, y: 8}});
+  const bar = page.locator('.vbar');
+  await expect(bar).toHaveCount(1);
+  await expect(bar).toContainText(`Genesis 1:${n}`);
+  await expect(bar.locator('[data-save]')).toHaveAttribute('aria-pressed', 'false');
+  await bar.locator('[data-save]').click();
+  await expect(bar.locator('[data-save]')).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(() => st.saved.map(r => r.item_key)).toEqual([`1:1:${n}`]);
+  await expect(plain).toHaveClass(/vsaved/);
+  // tapping elsewhere closes the bar; the saved mark stays
+  await page.locator('#app h1').click();
+  await expect(page.locator('.vbar')).toHaveCount(0);
+  await expect(plain).toHaveClass(/vsaved/);
+  // keyboard: the verse number is a button; Enter opens, Escape closes
+  const other = page.locator('#app .text p[id^=v]:not(:has(a.vv))').nth(4), on = (await other.getAttribute('id')).slice(1);
+  const num = other.locator('sup');
+  await expect(num).toHaveAttribute('role', 'button');
+  await num.focus(); await page.keyboard.press('Enter');
+  await expect(page.locator('.vbar')).toContainText(`Genesis 1:${on}`);
+  await expect(num).toHaveAttribute('aria-expanded', 'true');
+  await page.keyboard.press('Tab'); await expect(page.locator('.vbar [data-save]')).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.vbar')).toHaveCount(0);
+  // a cited verse keeps its link; its number opens the bar; Space on the focused link does too
+  const cited = page.locator('#app .text p[id^=v]:has(a.vv)').first();
+  if (await cited.count()) {
+    const cid = (await cited.getAttribute('id')).slice(1), href = await cited.locator('a.vv').getAttribute('href');
+    expect(href).toBe(`/bible/genesis/1/${cid}/`);
+    await cited.locator('a.vv sup').click();
+    await expect(page.locator('.vbar')).toContainText(`Genesis 1:${cid}`);
+    await expect(page).toHaveURL(/\/bible\/genesis\/1\/$/);
+    await page.keyboard.press('Escape');
+    await cited.locator('a.vv').focus(); await page.keyboard.press(' ');
+    await expect(page.locator('.vbar')).toHaveCount(1);
+    await page.keyboard.press('Escape');
+    await cited.locator('a.vv').click({position: {x: 150, y: 10}});
+    await expect(page).toHaveURL(new RegExp(`/bible/genesis/1/${cid}/$`));
+    await page.goBack(); await settle(page);
+  }
+  // the whole chapter
+  await page.locator('.savebar [data-save="verse|1:1"]').click();
+  await expect.poll(() => st.saved.map(r => r.item_key).sort()).toEqual(['1:1', `1:1:${n}`].sort());
+  // My Library: both under Saved Scripture; a refresh keeps them
+  await page.goto('/my-library/'); await settle(page);
+  await expect(page.locator('#libsaved .libh')).toHaveText(['Saved Scripture 2']);
+  await expect(page.locator('#libsaved')).toContainText(`Genesis 1:${n}`);
+  await expect(page.locator('#libsaved .libtext a').filter({hasText: /^Genesis 1$/})).toHaveCount(1);
+  await page.reload(); await settle(page);
+  await expect(page.locator('#libsaved .libitem')).toHaveCount(2);
+  // back in the chapter the verse is marked, and tapping it again offers Unsave
+  await page.goto('/bible/genesis/1/'); await settle(page);
+  await expect(page.locator(`#v${n}`)).toHaveClass(/vsaved/);
+  await page.locator(`#v${n}`).click({position: {x: 80, y: 8}});
+  await expect(page.locator('.vbar [data-save]')).toHaveAttribute('aria-pressed', 'true');
+  await page.locator('.vbar [data-save]').click();
+  await expect.poll(() => st.saved.map(r => r.item_key)).toEqual(['1:1']);
+  await expect(page.locator(`#v${n}`)).not.toHaveClass(/vsaved/);
+});
+
+test('a signed-out reader who saves a verse is taken to Become a Berean and returns to the chapter with it saved', async ({ page }) => {
+  const st = await fakeSupabase(page);
+  await page.goto('/bible/genesis/1/'); await settle(page);
+  const plain = page.locator('#app .text p[id^=v]:not(:has(a.vv))').first(), n = (await plain.getAttribute('id')).slice(1);
+  await plain.click({position: {x: 80, y: 8}});
+  await page.locator('.vbar [data-save]').click();
+  await page.waitForURL('**/become-a-berean/');
+  await page.fill('#acctmail', 'reader@example.com'); await page.click('#acctgo');
+  await page.waitForSelector('#acctnum'); await page.fill('#acctnum', CODE);
+  await page.waitForURL('**/bible/genesis/1/');
+  expect(st.saved.map(r => r.item_key)).toEqual([`1:1:${n}`]);
+  await expect(page.locator(`#v${n}`)).toHaveClass(/vsaved/);
+});
+
+test('the verse bar fits a phone in light and dark', async ({ page }) => {
+  const st = await fakeSupabase(page);
+  await signIn(page, st);
+  await page.setViewportSize({width: 375, height: 800});
+  for (const scheme of ['light', 'dark']) {
+    await page.emulateMedia({colorScheme: scheme});
+    await page.goto('/bible/genesis/1/'); await settle(page);
+    await page.locator('#app .text p[id^=v]:not(:has(a.vv))').first().click({position: {x: 60, y: 8}});
+    await expect(page.locator('.vbar')).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), scheme + ': no sideways scroll').toBe(true);
+    const box = await page.locator('.vbar [data-save]').boundingBox();
+    expect(box.height, 'a touch-sized control').toBeGreaterThanOrEqual(36);
   }
 });
