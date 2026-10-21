@@ -16,7 +16,7 @@ const essaySlug = pid => {                       // the essay's number, then its
 };
 
 const SIMPLE = {books: 'bible', english: 'english', words: 'words', names: 'names', guide: 'guides', guides: 'guides/kingdom-code',
-  translations: 'translations', church: 'guides/early-church', essays: 'essays', kc: 'questions', about: 'about', app: 'app', credits: 'credits', berean: 'become-a-berean', mylibrary: 'my-library', privacy: 'privacy'};
+  translations: 'translations', church: 'guides/early-church', essays: 'essays', kc: 'questions', about: 'about', app: 'app', credits: 'credits', witness: 'witness', berean: 'become-a-berean', mylibrary: 'my-library', privacy: 'privacy'};
 const SIMPLE_BACK = {};
 Object.keys(SIMPLE).forEach(k => { SIMPLE_BACK[SIMPLE[k]] = k; });
 
@@ -40,6 +40,7 @@ function pathOf(hash) {
   if (a === 'church' && p[1]) return tail(['guides', 'early-church', p[1]]);
   if (a === 'guides' && p[1]) return tail(['guides', 'kingdom-code', p[1]]);
   if (a === 'essay' && P[p[1]]) return tail(['essays', essaySlug(p[1])]);
+  if (a === 'witness' && p[1]) { const w = D.W && D.W.e.find(x => x.n === +p[1]); return w ? tail(['witness', w.n + '-' + w.slug]) : null; }
   if (a === 'path' && p[1]) return tail(['questions', p[1]]);
   if (a === 'search') return tail(['search', encodeURIComponent(decodeURIComponent(p.slice(1).join('/')))]);
   if (a === 'cta') return tail(['cta', encodeURIComponent(decodeURIComponent(p.slice(1).join('/')))]);
@@ -71,6 +72,7 @@ function hashOf(path, search) {
   if (a === 'essays' && b === 'topics' && s.length === 2) return '#/essays/topics';
   if (a === 'essays' && s.length === 3 && c) { if (b === 'subjects') return '#/essays/subject/' + c; if (b === 'topics') return '#/essays/topic/' + c; if (b === 'collections') return '#/essays/collection/' + c; }
   if (s.length === 2 && a === 'essays' && /^\d{4}$/.test(b)) return '#/essays/' + b;
+  if (s.length === 2 && a === 'witness') { const id = /^\d+/.exec(b); return id ? '#/witness/' + id[0] : none; }
   if (s.length === 2 && a === 'essays') { const id = /^\d+/.exec(b); return id ? '#/essay/' + id[0] : none; }
   if (a === 'search' && s.length >= 2) return '#/search/' + encodeURIComponent(s.slice(1).join('/'));
   if (a === 'cta' && s.length >= 2) return '#/cta/' + encodeURIComponent(s.slice(1).join('/'));

@@ -27,6 +27,7 @@ function seoCrumbs(p, name) {
   } else if (a === 'word') add('Words', '#/words');
   else if (a === 'person') add('Names', '#/names');
   else if (a === 'guides' && p[1]) { add('Guides', '#/guide'); add('Kingdom Code guides', '#/guides'); }
+  else if (a === 'witness') { if (p[1]) add('The Daily Witness', '#/witness'); }
   else if (a === 'church') { add('Guides', '#/guide'); if (p[1]) add('Early Church', '#/church'); }
   else if (a === 'guides') add('Guides', '#/guide');
   else if (a === 'essay' || (a === 'essays' && p[1] && !/^\d{4}$/.test(p[1]))) add('Essays', '#/essays');
@@ -141,5 +142,9 @@ function seoRoutes() {
     LIB.cols.forEach(c => add('#/essays/collection/' + c.id, null, 0.8));
   }
   essayIds().forEach(pid => add('#/essay/' + pid, P[pid][3], 0.6));
+  if (typeof WIT_ON !== 'undefined' && WIT_ON && D.W.e.some(e => e.st === 'approved')) {        // the Daily Witness: approved studies only, never a draft
+    add('#/witness', null, 0.8);
+    D.W.e.filter(e => e.st === 'approved').forEach(e => add('#/witness/' + e.n, null, 0.7));
+  }
   return out.map(r => Object.assign(r, {path: pathOf(r.hash)}));
 }

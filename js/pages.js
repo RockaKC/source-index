@@ -74,7 +74,7 @@ function archiveHome() {
     <ul class="chips" aria-label="Popular verses">${chips}</ul>
   </section>
 
-  ${PROFILE.dailyVerse ? '<section id="dv" class="dv" aria-label="Today\u2019s study verse"></section>' : ''}
+  ${typeof witCard === 'function' ? witCard() : ''}
 
   <div class="acols">
     ${g ? `<section aria-labelledby="ah-g"><h2 id="ah-g" class="ah2">Featured guide</h2>
