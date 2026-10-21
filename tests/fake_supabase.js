@@ -15,7 +15,7 @@ function sessionFor(email) {
 async function fakeSupabase(page, opts = {}) {
   const st = {saved: [], otp: [], verify: [], rpc: [], failInsert: false, otpStatus: 200, email: null, config: opts.config || {url: SB, key: 'sb_publishable_test', public: true}};
   await page.route('**/profiles/site.js*', async route => {
-    const res = await route.fetch(), body = (await res.text()).replace('accounts: null,', `accounts: ${JSON.stringify(st.config)},`);
+    const res = await route.fetch(), body = (await res.text()).replace(/accounts: (null|\{[^}]*\}),/, () => `accounts: ${JSON.stringify(st.config)},`);
     await route.fulfill({response: res, body});
   });
   const cors = (route, status, body) => route.fulfill({status, contentType: 'application/json', body: body === undefined ? '' : JSON.stringify(body),
