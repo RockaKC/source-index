@@ -95,8 +95,8 @@ async function ensureEssay(pid) {
 }
 function essayHead(pid) {                // the title, the line under it, and (once loaded) the text itself
   const [title, , , date] = P[pid], mins = Math.max(1, Math.round(ET[pid] / 220));
-  return `${backLink('#/essays')}${seriesCap(pid)}<h1>${esc(title)}</h1>
-  <p class="cap essaymeta">${meta(pid)} \u00b7 ${mins} min read</p>`;
+  return `${backLink('#/essays')}<div class="essayhead">${seriesCap(pid)}<h1>${esc(title)}</h1>
+  <div class="essayline"><p class="cap essaymeta">${meta(pid)} \u00b7 ${mins} min read</p></div></div>`;
 }
 function essayBody(pid) {
   const [, url, plat] = P[pid];
@@ -126,17 +126,34 @@ function viewEssay(pid) {
   const rel = related(pid, 3);
   const relHtml = rel.length ? `<h2>Essays that cite the same verses</h2><div class="card"><ul class="list">${rel.map(([p,n]) => `<li class="piece">${seriesCap(p)}
     <div class="t"><a ${link(p)}>${esc(P[p][0])}</a></div><p class="cap">${plural(n,'shared verse')} \u00b7 ${meta(p)}${srcLink(p)}</p></li>`).join('')}</ul></div>` : '';
-  const reading = onSite(pid);
-  return `
-  ${reading ? essayHead(pid) + essayBody(pid) : `${backLink(`#/`)}
+  if (onSite(pid)) return essayReading(pid, refs, books, groups, texts, rel);
+  return `${backLink(`#/`)}
   <h1>${esc(title)}</h1>
   <p class="lede">${meta(pid)}. Cites ${plural(refs.length,'verse')} across ${plural(books.length,'book')}.</p>
-  <p style="margin-top:24px"><a class="btn primary" ${link(pid)} aria-label="Read the essay: ${esc(title)}">Read the essay</a></p>`}
-  <h2>${reading ? `Scripture cited in this essay</h2><p class="cap" style="margin-top:4px">${plural(refs.length,'verse')} across ${plural(books.length,'book')}.</p><div>` : `Scripture cited</h2>`}${groups}${reading ? '</div>' : ''}
+  <p style="margin-top:24px"><a class="btn primary" ${link(pid)} aria-label="Read the essay: ${esc(title)}">Read the essay</a></p>
+  <h2>Scripture cited</h2>${groups}
   ${wordsForEssay(pid).length ? `<h2>Words discussed</h2><ul class="chips">${wordsForEssay(pid).map(w => `<li><a class="chip" href="#/word/${w.slug}">${esc(w.title)}</a></li>`).join('')}</ul>` : ''}
   ${libraryChips(pid)}
   ${connectionChips(pid)}
   ${texts}
+  ${relHtml}`;
+}
+// An essay read on the site: the text, then one compact Sources & Scripture section (everything the Source Index holds for it, folded away), then the related investigations.
+function essayReading(pid, refs, books, groups, texts, rel) {
+  const disc = (title, count, body) => `<details class="disc"><summary><span>${title}</span>${count === '' ? '' : `<span class="count">${count}</span>`}</summary><div class="discbody">${body}</div></details>`;
+  const words = wordsForEssay(pid).length ? `<h3>Words discussed</h3><ul class="chips">${wordsForEssay(pid).map(w => `<li><a class="chip" href="#/word/${w.slug}">${esc(w.title)}</a></li>`).join('')}</ul>` : '';
+  const more = [words, libraryChips(pid), connectionChips(pid)].join('').replace(/<h2>/g, '<h3>').replace(/<\/h2>/g, '</h3>');
+  const relHtml = rel.length ? `<section class="relinv" aria-labelledby="relinv-t"><h2 id="relinv-t">Related investigations</h2>
+    <p class="cap" style="margin-top:4px">Kingdom Code essays that cite the same verses.</p>
+    <div class="card"><ul class="list">${rel.map(([p, n]) => `<li class="piece">${seriesCap(p)}
+    <div class="t"><a ${link(p)}>${esc(P[p][0])}</a></div><p class="cap">${plural(n, 'shared verse')} \u00b7 ${meta(p)}${srcLink(p)}</p></li>`).join('')}</ul></div></section>` : '';
+  return `${essayHead(pid)}${essayBody(pid)}
+  <section class="srcs" aria-labelledby="srcs-t"><h2 id="srcs-t">Sources &amp; Scripture</h2>
+    <p class="cap">${plural(refs.length, 'verse')} across ${plural(books.length, 'book')} cited in this essay.</p>
+    ${disc('All cited passages', refs.length, groups)}
+    ${texts ? disc('The verses', 'first ' + Math.min(6, refs.filter(([b, ch, v]) => verseText(b, ch, v)).length), texts.replace(/<h2>[^<]*<\/h2>/, '')) : ''}
+    ${more.trim() ? disc('In the Source Index', '', more) : ''}
+  </section>
   ${relHtml}`;
 }
 function ctaFor(pid) {

@@ -61,6 +61,7 @@ function accSaveBar(p) {            // a Save button on the essay, guide, chapte
   const t = accTarget(p); if (!t) return;
   let host, html = saveButton(t[0], t[1], t[0] === 'guide' ? 'btn secondary' : '');
   if (t[0] === 'guide') host = document.querySelector('#app .act');
+  if (t[0] === 'essay' && (host = document.querySelector('#app .essayline'))) { host.insertAdjacentHTML('beforeend', saveButton(t[0], t[1], 'quiet')); return; }   // an essay read here: Save sits quietly beside its date
   if (host) { host.insertAdjacentHTML('beforeend', html); return; }
   host = (t[0] === 'essay' && document.querySelector('#app .essaymeta')) || document.querySelector('#app h1');
   if (host) host.insertAdjacentHTML('afterend', `<div class="savebar">${html}</div>`);

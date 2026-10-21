@@ -16,7 +16,14 @@ function pick() {
     for (const b in D.verses) for (const ch in D.verses[b]) for (const v in D.verses[b][ch]) {
       if (!D.verses[b][ch][v].map(String).includes(String(pid)) || !(D.CC[b] || []).includes(+ch)) continue;
       let u = 1; while (D.verses[b][ch][u]) u++;
-      return {pid: String(pid), b: +b, ch: +ch, v: +v, u};
+      const score = {};                                       // the essay the page lists first as related: most shared verses, then the better ranked
+      for (const b2 in D.verses) for (const c2 in D.verses[b2]) for (const v2 in D.verses[b2][c2]) {
+        const ids = D.verses[b2][c2][v2].map(String); if (!ids.includes(String(pid))) continue;
+        ids.forEach(x => { if (x !== String(pid)) score[x] = (score[x] || 0) + 1; });
+      }
+      const top = Object.keys(score).sort((a, c) => score[c] - score[a] || D.pieces[c][5] - D.pieces[a][5]);
+      if (!top.length) continue;
+      return {pid: String(pid), b: +b, ch: +ch, v: +v, u, pid2: top[0], rest: top.slice(1, 3)};
     }
   }
   throw new Error('no essay to test with');
@@ -27,12 +34,14 @@ const BODY = `<p>The opening words of a made-up essay, written for the test.</p>
   `<p>Then <a class="sref" data-ref="${X.b}:${X.ch}:${X.u}-${X.u + 2}" href="#/read/${X.b}/${X.ch}/${X.u}">a passage</a> and a <a href="https://example.com/x" target="_blank" rel="noopener">link out</a>.</p>` +
   `<ul><li>One</li><li>Two</li></ul><hr><p>Last words.</p>`;
 
-async function withEssay(page) {                            // the essay's text is "approved": its word count is in the data and its file is served
+const BODY2 = '<p>The second made-up essay, which the first one is related to.</p>';
+async function withEssay(page) {                            // two essays are "approved": their word counts are in the data and their files are served
   await page.route('**/data/site.js*', async route => {
     const res = await route.fetch();
-    await route.fulfill({response: res, body: (await res.text()).replace('"ET":{}', `"ET":{"${X.pid}":${WORDS}}`)});
+    await route.fulfill({response: res, body: (await res.text()).replace('"ET":{}', `"ET":{"${X.pid}":${WORDS},"${X.pid2}":9}`)});
   });
   await page.route(`**/essay-text/${X.pid}.json`, route => route.fulfill({contentType: 'application/json', body: JSON.stringify({h: BODY})}));
+  await page.route(`**/essay-text/${X.pid2}.json`, route => route.fulfill({contentType: 'application/json', body: JSON.stringify({h: BODY2})}));
 }
 
 test('the renderer keeps every word, links only what is safe, and refuses a page that differs', () => {
@@ -42,6 +51,7 @@ test('the renderer keeps every word, links only what is safe, and refuses a page
 
 test('an approved essay opens on the site with its text as written, its references as links, and its article data', async ({ page }) => {
   await withEssay(page);
+  await fakeSupabase(page);                                 // accounts on, so Save is there
   await page.goto('/#/essay/' + X.pid); await settle(page);
   await expect(page.locator('#app h1')).toHaveText(D.pieces[X.pid][0]);
   await expect(page.locator('.essaymeta')).toContainText('min read');
@@ -66,6 +76,32 @@ test('an approved essay opens on the site with its text as written, its referenc
   expect(meta.ld.citation.length).toBeGreaterThan(0);
   expect(meta.canon).toMatch(new RegExp(`/essays/${X.pid}-[^/]+/$`));
   expect(meta.robots).toMatch(/^index/);
+  // the header: a title, then the date and a quiet Save beside it
+  await expect(page.locator('.essayhead h1')).toHaveText(D.pieces[X.pid][0]);
+  await expect(page.locator('.essayhead .essayline .essaymeta')).toContainText('min read');
+  await expect(page.locator('.essayhead .essayline [data-save]')).toHaveClass(/quiet/);
+  expect(await page.locator('.essayhead .essayline [data-save]').evaluate(b => b.getBoundingClientRect().height), 'a touch-sized control').toBeGreaterThan(39.5);
+  // Sources & Scripture: compact, folded away, everything inside; the related investigations stand apart
+  await expect(page.locator('.srcs h2')).toHaveText('Sources & Scripture');
+  await expect(page.locator('.srcs details.disc')).toHaveCount(3);
+  await expect(page.locator('.srcs details[open]')).toHaveCount(0);
+  const cited = page.locator('.srcs details.disc').nth(0);
+  await expect(cited.locator('a.chip').first()).toBeHidden();
+  await cited.locator('summary').click();
+  await expect(cited.locator('a.chip').first()).toBeVisible();
+  expect(await cited.locator('a.chip').evaluateAll(a => a.every(x => /^\/bible\//.test(x.getAttribute('href'))))).toBe(true);
+  await expect(page.locator('.srcs details.disc').nth(1).locator('summary')).toContainText('The verses');
+  await expect(page.locator('.srcs details.disc').nth(2).locator('summary')).toContainText('In the Source Index');
+  await expect(page.locator('.srcs .relinv, .srcs [id=relinv-t]')).toHaveCount(0);
+  await expect(page.locator('.relinv h2')).toHaveText('Related investigations');
+  // a related essay with its text here opens here; any other keeps its Substack address
+  const own = page.locator(`.relinv a[data-pid="${X.pid2}"]`);
+  await expect(own).toHaveAttribute('href', await page.evaluate(id => pathOf('#/essay/' + id), X.pid2));
+  await expect(own).not.toHaveAttribute('target', '_blank');
+  for (const id of X.rest) {
+    const a = page.locator(`.relinv a[data-pid="${id}"]`);
+    if (await a.count()) { await expect(a).toHaveAttribute('href', D.pieces[id][1]); await expect(a).toHaveAttribute('target', '_blank'); }
+  }
   // a reference goes where it says
   await page.locator('.essaytext a.sref').first().click();
   await expect(page.locator('#app h1')).toContainText(`${D.books[X.b][0]} ${X.ch}:${X.v}`);

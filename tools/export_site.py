@@ -278,7 +278,7 @@ def build(con, cur, warn):
             linked[k] = essay_text.link_refs(md, refs)
         essay_html = {k: essay_text.to_html(v[0], rewrite) for k, v in linked.items()}
         for k, h in essay_html.items():
-            off = essay_text.same_words(essay_md[k], h)
+            off = essay_text.same_words(essay_md[k], h) or essay_text.structure(essay_md[k], h)
             if off:
                 raise SystemExit("essay %d: the page does not say what the manuscript says: %s" % (k, off))
         print("  essay text: %s" % ", ".join("%d (%d words, %d references linked)" % (k, essay_text.words(essay_md[k]), linked[k][1]) for k in sorted(linked)))
