@@ -1,6 +1,6 @@
 // account.js: Berean reader accounts: Become a Berean, My Library, Save buttons, and the privacy page (the website only)
 // Loaded as a plain script after js/guide.js; see index.html for the order. Shared names live in the page's global scope.
-// The archive stays open to everyone; an account only gives a reader a private shelf: the guides, and what they chose to save.
+// The archive stays open to everyone; an account only gives a reader a private shelf of what they chose to save.
 // Sign-in is Supabase Auth (the official supabase-js, vendor/supabase.js, fetched only on account pages or for a reader who already has a session):
 // the reader types their email, receives a one-time code, types it back. No password. Saved items live in one table, `saved`
 // (supabase/schema.sql), that Postgres row-level security lets each reader see and change only for themselves.
@@ -159,7 +159,7 @@ function viewBerean() {
       Explore the archive, examine Scripture, and keep what you find in a library of your own.</p>
     <div id="acctstep">${accEmailStep(t, '')}</div>
     <ul class="acctlist">
-      <li><b>Your library.</b> Every Kingdom Code study guide, on one shelf.</li>
+      <li><b>Your library.</b> A shelf of your own, empty until you save something.</li>
       <li><b>Save what you study.</b> Essays, guides, chapters, and verses, ready when you return.</li>
       <li><b>Free, and yours alone.</b> No password, no payment, no mailing list. Only you can see what you save.</li>
     </ul>
@@ -285,25 +285,14 @@ document.addEventListener('click', e => {
     try { sessionStorage.setItem('kc-save-intent', JSON.stringify({kind, key, back: curHash()})); } catch (x) {}
     navigate('#/berean'); return;
   }
-  accSet(kind, key, !acc.saved.has(b.dataset.save)).then(() => { if (b.closest('#libsaved')) route(); });
+  const inLibrary = !!b.closest('#libsaved');
+  accSet(kind, key, !acc.saved.has(b.dataset.save));       // the page changes at once; the server follows (a failure puts it back)
+  if (inLibrary) route();                                  // an unsaved item leaves the library straight away
 });
 
 // ---------- My Library ----------
 function accSavedList(kind) {       // saved items of one kind, newest first
   return [...acc.saved].filter(([k]) => k.startsWith(kind + '|')).map(([k, at]) => [k.slice(kind.length + 1), at]).sort((a, b) => b[1].localeCompare(a[1]));
-}
-function libGuides() {
-  const gs = (PROFILE.kcGuides && D.KG) || [];
-  const saved = new Set(accSavedList('guide').map(x => x[0]));
-  const order = gs.slice().sort((a, b) => (saved.has(b.slug) ? 1 : 0) - (saved.has(a.slug) ? 1 : 0));
-  return `<ul class="libguides">${order.map(g => `<li class="libguide">
-    <a class="libcover" href="#/guides/${esc(g.slug)}" aria-hidden="true" tabindex="-1"><img src="${esc(g.cover)}" width="1200" height="675" alt="" loading="lazy"></a>
-    <div class="libbody">
-      <h3><a href="#/guides/${esc(g.slug)}">${esc(g.title)}</a></h3>
-      <p class="gsub">${esc(g.sub)}</p>
-      <p class="cap">${esc(guideMeta(g))}</p>
-      <p class="libact"><a class="btn secondary" href="${esc(g.file)}" target="_blank" rel="noopener" download="${esc(g.slug)}.pdf" data-guide="${esc(g.slug)}">Read or download</a>${saveButton('guide', g.slug, 'btn secondary')}</p>
-    </div></li>`).join('')}</ul>`;
 }
 function libEssay([key]) {
   const p = P[key];
@@ -315,11 +304,16 @@ function libVerse([key]) {
   const body = s ? `<a href="${esc(s.hash)}">${esc(s.label)}</a>${s.vs ? `<span class="libsnip" data-snip="${esc(key)}"></span>` : ''}` : `<span>Scripture that is no longer in the archive</span>`;
   return `<li class="libitem"><div class="libtext">${body}</div>${saveButton('verse', key)}</li>`;
 }
-function libSaved() {
-  const es = accSavedList('essay'), vs = accSavedList('verse');
-  if (!es.length && !vs.length) return `<div class="card libempty"><p>Your saved essays and Scripture references will appear here.</p><p class="cap">Look for <b>Save</b> on any essay, chapter, or verse.</p></div>`;
-  return `${es.length ? `<h3>Essays <span class="count">${es.length}</span></h3><ul class="libitems">${es.map(libEssay).join('')}</ul>` : ''}
-    ${vs.length ? `<h3>Scripture <span class="count">${vs.length}</span></h3><ul class="libitems">${vs.map(libVerse).join('')}</ul>` : ''}`;
+function libGuide([key]) {
+  const g = kcGuide(key);
+  const body = g ? `<a href="#/guides/${esc(key)}">${esc(g.title)}</a><span class="cap">${esc(guideMeta(g))}</span>` : `<span>A guide that is no longer available</span>`;
+  return `<li class="libitem"><div class="libtext">${body}</div>${saveButton('guide', key)}</li>`;
+}
+function libSaved() {             // only what the reader saved, in three groups; a group with nothing in it is not shown
+  const groups = [['Saved Scripture', accSavedList('verse'), libVerse], ['Saved Investigations', accSavedList('essay'), libEssay], ['Saved Study Guides', accSavedList('guide'), libGuide]].filter(g => g[1].length);
+  if (!groups.length) return `<div class="card libempty"><p><b>Your library is empty.</b></p><p>Explore the archive, then choose <b>Save</b> on an essay, a chapter, a verse, or a study guide to keep it here.</p>
+    <p class="libgo"><a class="btn secondary" href="#/essays">Essays</a><a class="btn secondary" href="#/books">Scripture</a>${PROFILE.kcGuides && D.KG && D.KG.length ? '<a class="btn secondary" href="#/guides">Study guides</a>' : ''}</p></div>`;
+  return groups.map(([name, items, row]) => `<h2 class="libh">${name} <span class="count">${items.length}</span></h2><ul class="libitems">${items.map(row).join('')}</ul>`).join('');
 }
 function viewMyLibrary() {
   if (!acc.ready) {
@@ -330,18 +324,15 @@ function viewMyLibrary() {
   if (!acc.user) { setTimeout(() => accReplace('#/berean'), 0); return ''; }
   let welcome = false;
   try { welcome = sessionStorage.getItem('kc-welcome') === '1'; sessionStorage.removeItem('kc-welcome'); } catch (e) {}
-  const guides = (PROFILE.kcGuides && D.KG) || [];
   return `
   ${backLink('#/')}
   ${accPreview()}
   <section class="libhead">
     <p class="eyebrow">Kingdom Code ${ACC_ICON}</p>
     <h1>My Library</h1>
-    <p>Your investigations, Scripture references, and study guides. All in one place.</p>
+    <p>What you save from the archive: Scripture, investigations, and study guides.</p>
     ${welcome ? '<p class="libwelcome" role="status">Welcome, Berean. Your library is ready.</p>' : ''}
   </section>
-  ${guides.length ? `<h2 class="libh">Study Guides <span class="count">${plural(guides.length, 'guide')} available</span></h2>${libGuides()}` : ''}
-  <h2 class="libh">Saved Investigations</h2>
   <div id="libsaved">${libSaved()}</div>
   <h2 class="libh">Account</h2>
   <div class="card libacct">

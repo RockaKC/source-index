@@ -571,19 +571,9 @@ html:not([data-product]){-webkit-tap-highlight-color:transparent;touch-action:ma
 .libhead .eyebrow{color:#8fd6ae}
 .libwelcome{margin-top:var(--s2)!important;padding-top:var(--s2);border-top:1px solid #2c4034;color:#8fd6ae!important;font-weight:600}
 .libh{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s2);margin-top:var(--s6)}
-.libh .count,#libsaved h3 .count{font:500 14px/20px var(--sans);color:var(--accent)}
-.libguides{list-style:none;margin:var(--s2) 0 0;padding:0;display:grid;gap:var(--s2)}
-.libguide{display:grid;grid-template-columns:112px 1fr;gap:var(--s2);padding:var(--s2);border:1px solid var(--hairline);border-radius:14px;background:var(--surface)}
-.libcover img{display:block;width:100%;height:auto;aspect-ratio:1200/675;object-fit:cover;border-radius:8px;border:1px solid var(--hairline);background:#111}
-.libbody h3{margin:0;font:600 18px/24px var(--serif)}
-.libbody h3 a{text-decoration:none}
-@media (hover:hover){.libbody h3 a:hover{color:var(--accent)}}
-.libbody .gsub{margin:2px 0 0;color:var(--muted);font-size:14px;line-height:20px}
-.libbody .cap{margin-top:4px}
-.libact{display:flex;flex-wrap:wrap;gap:var(--s1);margin:var(--s2) 0 0}
-@media (max-width:520px){.libguide{grid-template-columns:1fr}.libcover{max-width:240px}}
-#libsaved h3{display:flex;align-items:baseline;gap:var(--s1);margin:var(--s3) 0 0;font:600 16px/24px var(--sans)}
-#libsaved h3:first-child{margin-top:var(--s2)}
+.libh .count{font:500 14px/20px var(--sans);color:var(--accent)}
+#libsaved .libh{margin-top:var(--s4)}
+#libsaved .libh:first-child{margin-top:var(--s3)}
 .libitems{list-style:none;margin:var(--s1) 0 0;padding:0;border:1px solid var(--hairline);border-radius:12px;background:var(--surface)}
 .libitem{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);padding:12px var(--s2)}
 .libitem + .libitem{border-top:1px solid var(--hairline)}
@@ -594,7 +584,8 @@ html:not([data-product]){-webkit-tap-highlight-color:transparent;touch-action:ma
 .libsnip{display:block;margin-top:4px;color:var(--muted);font:400 15px/22px var(--serif);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .libsnip:empty{display:none}
 .libempty p{margin:0}
-.libempty .cap{margin-top:var(--s1)}
+.libempty p + p{margin-top:var(--s1)}
+.libgo{display:flex;flex-wrap:wrap;gap:var(--s1)}
 .libacct p{margin:0}
 .libbtns{display:flex;flex-wrap:wrap;gap:var(--s1);margin:var(--s2) 0!important}
 .libacct #libdel{margin:var(--s1) 0 var(--s2)}
