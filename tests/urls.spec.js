@@ -123,6 +123,17 @@ test('the prerendered site: real files at clean addresses, a sitemap, robots.txt
   expect(read('llms.txt')).toMatch(/^# Kingdom Code Source Index/);
   expect(read('llms.txt')).toContain('/guides/kingdom-code/the-ungovernable-mind/');
   expect(read('404.html')).toContain('noindex');
+  for (const id of ['1349', '181', '37']) {                                       // the approved essays are whole in the saved pages, with their article data
+    const dir = fs.readdirSync(path.join(out, 'essays')).find(d => d.startsWith(id + '-'));
+    const page = read(`essays/${dir}/index.html`), text = JSON.parse(read(`essay-text/${id}.json`)).h;
+    const first = text.replace(/<[^>]+>/g, ' ').replace(/&[a-z#0-9]+;/g, ' ').split(/\s+/).filter(Boolean);
+    const words = page.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<[^>]+>/g, ' ').replace(/&[a-z#0-9]+;/g, ' ').replace(/\s+/g, ' ');
+    expect(words, 'the saved page holds the essay through to its last words').toContain(first.slice(-6).join(' '));
+    expect(page).toContain(`"wordCount":${D.ET[id]}`);
+    expect(page).toContain(`<meta property="article:published_time" content="${D.pieces[id][3]}">`);
+    expect(page).toContain('class="sref"');
+    expect(read('sitemap.xml')).toContain(`/essays/${dir}/</loc><lastmod>${D.pieces[id][3]}</lastmod>`);
+  }
   const essay = D.PUB && D.PUB.length ? fs.readdirSync(path.join(out, 'essays')).find(d => /^\d+-/.test(d)) : null;
   expect(essay, 'essay pages are written').toBeTruthy();
   expect(JSON.parse(read('prerender-report.json')).problems).toEqual([]);

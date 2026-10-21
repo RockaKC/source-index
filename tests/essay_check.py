@@ -60,6 +60,11 @@ def check():
     for old, new in (("to read", "read"), ("plain", "plane"), ("First, see", "see First,"), ("</ul>", "</ul><p>Extra.</p>")):
         bad = h.replace(old, new, 1)
         assert bad != h and e.same_words(MD, bad), old
+    # the shape too: headings, rules, list items and links; a page that loses or changes one is refused
+    assert e.structure(MD, e.to_html(MD)) is None and e.structure(MD, h) is None, e.structure(MD, h)
+    for old, new in (("<h3>1. The Union</h3>", "<h3>The Union</h3>"), ("<hr>", ""), ("<li>Two</li>", ""), (">Genesis 6:2 in context<", ">Genesis 6:2<")):
+        bad = h.replace(old, new, 1)
+        assert bad != h and e.structure(MD, bad), old
     assert e.ref_key(1006001, 1006004) == "1:6:1-4" and e.ref_key(27001006, 27001006) == "27:1:6" and e.ref_key(1006030, 1007002) == "1:6:30"
     print("OK")
 

@@ -94,7 +94,7 @@ async function main() {
     entries: D.entries.map(e => ({ t: e.name, p: pathOf('#/book/' + e.id) })),
     subjects: (typeof LIB !== 'undefined' && LIB ? LIB.cats : []).map(c => ({ t: c.name, line: c.line, p: pathOf('#/essays/subject/' + c.id) })),
     topics: (typeof LIB !== 'undefined' && LIB ? LIB.tags : []).map(t => ({ t: t.name, line: t.line, p: pathOf('#/essays/topic/' + t.id) })),
-    essays: essayIds().map(pid => ({ t: P[pid][0], date: P[pid][3], url: P[pid][1], p: pathOf('#/essay/' + pid) })),
+    essays: essayIds().map(pid => ({ t: P[pid][0], date: P[pid][3], url: P[pid][1], here: onSite(pid), p: pathOf('#/essay/' + pid) })),
   }));
   const link = (t, p, d) => `- [${t}](${root}${p})${d ? ': ' + String(d).replace(/\s+/g, ' ') : ''}`;
   const head = `# Kingdom Code Source Index\n\n> ${site.desc} Kingdom Code is an independent Christian publication built on Jesus Christ and Holy Scripture, in the heritage of the Ethiopian canon. Everything here is free to read, quote and cite.\n\n` +
@@ -113,8 +113,8 @@ async function main() {
     `\n## Optional\n\n- [Full list of pages](${root}/llms-full.txt): every book, essay and page of the site, one line each\n- [Sitemap](${root}/sitemap.xml)\n`);
   fs.writeFileSync(path.join(dir, 'llms-full.txt'), head + sections.filter(s => s[1].length).map(([h, l]) => `## ${h}\n\n${l.join('\n')}\n`).join('\n') +
     `\n## Books and groups of books\n\n${D.entries.map(e => link(e.t, e.p)).join('\n')}\n` +
-    `\n## Essays\n\nEach link is the essay's Sources page: the Scripture it cites and the essays that cite the same verses. The essay itself is on the publication's own page.\n\n` +
-    D.essays.map(e => `${link(e.t + (e.date ? ' (' + e.date + ')' : ''), e.p)}${e.url ? ' | essay: ' + e.url : ''}`).join('\n') + '\n');
+    `\n## Essays\n\nEach link is the essay's page on this site. Where it says "full text here", the whole essay is on the page, with the Scripture it cites and the essays that cite the same verses. For the others the page is the essay's Sources page, and the essay itself is on the publication's own page (the address after "essay:").\n\n` +
+    D.essays.map(e => `${link(e.t + (e.date ? ' (' + e.date + ')' : ''), e.p)}${e.here ? ' | full text here' : ''}${e.url ? ' | essay: ' + e.url : ''}`).join('\n') + '\n');
 
   await browser.close(); server.close();
   fs.writeFileSync(path.join(dir, 'prerender-report.json'), JSON.stringify({ pages: done.length, problems }, null, 1));

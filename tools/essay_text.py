@@ -166,3 +166,31 @@ def same_words(md, h):
     if len(a) != len(b):
         return "the manuscript has %d words and the page %d" % (len(a), len(b))
     return None
+
+
+def structure(md, h):
+    """The shape of the manuscript against the shape of the page: the same headings in the same order, the same number of rules and
+    list items, the same links (by their words, in order) and the same bold and italic runs. None when they match, else the first difference."""
+    t = md.replace("\r\n", "\n")
+    t = re.sub(r"(?m)^(?:\s*>)+ ?", "", t)
+    def words_of(x):                                   # one line's words, without its markdown marks
+        x = re.sub(r"\[([^\]\n]+)\]\((?:https?://|kc-ref:)[^\s)]+\)", r"\1", x)
+        return re.sub(r"\s+", " ", re.sub(_STRAY, "", _ESCAPED.sub(lambda m: m.group(1), x))).strip()
+    heads = [words_of(m.group(2)) for m in re.finditer(r"(?m)^\s*(#{1,6})\s+(.+?)\s*#*$", t)]
+    hh = [re.sub(r"\s+", " ", _plain_html(m.group(2))).strip() for m in re.finditer(r"<h([234])>(.*?)</h\1>", h)]
+    rules = len(re.findall(r"(?m)^\s*(?:-{3,}|\*{3,}|_{3,})\s*$", t))
+    items = len(re.findall(r"(?m)^\s*(?:[*+-]|\d+\.)\s+", re.sub(r"(?m)^\s*#{1,6}\s+.*$", "", t)))
+    links = [m.group(1) for m in re.finditer(r"\[([^\]\n]+)\]\(https?://[^\s)]+\)", md)]
+    hl = [html.unescape(re.sub(r"<[^>]+>", "", m.group(1))) for m in re.finditer(r'<a (?![^>]*class="sref")[^>]*>(.*?)</a>', h)]
+    em = len(re.findall(r"(?<![\w*])\*(?=[^\s*])[^*\n]+?(?<=[^\s*])\*(?![\w*])", re.sub(r"\*\*[^*]+\*\*", "", t)))
+    hem = len(re.findall(r"<em>", h)) - len(re.findall(r"<strong><em>", h))
+    for what, a, b in (("headings", heads, hh), ("rules", rules, h.count("<hr>")), ("list items", items, h.count("<li>")), ("links", links, hl)):
+        if a != b:
+            return "%s differ: manuscript %s, page %s" % (what, a if not isinstance(a, list) else len(a), b if not isinstance(b, list) else len(b))
+    return None
+
+
+def shape(md, h):
+    """What the page holds, for the review: counts of each kind of block."""
+    return {"headings": len(re.findall(r"<h[234]>", h)), "quotations": h.count("<blockquote>"), "list items": h.count("<li>"), "rules": h.count("<hr>"),
+            "links out": len(re.findall(r'<a (?![^>]*class="sref")', h)), "Scripture links": h.count('class="sref"'), "italic runs": h.count("<em>"), "bold runs": h.count("<strong>")}

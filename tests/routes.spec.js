@@ -246,18 +246,22 @@ test('the app keeps its own home, not the archive', async ({ page }) => {
 const fs = require('fs');
 const path = require('path');
 
-test('no essay text is published until an essay is approved: none in the data, no essay-text folder, and the font and cache rules stay harmless', () => {
-  expect(Object.keys(D.ET || {})).toEqual([]);
-  expect(fs.existsSync(path.join(__dirname, '..', 'essay-text'))).toBe(false);
+const PILOT = ['1349', '181', '37'];      // the essays Boss approved for reading on the site (essay_text_ids in tools/curated.json); every other essay opens on its platform
+
+test('only the approved essays have text on the site: the data and the essay-text folder name exactly them', () => {
+  expect(Object.keys(D.ET || {}).sort()).toEqual([...PILOT].sort());
+  expect(fs.readdirSync(path.join(__dirname, '..', 'essay-text')).sort()).toEqual(PILOT.map(id => id + '.json').sort());
+  for (const id of PILOT) expect(D.PUB.map(String), 'a public Substack essay').toContain(id);
 });
 
-test('titles in the lists open the essay where it was published, in a new tab, never an essay page on the site', async ({ page }) => {
+test('titles in the lists open the essay where it was published, in a new tab, unless its text is approved for the site', async ({ page }) => {
   const year = (await page.goto('/') && (await page.evaluate(() => P[essayIds()[0]][3].slice(0, 4))));
   for (const hash of ['#/essays/' + year, '#/']) {
     await page.goto('/' + hash); await settle(page);
-    const links = await page.locator('#app .piece .t a').evaluateAll(a => a.map(x => [x.getAttribute('href'), x.getAttribute('target')]));
+    const links = await page.locator('#app .piece .t a').evaluateAll(a => a.map(x => [x.getAttribute('href'), x.getAttribute('target'), x.dataset.pid]));
     expect(links.length).toBeGreaterThan(3);
-    for (const [href, target] of links) {
+    for (const [href, target, pid] of links) {
+      if (PILOT.includes(pid)) { expect(href, 'an approved essay opens on the site').toMatch(new RegExp(`^/essays/${pid}-`)); expect(target).toBeNull(); continue; }
       expect(href).toMatch(/^https:\/\/(kingdomcode\.substack\.com|www\.patreon\.com)\//);
       expect(target).toBe('_blank');
     }
@@ -277,7 +281,7 @@ test('the Essays page and the front page list the newest public Substack essays 
   expect(D.pieces[await first.locator('.t a').getAttribute('data-pid')][3]).toBe(newest);
   // a public essay with no citations yet is listed, and offers no Sources link; one that cites verses does
   const uncited = await page.evaluate(() => D.PUB.find(id => !hasRefs(id)));
-  const withRefs = await page.evaluate(() => Object.keys(P).find(id => hasRefs(id)));
+  const withRefs = await page.evaluate(() => Object.keys(P).find(id => hasRefs(id) && !ET[id]));
   for (const [id, links] of [[uncited, 0], [withRefs, 1]]) {
     await page.evaluate(y => { location.hash = '#/essays/' + y; }, D.pieces[id][3].slice(0, 4)); await settle(page);
     await expect(page.locator(`#app .piece:has(a[data-pid="${id}"]) a[href^="/essays/"]`)).toHaveCount(links);
@@ -286,7 +290,7 @@ test('the Essays page and the front page list the newest public Substack essays 
 
 test('the essay page still lists the verses an essay cites, and offers the essay on its platform', async ({ page }) => {
   await page.goto('/'); await settle(page);
-  const pid = await page.evaluate(() => Object.keys(P).find(id => hasRefs(id)));
+  const pid = await page.evaluate(() => Object.keys(P).find(id => hasRefs(id) && !ET[id]));
   await page.evaluate(h => { location.hash = h; }, '#/essay/' + pid); await settle(page);
   await expect(page.locator('#app h1')).toHaveText(D.pieces[pid][0]);
   await expect(page.locator('#app')).toContainText('Scripture cited');
