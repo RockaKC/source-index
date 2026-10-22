@@ -33,6 +33,15 @@ function viewNames() {
   <div class="card" style="margin-top:24px;padding-top:8px;padding-bottom:8px"><ul class="list">${pp.map(x =>
     `<li><a class="wl" href="#/person/${x.slug}"><b>${esc(x.name)}</b><span class="en">${esc(x.line)}</span></a></li>`).join('')}</ul></div>`;
 }
+const REL_AS = {ancestor_of: 'Ancestor of', descendant_of: 'Descendant of', associated_with: 'Associated with', contemporary_of: 'Contemporary of', teacher_of: 'Teacher of',
+  student_of: 'Student of', attested_by: 'Attested by', attests: 'Attests', related_manuscript: 'Related manuscript'};
+const REL_BASIS = {scripture: 'Scripture', church_tradition: 'Church tradition', ancient_source: 'Ancient source', scholarly_inference: 'Scholarly inference', editorial: 'Kingdom Code'};
+function relItem(r) {                // another figure, how they connect, why, and what that rests on (a verse links to its page)
+  const to = (D.PP || []).find(x => x.slug === r.to); if (!to) return '';
+  const ev = (r.ev || []).map(e => e.r ? `<a href="${scriptureHash(e.r)}">${esc(e.l.replace(/(\d)-(\d)/g, '$1\u2013$2'))}</a>` : esc(e.l)).join('; ');
+  return `<li class="piece"><div class="t"><span class="relas">${esc(REL_AS[r.as] || r.as)}</span><a href="#/person/${esc(to.slug)}">${esc(to.name)}</a></div>
+    ${r.why ? `<p class="relwhy">${esc(r.why)}</p>` : ''}<p class="cap">${esc(REL_BASIS[r.basis] || r.basis)}${ev ? ' \u00b7 ' + ev : ''}</p></li>`;
+}
 function viewPerson(slug) {
   const pr = (D.PP || []).find(x => x.slug === slug); if (!pr) return viewMissing();
   const groups = pr.groups.map(g => `<h3 class="pg">${esc(g.t)}</h3>${g.g ? `<p style="margin:4px 0 0">${esc(g.g)}</p>` : ''}
@@ -41,6 +50,7 @@ function viewPerson(slug) {
   ${backLink('#/names')}
   <h1>${esc(pr.name)}</h1>
   <div class="about">${pr.about.map(t => `<p>${esc(t)}</p>`).join('')}</div>
+  ${(pr.rel || []).length ? `<h2>Related figures</h2><div class="card pp" style="margin-top:16px"><ul class="list">${pr.rel.map(relItem).join('')}</ul></div>` : ''}
   <h2>In Scripture</h2>
   ${groups}
   <h2>Essays</h2>

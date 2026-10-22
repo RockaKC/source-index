@@ -487,6 +487,11 @@ html[data-archive] .wrap{max-width:1040px}
 .essaytext hr{border:0;margin:2em auto;width:64px;border-top:1px solid var(--line)}
 .essaytext ul,.essaytext ol{margin:0 0 1.1em;padding-left:1.4em}.essaytext li{margin:.25em 0}
 .essaytext a{color:var(--accent)}
+.essaytext a.fref{color:inherit;text-decoration:underline solid var(--accent);text-decoration-thickness:1px;text-underline-offset:3px}
+@media (hover:hover){.essaytext a.fref:hover{color:var(--accent)}}
+.piece .t .relas{display:block;margin-bottom:2px;font:600 12px/16px var(--sans);letter-spacing:.05em;text-transform:uppercase;color:var(--accent)}
+.relwhy{margin:6px 0 0;font:400 16px/24px var(--serif)}
+.relwhy + .cap{margin-top:6px}
 .essaytext a.sref{color:inherit;text-decoration:underline dotted var(--accent);text-decoration-thickness:2px;text-underline-offset:4px}
 @media (hover:hover){.essaytext a.sref:hover{color:var(--accent)}}
 .essayfoot{margin-top:var(--s4)}
