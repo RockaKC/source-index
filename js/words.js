@@ -56,6 +56,7 @@ function viewWord(slug) {
   <div class="card say" style="margin-top:16px">${w.excerpt.map(e => `<p>${esc(e)}</p>`).join('')}<p class="cap" style="margin-top:16px">From \u201c${esc(P[pid][0])}\u201d, ${meta(pid)}</p></div>
   <p style="margin-top:24px"><a class="btn primary" ${link(pid)} aria-label="Read the essay: ${esc(P[pid][0])}">Read the essay</a></p>
   ${dictPanel(w)}
+  ${nxSection('word/' + w.slug)}
   ${vs ? `<h2>Verses</h2><ul class="chips">${vs}</ul>` : ''}
   ${cards}`;
 }

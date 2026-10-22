@@ -87,6 +87,39 @@ def check():
 
     # a name is looked for in an essay's own words, not in its quotations or headings
     assert "Enoch" not in knowledge.prose("> “Enoch said”\n\n## Enoch\n\nPlain words.\n") and "Plain words" in knowledge.prose("> “Enoch said”\n\n## Enoch\n\nPlain words.\n")
+
+    # connections that involve an Early Church figure or a word study: one hand-kept row, shown from both pages, refused when it cannot stand
+    people = [{"slug": "enoch", "rel": [{"to": "noah", "as": "ancestor_of", "why": "w", "basis": "scripture", "ev": [{"l": "Genesis 5:21"}]}]},
+              {"slug": "noah", "rel": [{"to": "enoch", "as": "descendant_of", "why": "w", "basis": "scripture", "ev": [{"l": "Genesis 5:21"}]}]}]
+    ok = lambda b, ch, v1, v2: b == 1
+    row = {"a": "person/enoch", "b": "church/tertullian", "as": "attested_by", "why": "He says so.", "basis": "ancient_source", "ev": [{"l": "On the Apparel of Women 1.3", "essay": 181}]}
+    def net(*rows, **kw):
+        return knowledge.build_network(list(rows), [{**p, "rel": list(p["rel"])} for p in people], ["tertullian"], ["cush"], kw.get("essays", {181}), ok)
+    def refuses(*rows, **kw):
+        try:
+            net(*rows, **kw)
+        except SystemExit as e:
+            return str(e)
+        return None
+    nx = net(row)
+    assert [(r["to"], r["as"]) for r in nx["person/enoch"]] == [("person/noah", "ancestor_of"), ("church/tertullian", "attested_by")], nx["person/enoch"]
+    assert [(r["to"], r["as"], r["basis"]) for r in nx["church/tertullian"]] == [("person/enoch", "attests", "ancient_source")]
+    assert nx["person/noah"][0]["to"] == "person/enoch"
+    assert "both ends" in refuses({**row, "b": "church/nobody"}) and "both ends" in refuses({**row, "b": "person/enoch"})
+    assert "belongs in the database" in refuses({**row, "b": "person/noah"})
+    assert "unknown relationship" in refuses({**row, "as": "friend_of"})
+    assert "needs a basis" in refuses({**row, "basis": "rumour"}) and "needs a basis" in refuses({**row, "ev": []}) and "needs a basis" in refuses({**row, "why": " "})
+    assert "not on the site" in refuses({**row, "ev": [{"l": "x", "essay": 999}]})
+    assert "not fully in the stored text" in refuses({**row, "ev": [{"l": "Exodus 1:1", "r": [2, 1, 1, 1]}]})
+    assert "written twice" in refuses(row, {**row, "a": "church/tertullian", "b": "person/enoch", "as": "attests"})
+    for bad in ({"t": "x", "g": "y", "refs": [[2, 1, 1, 1]], "basis": "scripture", "ev": [{"l": "z"}]}, {"t": "x", "g": "y", "refs": [[1, 1, 1, 1]], "basis": "hearsay", "ev": [{"l": "z"}]},
+                {"t": "x", "g": "y", "refs": [[1, 1, 1, 1]], "basis": "scripture", "ev": []}):
+        try:
+            knowledge.check_scripture_groups("tertullian", [bad], {181}, ok)
+            raise AssertionError("a bad Scripture group was accepted")
+        except SystemExit:
+            pass
+    knowledge.check_scripture_groups("tertullian", [{"t": "x", "g": "y", "refs": [[1, 6, 1, 4]], "basis": "ancient_source", "ev": [{"l": "z", "essay": 181}]}], {181}, ok)
     print("OK")
 
 

@@ -82,6 +82,7 @@ function viewVerse(b, ch, v) {
   <h1>${esc(label)}</h1>
   ${text}${note}${numNote(b, key, !!eng)}
   ${wordsForVerse(b, ch, v).length ? `<h2>Words in this verse</h2><div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">${wordsForVerse(b, ch, v).map(w => `<li><a class="wl" href="#/word/${w.slug}"><b>${esc(w.title)}</b><span class="en">${esc(w.en)}</span><span class="lang">${esc(w.lang)}</span></a></li>`).join('')}</ul></div>` : ''}
+  ${figuresBlock(b, ch, v)}
   ${main}`;
 }
 function viewRange(b, ch, vs, ve) {
@@ -138,6 +139,7 @@ function viewRead(b, ch, focus) {
     <button class="navbtn" type="button" data-size="-1" aria-label="Smaller text">A\u2212</button>
     <button class="navbtn" type="button" data-size="1" aria-label="Larger text">A+</button></div>
   <div class="text" id="rtext" lang="en" style="--rs:${size}px">${verses}</div>
+  ${figuresBlock(b, ch, 0)}
   <nav class="endnav" aria-label="Next and previous chapter">
     ${prev ? `<a class="btn secondary" href="#/read/${prev[0]}/${prev[1]}"><small>Previous</small>${lbl(prev)}</a>` : '<span></span>'}
     ${next ? `<a class="btn secondary next" href="#/read/${next[0]}/${next[1]}"><small>Next</small>${lbl(next)}</a>` : '<span></span>'}

@@ -89,10 +89,13 @@ const srefLinks = h => h.replace(/<a class="sref" data-ref="([\d:-]+)" href="[^"
 });
 // A figure's name inside an essay read on the site: the first mention in the essay's own words links to the figure's page. Added when the page is
 // drawn, so the essay's words and files stay exactly as written. Only the figures the database connects to this essay (D.PP[].essays, from the
-// confirmed about links) are linked, never inside a quotation, a heading or another link, and at most six to an essay.
+// confirmed about links) and the Early Church figures the essay cites or discusses (D.EL, tools/connections.py) are linked, never inside a quotation, a heading
+// or another link, and at most six to an essay.
 const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 function figureLinks(pid, h) {
-  const figs = (D.PP || []).filter(f => f.al && f.al.length && f.essays.includes(+pid));
+  const figs = [...(D.PP || []).filter(f => f.al && f.al.length && f.essays.includes(+pid)).map(f => ({slug: f.slug, al: f.al, href: '#/person/' + f.slug})),
+    ...(D.EC || []).filter(f => (f.link_terms || {}).names && ((D.EL || {})['church/' + f.slug] || []).some(r => r[0] === +pid))
+      .map(f => ({slug: f.slug, al: f.link_terms.names.slice().sort((a, b) => b.length - a.length), href: '#/church/' + f.slug}))];
   if (!figs.length) return h;
   const root = new DOMParser().parseFromString(`<div>${h}</div>`, 'text/html').body.firstChild;
   let made = 0;
@@ -105,7 +108,7 @@ function figureLinks(pid, h) {
       const m = re.exec(n.nodeValue); if (!m) continue;
       const hit = n.splitText(m.index + m[1].length); hit.splitText(m[2].length);
       const a = document.createElement('a');
-      a.className = 'fref'; a.href = '#/person/' + f.slug; a.dataset.fig = f.slug; a.textContent = m[2];
+      a.className = 'fref'; a.href = f.href; a.dataset.fig = f.slug; a.textContent = m[2];
       hit.replaceWith(a); made++;
       break;
     }

@@ -422,6 +422,14 @@ def build(con, cur, warn):
                 sys.exit("early_church %s needs sort_year: an approximate year (birth, where known), used only to put the figures in time order" % f["slug"])
         ec = sorted(ec, key=lambda f: f["sort_year"])             # the list is always in time order, whatever order they were added in
         D["EC"] = ec
+        def verse_ok(b_, ch_, v1, v2):
+            have = {int(re.match(r"\d+", str(r[0])).group()) for r in bible.get(str(b_), {}).get(str(ch_), [])}
+            return set(range(v1, v2 + 1)) <= have
+        for f in ec:
+            knowledge.check_scripture_groups(f["slug"], f.get("scripture"), {int(k) for k in D["pieces"]}, verse_ok)
+        # How the pages connect: figures to figures (the database), and anything that involves an Early Church figure or a word study (curated.json).
+        D["NX"] = knowledge.build_network(cur.get("connections"), D.get("PP", []), [f["slug"] for f in ec], [w["slug"] for w in cur["words"]],
+                                          {int(k) for k in D["pieces"]}, verse_ok)
         # Which essays cite or discuss each figure (tools/connections.py). Only the pairs travel, never the essay text; an essay that is not on
         # the site's lists is left out, and a pair appears once.
         links, _ = connections.compute(con, cur)

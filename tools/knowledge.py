@@ -17,6 +17,8 @@ import re
 import sqlite3
 import sys
 
+INVERSE = {"ancestor_of": "descendant_of", "descendant_of": "ancestor_of", "teacher_of": "student_of", "student_of": "teacher_of", "attested_by": "attests",
+           "attests": "attested_by", "associated_with": "associated_with", "contemporary_of": "contemporary_of", "related_manuscript": "related_manuscript"}
 RELATIONS = ("ancestor_of", "teacher_of", "contemporary_of", "associated_with", "attested_by", "related_manuscript")
 BASES = ("scripture", "church_tradition", "ancient_source", "scholarly_inference", "editorial")
 
@@ -64,6 +66,58 @@ def profile_extras(q, nid, slug_of, book_ids, show_proposed=None):
                                   where l.to_node = ? and l.link_type = 'about' and a.type = 'article' and a.status = 'published'%s
                                   order by r.published_at desc""" % ok, nid)]
     return aliases, rel, essays
+
+
+def build_network(connections, people, church_slugs, word_slugs, essay_ids, verse_ok):
+    """Every connection between two pages of the site, keyed by page ('person/enoch', 'church/tertullian', 'word/cush'), one list per page.
+
+    Figure-to-figure rows come from the database (already on each profile as 'rel', taken off here); a connection that involves an Early Church figure or a
+    word study is a hand-kept row in tools/curated.json ('connections'), because those pages are not nodes in the database. Each carries its basis and its
+    evidence, and a row is written once and shown from both pages with the inverse wording. Refuses anything it cannot stand behind.
+    verse_ok(book, chapter, first, last) says whether a verse is in the stored text."""
+    keys = {"person/" + p["slug"] for p in people} | {"church/" + s for s in church_slugs} | {"word/" + s for s in word_slugs}
+    nx = {}
+    for p in people:
+        for r in p.pop("rel", []):
+            nx.setdefault("person/" + p["slug"], []).append({**r, "to": "person/" + r["to"]})
+    seen = {(a, r["to"], r["as"]) for a, rows in nx.items() for r in rows}
+    for c in connections or []:
+        a, b, kind = c.get("a"), c.get("b"), c.get("as")
+        who = "connection %s / %s" % (a, b)
+        if a not in keys or b not in keys or a == b:
+            sys.exit("%s: both ends must be different pages of the site (person/..., church/..., word/...)" % who)
+        if a.startswith("person/") and b.startswith("person/"):
+            sys.exit("%s: a relationship between two figures with profiles belongs in the database (links), not here" % who)
+        if kind not in INVERSE:
+            sys.exit("%s: unknown relationship %r" % (who, kind))
+        if c.get("basis") not in BASES or not (c.get("why") or "").strip() or not c.get("ev"):
+            sys.exit("%s needs a basis (%s), a reason and evidence" % (who, ", ".join(BASES)))
+        for ev in c["ev"]:
+            if not ev.get("l"):
+                sys.exit("%s: each piece of evidence needs words" % who)
+            if "r" in ev and not verse_ok(*ev["r"]):
+                sys.exit("%s rests on %s, which is not fully in the stored text" % (who, ev["l"]))
+            if "essay" in ev and ev["essay"] not in essay_ids:
+                sys.exit("%s cites essay %s, which is not on the site's lists" % (who, ev["essay"]))
+        for x, y, k in ((a, b, kind), (b, a, INVERSE[kind])):
+            if (x, y, k) in seen:
+                sys.exit("%s is written twice" % who)
+            seen.add((x, y, k))
+            nx.setdefault(x, []).append({"to": y, "as": k, "why": c["why"], "basis": c["basis"], "ev": c["ev"]})
+    return nx
+
+
+def check_scripture_groups(slug, groups, essay_ids, verse_ok):
+    """The Scripture groups on an Early Church page: the passages a figure is tied to, why, and what that rests on."""
+    for g in groups or []:
+        if not (g.get("t") and g.get("g") and g.get("refs") and g.get("ev")) or g.get("basis") not in BASES:
+            sys.exit("early_church %s: each scripture group needs a title, a note, refs, a basis (%s) and evidence" % (slug, ", ".join(BASES)))
+        for r in g["refs"]:
+            if not verse_ok(*r):
+                sys.exit("early_church %s: %r is not fully in the stored text" % (slug, r))
+        for ev in g["ev"]:
+            if not ev.get("l") or ("r" in ev and not verse_ok(*ev["r"])) or ("essay" in ev and ev["essay"] not in essay_ids):
+                sys.exit("early_church %s: evidence %r does not stand" % (slug, ev))
 
 
 def prose(md):
