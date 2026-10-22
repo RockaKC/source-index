@@ -132,6 +132,7 @@ test('the prerendered site: real files at clean addresses, a sitemap, robots.txt
     expect(page).toContain(`"wordCount":${D.ET[id]}`);
     expect(page).toContain(`<meta property="article:published_time" content="${D.pieces[id][3]}">`);
     expect(page).toContain('class="sref"');
+    if (id === '1349') for (const slug of ['enoch', 'noah']) expect(page, 'the confirmed figures are linked in the saved page').toMatch(new RegExp(`<a class="fref" href="/names/${slug}/" data-fig="${slug}">`));
     expect(read('sitemap.xml')).toContain(`/essays/${dir}/</loc><lastmod>${D.pieces[id][3]}</lastmod>`);
   }
   const essay = D.PUB && D.PUB.length ? fs.readdirSync(path.join(out, 'essays')).find(d => /^\d+-/.test(d)) : null;
