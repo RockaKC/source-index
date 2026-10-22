@@ -1465,6 +1465,9 @@
    "line": "Bishop of Antioch, martyred in Rome in the early second century.",
    "dates": "Died about AD 110",
    "sort_year": 50,
+   "scripture": [
+    {"t": "Antioch", "g": "The city where, in the Acts of the Apostles, the disciples were first called Christians. Ignatius was its bishop.", "refs": [[57, 11, 26, 26]], "basis": "scripture", "ev": [{"l": "Acts 11:26", "r": [57, 11, 26, 26]}]}
+   ],
    "image": "img/early-church/ignatius-of-antioch.webp",
    "width": 800,
    "height": 1000,
@@ -1495,6 +1498,9 @@
    "line": "Christian philosopher and apologist, martyred in Rome about AD 165.",
    "dates": "About AD 100 to about AD 165",
    "sort_year": 100,
+   "scripture": [
+    {"t": "Genesis 6: the sons of God", "g": "Reads the sons of God as angels who fell, in the work Kingdom Code quotes.", "refs": [[1, 6, 1, 4]], "basis": "ancient_source", "ev": [{"l": "Second Apology", "essay": 131}]}
+   ],
    "image": "img/early-church/justin-martyr.webp",
    "width": 800,
    "height": 985,
@@ -1527,6 +1533,9 @@
    "line": "Bishop of Lyons, whose Against Heresies answered the Gnostics from what the apostles taught.",
    "dates": "About AD 130 to about AD 202",
    "sort_year": 130,
+   "scripture": [
+    {"t": "Genesis 6: the sons of God", "g": "Reads the sons of God as angels who fell, in the work Kingdom Code quotes.", "refs": [[1, 6, 1, 4]], "basis": "ancient_source", "ev": [{"l": "Against Heresies IV.16.2", "essay": 131}]}
+   ],
    "image": "img/early-church/irenaeus-of-lyons.webp",
    "width": 800,
    "height": 1037,
@@ -1555,6 +1564,10 @@
    "line": "Carthaginian writer, the first major Christian author to write in Latin.",
    "dates": "About AD 155 to after AD 220",
    "sort_year": 155,
+   "scripture": [
+    {"t": "Genesis 6: the sons of God", "g": "Reads the sons of God as angels who fell, in the work Kingdom Code quotes.", "refs": [[1, 6, 1, 4]], "basis": "ancient_source", "ev": [{"l": "On the Apparel of Women I.2", "essay": 131}]},
+    {"t": "Jude and Enoch", "g": "Writes that “Enoch possesses a testimony in the Apostle Jude.”", "refs": [[78, 1, 14, 15]], "basis": "ancient_source", "ev": [{"l": "On the Apparel of Women 1.3", "essay": 181}]}
+   ],
    "image": "img/early-church/tertullian.webp",
    "width": 800,
    "height": 949,
@@ -1615,5 +1628,13 @@
     "He is remembered as having died about AD 405, at about seventy-five. Later accounts say raiders killed him at Scetis with companions, after he had told the brothers to flee. The Orthodox, Coptic and Catholic churches remember him as a saint."
    ]
   }
+ ],
+ "connections": [
+  {"a": "person/enoch", "b": "church/tertullian", "as": "attested_by",
+   "why": "Tertullian, writing about AD 200, puts it in one line: “Enoch possesses a testimony in the Apostle Jude.” He also argues that Noah, Enoch’s great-grandson, could have carried the writing through the flood.",
+   "basis": "ancient_source", "ev": [{"l": "On the Apparel of Women 1.3", "essay": 181}, {"l": "His argument about Noah, as the essay reports it", "essay": 315}]},
+  {"a": "church/moses-the-black", "b": "word/cush", "as": "associated_with",
+   "why": "Moses is called the Ethiopian, from the Greek Aithiops. The Cush study follows the biblical land of Cush, which the stored Septuagint calls Ethiopia.",
+   "basis": "editorial", "ev": [{"l": "Zephaniah 3:10", "r": [47, 3, 10, 10]}, {"l": "Isaiah 18:1", "r": [34, 18, 1, 1]}]}
  ]
 }

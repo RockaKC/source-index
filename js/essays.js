@@ -87,11 +87,39 @@ const srefLinks = h => h.replace(/<a class="sref" data-ref="([\d:-]+)" href="[^"
   const [b, ch, vs, ve] = k.split(/[:-]/).map(Number);
   return `<a class="sref" data-ref="${k}" href="${scriptureHash([b, ch, vs, ve || vs])}"`;
 });
+// A figure's name inside an essay read on the site: the first mention in the essay's own words links to the figure's page. Added when the page is
+// drawn, so the essay's words and files stay exactly as written. Only the figures the database connects to this essay (D.PP[].essays, from the
+// confirmed about links) and the Early Church figures the essay cites or discusses (D.EL, tools/connections.py) are linked, never inside a quotation, a heading
+// or another link, and at most six to an essay.
+const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function figureLinks(pid, h) {
+  const figs = [...(D.PP || []).filter(f => f.al && f.al.length && f.essays.includes(+pid)).map(f => ({slug: f.slug, al: f.al, href: '#/person/' + f.slug})),
+    ...(D.EC || []).filter(f => (f.link_terms || {}).names && ((D.EL || {})['church/' + f.slug] || []).some(r => r[0] === +pid))
+      .map(f => ({slug: f.slug, al: f.link_terms.names.slice().sort((a, b) => b.length - a.length), href: '#/church/' + f.slug}))];
+  if (!figs.length) return h;
+  const root = new DOMParser().parseFromString(`<div>${h}</div>`, 'text/html').body.firstChild;
+  let made = 0;
+  for (const f of figs) {
+    if (made >= 6) break;
+    const re = new RegExp(`(^|[^\\p{L}\\p{N}])(${f.al.map(escRe).join('|')})(?![\\p{L}\\p{N}])`, 'u');
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      if (n.parentElement.closest('blockquote, a, h2, h3, h4, sup')) continue;
+      const m = re.exec(n.nodeValue); if (!m) continue;
+      const hit = n.splitText(m.index + m[1].length); hit.splitText(m[2].length);
+      const a = document.createElement('a');
+      a.className = 'fref'; a.href = f.href; a.dataset.fig = f.slug; a.textContent = m[2];
+      hit.replaceWith(a); made++;
+      break;
+    }
+  }
+  return made ? root.innerHTML : h;
+}
 async function ensureEssay(pid) {
   if (ESSAYS[pid]) return;
   const r = await fetch(`essay-text/${pid}.json`);
   if (!r.ok) throw new Error('essay');
-  ESSAYS[pid] = srefLinks((await r.json()).h);
+  ESSAYS[pid] = figureLinks(pid, srefLinks((await r.json()).h));
 }
 function essayHead(pid) {                // the title, the line under it, and (once loaded) the text itself
   const [title, , , date] = P[pid], mins = Math.max(1, Math.round(ET[pid] / 220));

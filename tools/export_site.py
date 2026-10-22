@@ -39,6 +39,7 @@ import stamp_assets  # noqa: E402
 import connections  # noqa: E402
 import library  # noqa: E402
 import essay_text  # noqa: E402
+import knowledge  # noqa: E402
 import witness  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -153,6 +154,8 @@ def profiles(q, cur):
     if not q("select 1 from sqlite_master where name = 'person_profiles'"):
         sys.exit("this database has no Names profiles (table person_profiles); use kc_v18 or later")
     out = []
+    slug_of = {r[0]: r[1] for r in q("select n.id, n.slug from person_profiles p join nodes n on n.id = p.node_id where n.type = 'person' and n.status = 'published'")}
+    book_ids = {r[0].lower(): r[1] for r in q("select name, id from books")}
     for nid, name, slug, line, body in q("""select n.id, n.title, n.slug, n.summary, n.body_md from person_profiles p
                                              join nodes n on n.id = p.node_id
                                              where n.type = 'person' and n.status = 'published' order by p.position"""):
@@ -164,10 +167,17 @@ def profiles(q, cur):
             g["refs"] = [list(r) for r in q("""select book_id, chapter, verse_start, verse_end from profile_refs
                                                where group_id = ? order by position""", gid)]
             groups.append(g)
-        out.append({"slug": slug, "name": name, "line": line,
-                    "about": [para for para in (body or "").split("\n\n") if para.strip()],
-                    "groups": groups,
-                    "essays": [r[0] for r in q("select article_id from profile_essays where node_id = ? order by position", nid)]})
+        aliases, rel, about = knowledge.profile_extras(q, nid, slug_of, book_ids)
+        essays = [r[0] for r in q("select article_id from profile_essays where node_id = ? order by position", nid)]
+        essays += [e for e in about if e not in essays]         # essays connected by an about link follow the hand-ordered ones
+        p = {"slug": slug, "name": name, "line": line,
+             "about": [para for para in (body or "").split("\n\n") if para.strip()],
+             "groups": groups, "essays": essays}
+        if aliases:
+            p["al"] = aliases                                    # the names an essay uses, linked on first mention in essays read on the site
+        if rel:
+            p["rel"] = rel                                       # other figures, each with its basis and evidence
+        out.append(p)
     return out
 
 
@@ -349,6 +359,15 @@ def build(con, cur, warn):
             bad = [e for e in pr["essays"] if str(e) not in D["pieces"]]
             if bad:
                 sys.exit("the profile of %s lists essays that are not published on the page: %s" % (pr["name"], bad))
+            for r_ in pr.get("rel", []):
+                if r_["to"] not in {x["slug"] for x in people}:
+                    sys.exit("the profile of %s relates to %s, which is not a published profile" % (pr["name"], r_["to"]))
+                for ev in r_["ev"]:
+                    if "r" in ev:
+                        b_, ch_, v1, v2 = ev["r"]
+                        have = {int(re.match(r"\d+", str(r[0])).group()) for r in bible.get(str(b_), {}).get(str(ch_), [])}
+                        if not set(range(v1, v2 + 1)) <= have:
+                            sys.exit("a relationship of %s rests on %s, which is not fully in the stored text" % (pr["name"], ev["l"]))
             for g in pr["groups"]:
                 for b_, ch_, v1, v2 in g["refs"]:
                     have = {int(re.match(r"\d+", str(r[0])).group()) for r in bible.get(str(b_), {}).get(str(ch_), [])}
@@ -403,6 +422,14 @@ def build(con, cur, warn):
                 sys.exit("early_church %s needs sort_year: an approximate year (birth, where known), used only to put the figures in time order" % f["slug"])
         ec = sorted(ec, key=lambda f: f["sort_year"])             # the list is always in time order, whatever order they were added in
         D["EC"] = ec
+        def verse_ok(b_, ch_, v1, v2):
+            have = {int(re.match(r"\d+", str(r[0])).group()) for r in bible.get(str(b_), {}).get(str(ch_), [])}
+            return set(range(v1, v2 + 1)) <= have
+        for f in ec:
+            knowledge.check_scripture_groups(f["slug"], f.get("scripture"), {int(k) for k in D["pieces"]}, verse_ok)
+        # How the pages connect: figures to figures (the database), and anything that involves an Early Church figure or a word study (curated.json).
+        D["NX"] = knowledge.build_network(cur.get("connections"), D.get("PP", []), [f["slug"] for f in ec], [w["slug"] for w in cur["words"]],
+                                          {int(k) for k in D["pieces"]}, verse_ok)
         # Which essays cite or discuss each figure (tools/connections.py). Only the pairs travel, never the essay text; an essay that is not on
         # the site's lists is left out, and a pair appears once.
         links, _ = connections.compute(con, cur)

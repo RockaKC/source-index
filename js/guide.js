@@ -33,6 +33,52 @@ function viewNames() {
   <div class="card" style="margin-top:24px;padding-top:8px;padding-bottom:8px"><ul class="list">${pp.map(x =>
     `<li><a class="wl" href="#/person/${x.slug}"><b>${esc(x.name)}</b><span class="en">${esc(x.line)}</span></a></li>`).join('')}</ul></div>`;
 }
+const REL_AS = {ancestor_of: 'Ancestor of', descendant_of: 'Descendant of', associated_with: 'Associated with', contemporary_of: 'Contemporary of', teacher_of: 'Teacher of',
+  student_of: 'Student of', attested_by: 'Attested by', attests: 'Attests', related_manuscript: 'Related manuscript'};
+const REL_BASIS = {scripture: 'Scripture', church_tradition: 'Church tradition', ancient_source: 'Ancient source', scholarly_inference: 'Scholarly inference', editorial: 'Kingdom Code'};
+function nxTarget(key) {             // the page a connection points to: {name, href}, or null when that page is not on this site
+  const [kind, slug] = key.split('/');
+  const x = kind === 'person' ? (D.PP || []).find(p => p.slug === slug) : kind === 'church' ? (D.EC || []).find(f => f.slug === slug) : wordBySlug(slug);
+  return x ? {name: x.name || x.title, href: `#/${kind === 'person' ? 'person' : kind === 'church' ? 'church' : 'word'}/${slug}`} : null;
+}
+function evHtml(ev) {                // what a connection rests on: a verse links to its page, an essay that quotes the source links to the essay
+  return (ev || []).map(e => e.r ? `<a href="${scriptureHash(e.r)}">${esc(e.l.replace(/(\d)-(\d)/g, '$1\u2013$2'))}</a>`
+    : e.essay && P[e.essay] ? `${esc(e.l)}, in <a ${link(e.essay)}>${esc(P[e.essay][0])}</a>` : esc(e.l)).join('; ');
+}
+function relItem(r) {                // another page, how they connect, why, and what that rests on
+  const to = nxTarget(r.to); if (!to) return '';
+  const ev = evHtml(r.ev);
+  return `<li class="piece"><div class="t"><span class="relas">${esc(REL_AS[r.as] || r.as)}</span><a href="${esc(to.href)}">${esc(to.name)}</a></div>
+    ${r.why ? `<p class="relwhy">${esc(r.why)}</p>` : ''}<p class="cap">${esc(REL_BASIS[r.basis] || r.basis)}${ev ? ' \u00b7 ' + ev : ''}</p></li>`;
+}
+function nxSection(key) {            // (website only) Connections: figures, Early Church witnesses and word studies this page connects to (D.NX, tools/knowledge.py)
+  const rows = PROFILE.connections ? ((D.NX || {})[key] || []).filter(r => nxTarget(r.to)) : [];
+  return rows.length ? `<h2>Connections</h2><div class="card pp" style="margin-top:16px"><ul class="list">${rows.map(relItem).join('')}</ul></div>` : '';
+}
+function scriptureGroups(groups) {   // the passages a figure is tied to, each with why and what that rests on
+  return (groups || []).length ? `<h2>In Scripture</h2>${groups.map(g => `<h3 class="pg">${esc(g.t)}</h3><p style="margin:4px 0 0">${esc(g.g)}</p>
+  <ul class="chips" style="margin-top:12px">${g.refs.map(personRef).join('')}</ul>
+  <p class="cap" style="margin-top:8px">${esc(REL_BASIS[g.basis] || g.basis)} \u00b7 ${evHtml(g.ev)}</p>`).join('')}` : '';
+}
+function figuresAt(b, ch, v) {       // the figures with profiles, and the Early Christian witnesses, whose pages are tied to this verse (v = 0: this chapter)
+  const mine = refs => refs.filter(r => r[0] === b && r[1] === ch && (!v || (r[2] <= v && r[3] >= v)));
+  const pick = (list, groupsOf) => list.map(x => ({x, refs: groupsOf(x).flatMap(g => mine(g.refs))})).filter(h => h.refs.length);
+  return {people: pick(D.PP || [], p => p.groups), witnesses: pick(D.EC || [], f => f.scripture || [])};
+}
+function figuresBlock(b, ch, v) {    // links only, never commentary: the reason is on the figure's own page
+  if (!PROFILE.connections) return '';
+  const {people, witnesses} = figuresAt(b, ch, v);
+  if (!people.length && !witnesses.length) return '';
+  const span = h => {                // the verses of this chapter the figure is tied to, as ranges that really are tied
+    if (v) return '';
+    const m = []; for (const [a, z] of h.refs.map(r => [r[2], r[3]]).sort((x, y) => x[0] - y[0])) { const l = m[m.length - 1]; if (l && a <= l[1] + 1) l[1] = Math.max(l[1], z); else m.push([a, z]); }
+    return ` (verse${m.length > 1 || m[0][1] > m[0][0] ? 's' : ''} ${m.map(([a, z]) => z > a ? a + '\u2013' + z : a).join(', ')})`;
+  };
+  const chip = (h, kind) => `<li><a class="chip" href="#/${kind}/${esc(h.x.slug)}">${esc(h.x.name)}${span(h)}</a></li>`;
+  return `<section class="figs"><h2>${v ? 'Figures and witnesses' : 'Figures in this chapter'}</h2>
+    ${people.length ? `<p class="cap">In Scripture</p><ul class="chips">${people.map(h => chip(h, 'person')).join('')}</ul>` : ''}
+    ${witnesses.length ? `<p class="cap">Early Christian witnesses</p><ul class="chips">${witnesses.map(h => chip(h, 'church')).join('')}</ul>` : ''}</section>`;
+}
 function viewPerson(slug) {
   const pr = (D.PP || []).find(x => x.slug === slug); if (!pr) return viewMissing();
   const groups = pr.groups.map(g => `<h3 class="pg">${esc(g.t)}</h3>${g.g ? `<p style="margin:4px 0 0">${esc(g.g)}</p>` : ''}
@@ -41,6 +87,7 @@ function viewPerson(slug) {
   ${backLink('#/names')}
   <h1>${esc(pr.name)}</h1>
   <div class="about">${pr.about.map(t => `<p>${esc(t)}</p>`).join('')}</div>
+  ${nxSection('person/' + pr.slug)}
   <h2>In Scripture</h2>
   ${groups}
   <h2>Essays</h2>
@@ -131,6 +178,8 @@ function viewChurchFigure(slug) {
   <p class="cap">${esc(f.dates)}</p>
   ${(f.aka || []).length ? `<p class="cap">Also known as ${esc(f.aka.join(' and '))}</p>` : ''}
   <div class="eover">${f.overview.map(p => `<p>${esc(p)}</p>`).join('')}</div>
+  ${scriptureGroups(f.scripture)}
+  ${nxSection('church/' + f.slug)}
   ${featuredSection('church/' + f.slug, f.name)}
   ${(f.sources || []).length ? `<h2>Primary sources</h2><div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">${f.sources.map(s => `<li><a class="wl" href="${esc(s.url)}" target="_blank" rel="noopener"><b>${esc(s.title)}</b><span class="en">${esc(s.note)}</span></a></li>`).join('')}</ul></div>` : ''}`;
 }
