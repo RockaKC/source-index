@@ -150,7 +150,7 @@ test('a Bible page links to the figures and witnesses tied to it, and says nothi
 });
 
 test('the three published essays link their figures, Church Fathers included, and not one word of them changes', async ({ page }) => {
-  const want = {1349: ['enoch', 'noah'], 181: ['tertullian'], 37: ['sheba', 'jeremiah']};      // in the order they first appear
+  const want = {1349: ['enoch', 'noah'], 181: ['tertullian'], 37: ['sheba', 'ezekiel', 'jeremiah']};      // in the order they first appear
   for (const id of Object.keys(want)) {
     await page.goto('/#/essay/' + id); await settle(page);
     const links = page.locator('.essaytext a.fref');
@@ -159,4 +159,16 @@ test('the three published essays link their figures, Church Fathers included, an
   }
   await page.goto('/#/essay/181'); await settle(page);
   await expect(page.locator('.essaytext a.fref')).toHaveAttribute('href', '/guides/early-church/tertullian/');
+});
+
+test('Ezekiel has his own profile: his Scripture, the Septuagint spelling, Noe and Daniel, and the essays that discuss him', async ({ page }) => {
+  await page.goto('/#/person/ezekiel'); await settle(page);
+  await expect(page.locator('#app h1')).toContainText('Ezekiel');
+  await expect(page.locator('#app')).toContainText('Jezekiel');
+  await expect(page.locator('#app h3.pg')).toHaveText(['The call', 'The watchman', 'Shepherds and sheep', 'A new heart', 'The dry bones and the one stick', 'Gog', 'The city and the water', 'Noe, Daniel and Job']);
+  await expect(page.locator('#app')).toContainText('Plato. Wearing a Cross.');
+  const row = page.locator('#app .pp li', {hasText: 'Daniel'}).first();
+  await expect(row.locator('.relas')).toHaveText('Associated with');
+  await expect(row.locator('.cap')).toContainText('Scripture');
+  await expect(row.locator('.cap a').first()).toHaveAttribute('href', /^\/bible\/ezekiel\/14\//);
 });
