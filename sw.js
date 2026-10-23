@@ -8,7 +8,7 @@
    refreshed in the background, so an essay already read opens offline.
    Everything on another origin (analytics, Ko-fi) is left alone.
    Bump SHELL when the caching rules below change. */
-const SHELL = 'kc-shell-v16';
+const SHELL = 'kc-shell-v17';
 const BOOKS = 'kc-books-v2';
 const PRECACHE = ['./', 'profiles/site.js', 'data/site.js', 'css/site.css',
   'js/core.js', 'js/urls.js', 'js/seo.js', 'js/text.js', 'js/words.js', 'js/essays.js', 'js/search.js', 'js/reader.js', 'js/readerbar.js', 'js/marks.js', 'js/backup.js', 'js/guide.js', 'js/connections.js', 'js/library.js', 'js/account.js', 'js/witness.js',
