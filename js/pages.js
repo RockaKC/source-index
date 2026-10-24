@@ -52,7 +52,7 @@ function archiveHome() {
   const qs = D.paths.map(p => `<li><a class="q" href="#/path/${p.id}"><span>${esc(p.q)}</span><i aria-hidden="true">Read</i></a></li>`).join('');
   const g = (D.KG || [])[0], latest = essayIds().slice(0, 3);
   const coll = [
-    ['#/books', withText, 'The Bible', `All 81 books of the Ethiopian canon. ${withText} have their text here.`],
+    ['#/books', withText, 'The Bible', `${withText} books of the Ethiopian canon, with their text, free to read.`],
     D.PP && D.PP.length ? ['#/names', D.PP.length, 'Names', 'Short profiles, with the verses where each appears.'] : null,
     ['#/words', WORDS.length, 'Words', 'Hebrew and Greek terms from the essays, side by side.'],
     D.TL ? ['#/translations', 'NT', 'Translations', 'Which New Testament translations let the Greek speak.'] : null,
