@@ -4,7 +4,7 @@
 function shelf(es) {
   return `<ul class="grid">${es.map(e => {
     const n = PROFILE.essaysInBible ? piecesForBook(e.books).length : 0, txt = e.books.some(b => D.CC[b]);
-    const meta = n ? plural(n,'essay') : (txt ? '' : 'Text not in the index yet');
+    const meta = n ? plural(n,'essay') : (txt ? '' : 'Text not available here');
     return `<li><a class="bk" href="#/book/${e.id}"><span class="n">${esc(e.name)}</span>${meta ? `<span class="m">${meta}</span>` : ''}</a></li>`;
   }).join('')}</ul>`;
 }
@@ -34,7 +34,7 @@ function viewEnglish() {
   ${backLink('#/books')}
   <h1>${esc(en.title)}</h1>
   <p class="lede">${esc(en.lede)}</p>
-  ${(() => { const k = Object.keys(D.CC), ge = k.filter(b => /Ethiopic/.test(D.TS[b])).length; return `<p class="lede" style="margin-top:8px">Of the ${k.length} books with text in this index, ${ge} ${ge === 1 ? 'is' : 'are'} translated from Ethiopic (Ge\u2019ez) and ${k.length - ge} from Greek. No direct Ge\u2019ez translation of the others is here yet.</p>`; })()}
+  ${(() => { const k = Object.keys(D.CC), ge = k.filter(b => /Ethiopic/.test(D.TS[b])).length; return `<p class="lede" style="margin-top:8px">Of the ${k.length} books with text in this index, ${ge} ${ge === 1 ? 'is' : 'are'} translated from Ethiopic (Ge\u2019ez) and ${k.length - ge} from Greek. No direct Ge\u2019ez translation of the others is included.</p>`; })()}
   ${groups}
   ${en.foot ? `<p class="cap" style="margin-top:24px">${esc(en.foot)}</p>` : ''}
   <p style="margin-top:16px"><a class="btn secondary" href="${esc(D.guide[1])}" target="_blank" rel="noopener">${esc(D.guide[0])}</a></p>`;
@@ -54,7 +54,7 @@ function viewBook(eid) {
     <p style="margin-top:24px"><a class="btn primary" href="#/read/${loaded[0]}/${D.CC[loaded[0]][0]}">Start reading</a></p>
     <h2>Chapters</h2>${grids}
     ${anyCited ? '<p class="cap legend"><span class="dot" aria-hidden="true"></span>Has verses cited in Kingdom Code essays</p>' : ''}${psNote}`
-    : `<div class="card" style="margin-top:24px"><p style="margin:0">The text of ${esc(e.name)} isn\u2019t in the index yet. The free reference guide covers every book in the canon.</p>
+    : `<div class="card" style="margin-top:24px"><p style="margin:0">The text of ${esc(e.name)} isn\u2019t available here. The free reference guide covers every book in the canon.</p>
        <p style="margin:16px 0 0"><a class="btn secondary" href="${esc(D.guide[1])}" target="_blank" rel="noopener">Open the reference guide</a></p></div>`;
   return `
   ${backLink(`#/books`)}

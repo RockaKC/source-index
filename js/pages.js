@@ -27,7 +27,7 @@ function viewReaderHome() {         // the app's home: the Bible first, the Guid
   const withText = D.entries.filter(e => e.books.some(b => D.CC[b])).length;
   return `
   <h1>Read the Bible.</h1>
-  <p class="lede">All 81 books of the Ethiopian canon, as the Ethiopian and Eritrean Orthodox Tewahedo Churches list them. ${withText} have their text here so far.</p>
+  <p class="lede">All 81 books of the Ethiopian canon, as the Ethiopian and Eritrean Orthodox Tewahedo Churches list them. ${withText} have their text here.</p>
   ${continueCard()}
   ${searchForm()}
   <h2>The 81 books</h2>
@@ -87,7 +87,7 @@ function archiveHome() {
     ${g ? `<section aria-labelledby="ah-g"><h2 id="ah-g" class="ah2">Featured guide</h2>
       <a class="afeat" href="#/guides/${esc(g.slug)}"><img src="${esc(g.cover)}" width="1200" height="675" alt="" loading="lazy">
         <span class="afeat-b"><b>${esc(g.title)}</b><span>${esc(g.sub)}</span><i>${esc(guideMeta(g))}</i></span></a></section>` : ''}
-    <section aria-labelledby="ah-l"><h2 id="ah-l" class="ah2">Essays, if you want them</h2>
+    <section aria-labelledby="ah-l"><h2 id="ah-l" class="ah2">Kingdom Code essays</h2>
       ${pieceList(latest)}
       <p class="cap" style="margin-top:12px"><a href="#/essays" style="color:var(--accent)">All ${essayIds().length} essays</a></p></section>
   </div>
@@ -168,7 +168,7 @@ function viewApp() {
   ${backLink('#/about')}
   <img class="appicon" src="img/app-icon.webp" width="96" height="96" alt="KC Tewahedo Bible app icon">
   <h1>KC Tewahedo Bible for Android</h1>
-  <p class="lede">All 81 books of the Ethiopian canon on your phone, ${withText} with their text so far, every one readable without a connection. Free, with no account and no ads.</p>
+  <p class="lede">All 81 books of the Ethiopian canon on your phone, ${withText} with their text, every one readable without a connection. Free, with no account and no ads.</p>
   <p class="act" style="margin-top:24px"><a class="btn primary" href="${APP_DOWNLOAD}" data-app-download>Download for Android</a></p>
   <p class="cap" style="margin-top:8px">Android 7 or newer. About 6 MB.</p>
   <div class="about">
@@ -194,7 +194,7 @@ function viewCredits() {
   <p class="lede">Every Scripture text in this index is in the public domain.</p>
   <div class="card" style="margin-top:24px"><ul class="list">${D.credits.map(c => `<li class="piece"><div class="t">${esc(c.what)}</div><p style="margin:2px 0 0">${esc(c.text)}</p></li>`).join('')}${analyticsOn ? `<li class="piece"><div class="t">Visit counts</div><p style="margin:2px 0 0">This site counts visits and clicks without cookies or personal data. Searches that find nothing are logged so the index can grow.</p></li>` : ''}</ul></div>`;
 }
-function viewMissing() { return `${backLink(`#/`)}<h1>Not found</h1><p class="lede">That page is not in the index yet.</p>`; }
+function viewMissing() { return `${backLink(`#/`)}<h1>Not found</h1><p class="lede">That page could not be found.</p>`; }
 
 addRoute('', () => viewHome());
 onPage(p => { if (PROFILE.archiveHome) document.documentElement.toggleAttribute('data-archive', p[0] === ''); });   // the front page alone uses the wide layout

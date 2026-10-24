@@ -143,7 +143,7 @@ function viewEssay(pid) {
   }
   if (onSite(pid) && !hasRefs(pid)) return `${essayHead(pid)}${essayBody(pid)}`;
   if (!hasRefs(pid)) return `${backLink(`#/`)}<h1>${esc(title)}</h1>
-    <p class="lede">No Scripture references from this essay are in the index yet.</p>
+    <p class="lede">No Scripture references are listed for this essay.</p>
     <p style="margin-top:24px"><a class="btn primary" ${link(pid)}>Read the essay</a></p>`;
   const refs = REFS[pid], books = [...new Set(refs.map(r => r[0]))].sort((a,c) => a-c);
   const groups = books.map(b => `<div class="grp"><h3>${esc(bname(b))}</h3><ul class="chips">${

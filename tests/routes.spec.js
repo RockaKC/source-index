@@ -205,7 +205,7 @@ test('the website front page is the Kingdom Code archive: the mission, search, t
   await expect(page.locator('#q')).toBeVisible();                                    // search is still first at hand
   await expect(page.locator('.afeat')).toHaveAttribute('href', '/guides/kingdom-code/the-ungovernable-mind/');
   const order = await page.locator('#app .ah2').allTextContents();
-  expect(order.indexOf('Study the archive')).toBeLessThan(order.indexOf('Essays, if you want them'));   // study first, essays optional
+  expect(order.indexOf('Study the archive')).toBeLessThan(order.indexOf('Kingdom Code essays'));   // study first, essays optional
   const ids = await page.evaluate(() => essayIds().slice(0, 3));
   const shown = await page.locator('.acols .piece .t a').evaluateAll(a => a.map(x => x.dataset.pid));
   expect(shown).toEqual(ids.map(String));                                           // the three newest, in order
