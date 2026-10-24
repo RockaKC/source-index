@@ -196,18 +196,21 @@ test('the app keeps its own Guide page, without the PDF guides', async ({ page }
   await expect(page.locator('.gcard')).toHaveCount(0);
 });
 
-test('the website front page is the Kingdom Code archive: the mission, search, the featured guide, the newest essays and the collections', async ({ page }) => {
+test('the website front page is the Kingdom Code archive: the mission, search, the study collections first, then the featured guide and the newest essays as an option', async ({ page }) => {
   await page.goto('/'); await settle(page);
   await expect(page.locator('#app h1')).toHaveText('Kingdom Code');
-  await expect(page.locator('.ahead')).toHaveText('Recovering ancient wisdom. Investigating history. Understanding Scripture.');
-  await expect(page.locator('.alede')).toContainText('An independent Christian publication exploring Holy Scripture, early Christianity, ancient civilizations, and the historical records that illuminate our world.');
+  await expect(page.locator('.ahead')).toHaveText('Examine the Scriptures daily.');
+  await expect(page.locator('.alede')).toContainText('A free Christian publication in the heritage of the Ethiopian canon. Every essay, word study and profile sends you back to the text, so you can test what you hear against it, as the Bereans did.');
+  await expect(page.locator('.astd')).toHaveText('The standard is Scripture. Everything here is free to read and free to check.');
   await expect(page.locator('#q')).toBeVisible();                                    // search is still first at hand
   await expect(page.locator('.afeat')).toHaveAttribute('href', '/guides/kingdom-code/the-ungovernable-mind/');
-  const ids = await page.evaluate(() => essayIds().slice(0, 5));
+  const order = await page.locator('#app .ah2').allTextContents();
+  expect(order.indexOf('Study the archive')).toBeLessThan(order.indexOf('Kingdom Code essays'));   // study first, essays optional
+  const ids = await page.evaluate(() => essayIds().slice(0, 3));
   const shown = await page.locator('.acols .piece .t a').evaluateAll(a => a.map(x => x.dataset.pid));
-  expect(shown).toEqual(ids.map(String));                                           // the five newest, in order
+  expect(shown).toEqual(ids.map(String));                                           // the three newest, in order
   const hrefs = await page.locator('.coll a.cc').evaluateAll(a => a.map(x => x.getAttribute('href')));
-  expect(hrefs).toEqual(['/bible/', '/essays/', '/guides/kingdom-code/', '/names/', '/words/', '/translations/', '/english/']);
+  expect(hrefs).toEqual(['/bible/', '/names/', '/words/', '/translations/', '/english/', '/guides/kingdom-code/', '/essays/']);
   expect(await page.evaluate(() => document.documentElement.hasAttribute('data-archive'))).toBe(true);   // the front page alone is wide
   await page.locator('.coll a[href="/words/"]').click(); await settle(page);
   expect(await page.evaluate(() => document.documentElement.hasAttribute('data-archive'))).toBe(false);
@@ -259,7 +262,7 @@ test('titles in the lists open the essay where it was published, in a new tab, u
   for (const hash of ['#/essays/' + year, '#/']) {
     await page.goto('/' + hash); await settle(page);
     const links = await page.locator('#app .piece .t a').evaluateAll(a => a.map(x => [x.getAttribute('href'), x.getAttribute('target'), x.dataset.pid]));
-    expect(links.length).toBeGreaterThan(3);
+    expect(links.length).toBeGreaterThan(2);
     for (const [href, target, pid] of links) {
       if (PILOT.includes(pid)) { expect(href, 'an approved essay opens on the site').toMatch(new RegExp(`^/essays/${pid}-`)); expect(target).toBeNull(); continue; }
       expect(href).toMatch(/^https:\/\/(kingdomcode\.substack\.com|www\.patreon\.com)\//);

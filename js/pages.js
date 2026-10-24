@@ -27,7 +27,7 @@ function viewReaderHome() {         // the app's home: the Bible first, the Guid
   const withText = D.entries.filter(e => e.books.some(b => D.CC[b])).length;
   return `
   <h1>Read the Bible.</h1>
-  <p class="lede">All 81 books of the Ethiopian canon, as the Ethiopian and Eritrean Orthodox Tewahedo Churches list them. ${withText} have their text here so far.</p>
+  <p class="lede">All 81 books of the Ethiopian canon, as the Ethiopian and Eritrean Orthodox Tewahedo Churches list them. ${withText} have their text here.</p>
   ${continueCard()}
   ${searchForm()}
   <h2>The 81 books</h2>
@@ -42,28 +42,29 @@ function viewReaderHome() {         // the app's home: the Bible first, the Guid
   <p class="lede" style="margin-top:8px">Essays from the publication behind this app, kept in their own section, apart from the Bible text.</p>
   <p style="margin-top:16px"><a class="btn secondary" href="#/kc">Open From Kingdom Code</a></p>`;
 }
-// The website's front page, laid out as the Kingdom Code archive: the mission and the search first, then the featured guide and the
-// newest essays, the collections as catalog cards with their counts, and the questions to start with.
+// The website's front page, laid out as the Kingdom Code archive: the mission and the search first, then the study collections as catalog
+// cards with their counts (the Bible, Names, Words, Translations first; Guides and Essays last), then the featured guide and the three
+// newest essays as an option for readers who want them, and the questions to start with.
 const essayIds = () => Object.keys(P).filter(pid => P[pid] && (hasRefs(pid) || PUB.has(pid))).sort((a, c) => P[c][3].localeCompare(P[a][3]) || c - a);   // cited in the index, or a public Substack essay (a new one is listed before its citations are in)
 function archiveHome() {
   const withText = D.entries.filter(e => e.books.some(b => D.CC[b])).length, extras = D.entries.filter(e => e.extra);
   const chips = topVerses().map(([b,ch,v]) => `<li><a class="chip" href="#/verse/${b}/${ch}/${v}">${esc(bname(b))} ${ch}:${v}</a></li>`).join('');
   const qs = D.paths.map(p => `<li><a class="q" href="#/path/${p.id}"><span>${esc(p.q)}</span><i aria-hidden="true">Read</i></a></li>`).join('');
-  const g = (D.KG || [])[0], latest = essayIds().slice(0, 5);
+  const g = (D.KG || [])[0], latest = essayIds().slice(0, 3);
   const coll = [
-    ['#/books', withText, 'The Bible', `All 81 books of the Ethiopian canon. ${withText} have their text here.`],
-    ['#/essays', essayIds().length, 'Essays', 'Kingdom Code essays, newest first, and the verses each one cites.'],
-    g ? ['#/guides', D.KG.length, 'Guides', 'Kingdom Code guides to download and keep.'] : null,
+    ['#/books', withText, 'The Bible', `${withText} books of the Ethiopian canon, with their text, free to read.`],
     D.PP && D.PP.length ? ['#/names', D.PP.length, 'Names', 'Short profiles, with the verses where each appears.'] : null,
     ['#/words', WORDS.length, 'Words', 'Hebrew and Greek terms from the essays, side by side.'],
     D.TL ? ['#/translations', 'NT', 'Translations', 'Which New Testament translations let the Greek speak.'] : null,
     D.EN ? ['#/english', extras.length, 'Outside most Bibles', 'The books not in a Protestant Bible, and where to read them in English.'] : null,
+    g ? ['#/guides', D.KG.length, 'Guides', 'Kingdom Code guides to download and keep.'] : null,
+    ['#/essays', essayIds().length, 'Essays', 'Kingdom Code essays, newest first, and the verses each one cites.'],
   ].filter(Boolean);
   return `
   <section class="ahero" aria-labelledby="ah-t">
     <h1 id="ah-t">Kingdom <em>Code</em></h1>
-    <p class="ahead"><span>Recovering ancient wisdom.</span> <span>Investigating history.</span> <span>Understanding Scripture.</span></p>
-    <p class="alede">An independent Christian publication exploring Holy Scripture, early Christianity, ancient civilizations, and the historical records that illuminate our world.</p>
+    <p class="ahead"><span>Examine the Scriptures daily.</span></p>
+    <p class="alede">A free Christian publication in the heritage of the Ethiopian canon. Every essay, word study and profile sends you back to the text, so you can test what you hear against it, as the Bereans did.</p>
     <form class="search" role="search" id="sf">
       <label class="sr" for="q">Search by verse, word, or title</label>
       <input id="q" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug" aria-haspopup="listbox" placeholder="Verse, word, or title" autocomplete="off" autocapitalize="none" spellcheck="false" enterkeyhint="search">
@@ -71,24 +72,25 @@ function archiveHome() {
       <ul class="sug" id="sug" role="listbox" aria-label="Suggestions" hidden></ul>
       <div class="sr" id="sugstat" role="status" aria-live="polite"></div>
     </form>
+    <p class="astd">The standard is Scripture. Everything here is free to read and free to check.</p>
     <ul class="chips" aria-label="Popular verses">${chips}</ul>
   </section>
 
   ${typeof witCard === 'function' ? witCard() : ''}
 
+  <h2 class="ah2">Study the archive</h2>
+  <ul class="coll">${coll.map(([href, n, t, d]) => `<li><a class="cc" href="${href}"><span class="cn">${esc(String(n))}</span><b>${esc(t)}</b><span class="cd">${esc(d)}</span></a></li>`).join('')}</ul>
+
+  ${continueCard()}
+
   <div class="acols">
     ${g ? `<section aria-labelledby="ah-g"><h2 id="ah-g" class="ah2">Featured guide</h2>
       <a class="afeat" href="#/guides/${esc(g.slug)}"><img src="${esc(g.cover)}" width="1200" height="675" alt="" loading="lazy">
         <span class="afeat-b"><b>${esc(g.title)}</b><span>${esc(g.sub)}</span><i>${esc(guideMeta(g))}</i></span></a></section>` : ''}
-    <section aria-labelledby="ah-l"><h2 id="ah-l" class="ah2">Latest essays</h2>
+    <section aria-labelledby="ah-l"><h2 id="ah-l" class="ah2">Kingdom Code essays</h2>
       ${pieceList(latest)}
       <p class="cap" style="margin-top:12px"><a href="#/essays" style="color:var(--accent)">All ${essayIds().length} essays</a></p></section>
   </div>
-
-  <h2 class="ah2">The collections</h2>
-  <ul class="coll">${coll.map(([href, n, t, d]) => `<li><a class="cc" href="${href}"><span class="cn">${esc(String(n))}</span><b>${esc(t)}</b><span class="cd">${esc(d)}</span></a></li>`).join('')}</ul>
-
-  ${continueCard()}
 
   <h2 class="ah2">Start with a question</h2>
   <div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">${qs}</ul></div>
@@ -166,7 +168,7 @@ function viewApp() {
   ${backLink('#/about')}
   <img class="appicon" src="img/app-icon.webp" width="96" height="96" alt="KC Tewahedo Bible app icon">
   <h1>KC Tewahedo Bible for Android</h1>
-  <p class="lede">All 81 books of the Ethiopian canon on your phone, ${withText} with their text so far, every one readable without a connection. Free, with no account and no ads.</p>
+  <p class="lede">All 81 books of the Ethiopian canon on your phone, ${withText} with their text, every one readable without a connection. Free, with no account and no ads.</p>
   <p class="act" style="margin-top:24px"><a class="btn primary" href="${APP_DOWNLOAD}" data-app-download>Download for Android</a></p>
   <p class="cap" style="margin-top:8px">Android 7 or newer. About 6 MB.</p>
   <div class="about">
@@ -192,7 +194,7 @@ function viewCredits() {
   <p class="lede">Every Scripture text in this index is in the public domain.</p>
   <div class="card" style="margin-top:24px"><ul class="list">${D.credits.map(c => `<li class="piece"><div class="t">${esc(c.what)}</div><p style="margin:2px 0 0">${esc(c.text)}</p></li>`).join('')}${analyticsOn ? `<li class="piece"><div class="t">Visit counts</div><p style="margin:2px 0 0">This site counts visits and clicks without cookies or personal data. Searches that find nothing are logged so the index can grow.</p></li>` : ''}</ul></div>`;
 }
-function viewMissing() { return `${backLink(`#/`)}<h1>Not found</h1><p class="lede">That page is not in the index yet.</p>`; }
+function viewMissing() { return `${backLink(`#/`)}<h1>Not found</h1><p class="lede">That page could not be found.</p>`; }
 
 addRoute('', () => viewHome());
 onPage(p => { if (PROFILE.archiveHome) document.documentElement.toggleAttribute('data-archive', p[0] === ''); });   // the front page alone uses the wide layout

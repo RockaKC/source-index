@@ -440,6 +440,7 @@ html[data-archive] .wrap{max-width:1040px}
 .ahero h1{margin:0;font:700 clamp(30px,8.2vw,72px)/1.04 var(--serif);letter-spacing:-.01em;text-transform:uppercase}
 .ahero h1 em{font-style:normal;color:#70b850}
 .ahead{max-width:640px;margin:var(--s3) 0 var(--s2);font:700 clamp(18px,5vw,36px)/1.25 var(--sans);letter-spacing:-.01em;color:#f1f3f0}
+.astd{max-width:640px;margin:var(--s2) 0 var(--s3);font:400 14px/1.5 var(--sans);color:#aeb7b0}
 .alede{max-width:640px;margin:0 0 var(--s4);font:400 clamp(16px,2.2vw,18px)/1.6 var(--sans);color:#aeb7b0}
 .ahero .search{margin-top:0;max-width:680px}
 .ahero .search input{background:#f6f7f5;color:#14181a;border-color:transparent}
