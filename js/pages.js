@@ -42,22 +42,23 @@ function viewReaderHome() {         // the app's home: the Bible first, the Guid
   <p class="lede" style="margin-top:8px">Essays from the publication behind this app, kept in their own section, apart from the Bible text.</p>
   <p style="margin-top:16px"><a class="btn secondary" href="#/kc">Open From Kingdom Code</a></p>`;
 }
-// The website's front page, laid out as the Kingdom Code archive: the mission and the search first, then the featured guide and the
-// newest essays, the collections as catalog cards with their counts, and the questions to start with.
+// The website's front page, laid out as the Kingdom Code archive: the mission and the search first, then the study collections as catalog
+// cards with their counts (the Bible, Names, Words, Translations first; Guides and Essays last), then the featured guide and the three
+// newest essays as an option for readers who want them, and the questions to start with.
 const essayIds = () => Object.keys(P).filter(pid => P[pid] && (hasRefs(pid) || PUB.has(pid))).sort((a, c) => P[c][3].localeCompare(P[a][3]) || c - a);   // cited in the index, or a public Substack essay (a new one is listed before its citations are in)
 function archiveHome() {
   const withText = D.entries.filter(e => e.books.some(b => D.CC[b])).length, extras = D.entries.filter(e => e.extra);
   const chips = topVerses().map(([b,ch,v]) => `<li><a class="chip" href="#/verse/${b}/${ch}/${v}">${esc(bname(b))} ${ch}:${v}</a></li>`).join('');
   const qs = D.paths.map(p => `<li><a class="q" href="#/path/${p.id}"><span>${esc(p.q)}</span><i aria-hidden="true">Read</i></a></li>`).join('');
-  const g = (D.KG || [])[0], latest = essayIds().slice(0, 5);
+  const g = (D.KG || [])[0], latest = essayIds().slice(0, 3);
   const coll = [
     ['#/books', withText, 'The Bible', `All 81 books of the Ethiopian canon. ${withText} have their text here.`],
-    ['#/essays', essayIds().length, 'Essays', 'Kingdom Code essays, newest first, and the verses each one cites.'],
-    g ? ['#/guides', D.KG.length, 'Guides', 'Kingdom Code guides to download and keep.'] : null,
     D.PP && D.PP.length ? ['#/names', D.PP.length, 'Names', 'Short profiles, with the verses where each appears.'] : null,
     ['#/words', WORDS.length, 'Words', 'Hebrew and Greek terms from the essays, side by side.'],
     D.TL ? ['#/translations', 'NT', 'Translations', 'Which New Testament translations let the Greek speak.'] : null,
     D.EN ? ['#/english', extras.length, 'Outside most Bibles', 'The books not in a Protestant Bible, and where to read them in English.'] : null,
+    g ? ['#/guides', D.KG.length, 'Guides', 'Kingdom Code guides to download and keep.'] : null,
+    ['#/essays', essayIds().length, 'Essays', 'Kingdom Code essays, newest first, and the verses each one cites.'],
   ].filter(Boolean);
   return `
   <section class="ahero" aria-labelledby="ah-t">
@@ -77,19 +78,19 @@ function archiveHome() {
 
   ${typeof witCard === 'function' ? witCard() : ''}
 
+  <h2 class="ah2">Study the archive</h2>
+  <ul class="coll">${coll.map(([href, n, t, d]) => `<li><a class="cc" href="${href}"><span class="cn">${esc(String(n))}</span><b>${esc(t)}</b><span class="cd">${esc(d)}</span></a></li>`).join('')}</ul>
+
+  ${continueCard()}
+
   <div class="acols">
     ${g ? `<section aria-labelledby="ah-g"><h2 id="ah-g" class="ah2">Featured guide</h2>
       <a class="afeat" href="#/guides/${esc(g.slug)}"><img src="${esc(g.cover)}" width="1200" height="675" alt="" loading="lazy">
         <span class="afeat-b"><b>${esc(g.title)}</b><span>${esc(g.sub)}</span><i>${esc(guideMeta(g))}</i></span></a></section>` : ''}
-    <section aria-labelledby="ah-l"><h2 id="ah-l" class="ah2">Latest essays</h2>
+    <section aria-labelledby="ah-l"><h2 id="ah-l" class="ah2">Essays, if you want them</h2>
       ${pieceList(latest)}
       <p class="cap" style="margin-top:12px"><a href="#/essays" style="color:var(--accent)">All ${essayIds().length} essays</a></p></section>
   </div>
-
-  <h2 class="ah2">The collections</h2>
-  <ul class="coll">${coll.map(([href, n, t, d]) => `<li><a class="cc" href="${href}"><span class="cn">${esc(String(n))}</span><b>${esc(t)}</b><span class="cd">${esc(d)}</span></a></li>`).join('')}</ul>
-
-  ${continueCard()}
 
   <h2 class="ah2">Start with a question</h2>
   <div class="card" style="margin-top:16px;padding-top:8px;padding-bottom:8px"><ul class="list">${qs}</ul></div>
