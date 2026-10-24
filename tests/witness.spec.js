@@ -192,7 +192,7 @@ test('a study: passage and translation, context, investigation, cross-references
   expect(await page.locator('.wit h2').allTextContents()).toEqual(['The passage', 'Where this sits', 'The investigation', 'Cross-references', 'Read further',
     'Cited in Kingdom Code essays', 'Related Kingdom Code investigations', 'In this sequence']);
   await expect(page.locator('.witpass')).toContainText('Enoch, the seventh from Adam');            // the stored text, read from the archive's own book file
-  await expect(page.locator('.witpass figcaption')).toContainText('Berean Literal Bible, translated from Greek');
+  await expect(page.locator('.witpass figcaption')).toContainText('Berean Literal Bible');
   await expect(page.locator('.witplace')).toHaveText('Jude · chapter 1 of 1 · Berean Literal Bible');
   await expect(page.locator('.wittext .wq').first()).toBeVisible();
   await expect(page.locator('.witx li')).toHaveCount(f.x.length);

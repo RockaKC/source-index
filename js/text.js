@@ -73,4 +73,4 @@ function textCard(b, ch, vs, ve, label) {
   return `<figure class="verse" style="margin:16px 0 0">${rows.map(([v, t]) => `<p>${many ? `<sup class="vn">${v}</sup> ` : ''}${fmtText(b, t.text)}</p>`).join('')}<p class="cap" style="${capStyle}">${esc(label)}, ${esc(rows[0][1].label)}</p>${eng ? `<p class="cap" style="${capStyle}">${esc(eng)}</p>` : ''}</figure>`;
 }
 const noteFor = (b, ch) => { const n = D.BN && D.BN[b], t = n && (ch ? (n.c || {})[ch] : n.p); return t ? `<p class="cap" style="margin-top:8px">${esc(t)}</p>` : ''; };
-function fromLine(b) { return `${TR[b]}, translated from ${D.TS[b]}`; }
+function fromLine(b) { return /^Greek/.test(D.TS[b]) ? TR[b] : `${TR[b]}, translated from ${D.TS[b]}`; }   // the Septuagint and the Berean Literal Bible stand by name; a version from Ethiopic says so

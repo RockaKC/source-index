@@ -133,7 +133,7 @@ function viewRead(b, ch, focus) {
     <a class="navbtn" ${next ? `href="#/read/${next[0]}/${next[1]}" aria-label="Next: ${lbl(next)}"` : 'aria-disabled="true"'}>\u203a</a>
   </div>`}
   <h1 style="margin-top:24px">${esc(bname(b))} ${ch}</h1>
-  <p class="lede">${esc(fromLine(b))}.${b === PSALMS && eng ? ` This is Psalm ${eng[0]} in English Bibles.` : ''}${PD.includes(b) ? ` Some verses in this book are numbered differently in English Bibles.` : ''}${cited ? ` Highlighted verses are cited in Kingdom Code essays. Tap one to see them.` : ''}</p>
+  <p class="lede">${esc(fromLine(b))}.${b === PSALMS && eng ? ` This is Psalm ${eng[0]} in English Bibles.` : ''}${cited ? ` Highlighted verses are cited in Kingdom Code essays. Tap one to see them.` : ''}</p>
   ${noteFor(b, ch)}
   <div class="rtools"><span class="cap">Text size</span>
     <button class="navbtn" type="button" data-size="-1" aria-label="Smaller text">A\u2212</button>
