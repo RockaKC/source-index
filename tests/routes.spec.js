@@ -189,11 +189,18 @@ test('an unknown guide shows the not-found page', async ({ page }) => {
   await expect(page.locator('#app h1')).toHaveText('Not found');
 });
 
-test('the app keeps its own Guide page, without the PDF guides', async ({ page }) => {
+test('the app has the Kingdom Code guides, and a guide opens its PDF on the website, in the browser', async ({ page }) => {
   await page.goto('/app.html'); await settle(page);
   await page.evaluate(() => { location.hash = '#/guide'; }); await settle(page);
-  await expect(page.locator('#app h1')).toHaveText('Guide');
-  await expect(page.locator('.gcard')).toHaveCount(0);
+  await expect(page.locator('#app h1')).toHaveText('Guides');
+  await page.locator('#app a.wl', { hasText: 'Kingdom Code Guides' }).click(); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Kingdom Code Guides');
+  await page.locator('#app .gcard h3 a').first().click(); await settle(page);
+  const btn = page.locator('#app .act a');
+  await expect(btn).toHaveCount(1);                                                   // one button: the PDF is not inside the app
+  await expect(btn).toHaveText('Open the PDF');
+  await expect(btn).toHaveAttribute('href', /^https:\/\/kingdomcodearchive\.com\/guides\/[\w-]+\.pdf$/);
+  await expect(btn).toHaveAttribute('target', '_blank');
 });
 
 test('the website front page is the Kingdom Code archive: the mission, search, the study collections first, then the featured guide and the newest essays as an option', async ({ page }) => {
@@ -342,9 +349,14 @@ test('Early Church: a list of figures, and Ignatius of Antioch with his image an
   await expect(page.locator('#app h1')).toHaveText('Not found');
 });
 
-test('the app has no Early Church section', async ({ page }) => {
+test('the app has the Early Church section: the list in time order, and each figure\'s page', async ({ page }) => {
   await page.goto('/app.html#/guide'); await settle(page);
-  await expect(page.locator('#app')).not.toContainText('Early Church');
+  await page.locator('#app a.wl', { hasText: 'Early Church' }).click(); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Early Church');
+  await expect(page.locator('#app a.efig')).toHaveText([/Ignatius of Antioch/, /Justin Martyr/, /Irenaeus of Lyons/, /Tertullian/, /Moses the Black/]);
+  await page.locator('#app a.efig').first().click(); await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Ignatius of Antioch');
+  expect(await page.evaluate(() => location.hash)).toBe('#/church/ignatius-of-antioch');   // the app keeps its #/ addresses
 });
 
 test('Early Church lists Ignatius, Justin Martyr, Irenaeus, Tertullian and Moses the Black in order, each with a loading image and a short overview', async ({ page }) => {

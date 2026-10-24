@@ -14,6 +14,6 @@ const PROFILE = {
   archiveHome: false,      // the website's archive front page
   library: false,            // the Essays library: search, subjects, topics, collections (js/library.js, D.LIB)
   connections: false,         // essays and subjects (Early Church, Names) link to each other (js/connections.js)
-  earlyChurch: false,      // the Early Church pages are on the website only
-  kcGuides: false,         // the PDF guides are on the website only
+  earlyChurch: true,       // the Early Church section of the Guide page, as on the website (its pictures are in img/, so they load offline)
+  kcGuides: true,          // Kingdom Code's guides; the PDFs are not in the app, so a guide's button opens the PDF on the website, in the browser
 };

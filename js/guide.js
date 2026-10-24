@@ -100,7 +100,10 @@ const guideMeta = g => {
   const day = new Date(g.date + 'T12:00:00Z'), when = isNaN(day) ? '' : ` \u00b7 ${day.toLocaleDateString('en-GB', {month: 'long', year: 'numeric', timeZone: 'UTC'})}`;
   return `PDF \u00b7 ${g.pages} pages \u00b7 ${fileSize(g.bytes)}${when}`;
 };
-const guideButtons = g => `<p class="act"><a class="btn primary" href="${esc(g.file)}" download="${esc(g.slug)}.pdf" data-guide="${esc(g.slug)}">Download PDF</a>
+const GUIDE_HOST = 'https://kingdomcodearchive.com/';      // the app carries no PDFs: its button opens the website's copy in the browser
+const guideButtons = g => PROFILE.id === 'app'
+  ? `<p class="act"><a class="btn primary" href="${esc(GUIDE_HOST + g.file)}" target="_blank" rel="noopener" data-guide-read="${esc(g.slug)}">Open the PDF</a></p>`
+  : `<p class="act"><a class="btn primary" href="${esc(g.file)}" download="${esc(g.slug)}.pdf" data-guide="${esc(g.slug)}">Download PDF</a>
   <a class="btn secondary" href="${esc(g.file)}" target="_blank" rel="noopener" data-guide-read="${esc(g.slug)}">Read online</a></p>`;
 document.addEventListener('click', e => {
   const d = e.target.closest('[data-guide]'), r = e.target.closest('[data-guide-read]');

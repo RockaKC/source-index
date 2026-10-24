@@ -39,7 +39,7 @@ function viewReaderHome() {         // the app's home: the Bible first, the Guid
   <h2>Guide</h2>
   ${guideList()}
   <h2>From Kingdom Code</h2>
-  <p class="lede" style="margin-top:8px">Essays from the publication behind this app, kept in their own section, apart from the Bible text.</p>
+  <p class="lede" style="margin-top:8px">Essays from Kingdom Code, the publication behind this app.</p>
   <p style="margin-top:16px"><a class="btn secondary" href="#/kc">Open From Kingdom Code</a></p>`;
 }
 // The website's front page, laid out as the Kingdom Code archive: the mission and the search first, then the study collections as catalog
