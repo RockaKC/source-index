@@ -67,3 +67,19 @@ test('the build stamps the app with the version it is publishing, and the app re
   expect(() => execFileSync('python3', [path.join(ROOT, 'tools', 'build_app.py')], { cwd: ROOT, stdio: 'pipe', env: { ...process.env, KC_APP_VERSION: 'x' } })).toThrow();
   execFileSync('python3', [path.join(ROOT, 'tools', 'build_app.py')], { cwd: ROOT, stdio: 'pipe' });
 });
+
+test('the guide covers and the Early Church pictures are in the app and load from the phone', async ({ page }) => {
+  await asApp(page);
+  await page.goto(base + '#/guides');
+  await settle(page);
+  const covers = page.locator('#app .gcover img');
+  await expect(covers).toHaveCount(D.KG.length);
+  for (let i = 0; i < D.KG.length; i++) {
+    await covers.nth(i).scrollIntoViewIfNeeded();
+    await expect.poll(() => covers.nth(i).evaluate(e => e.complete && e.naturalWidth)).toBe(1200);
+  }
+  await page.goto(base + '#/church/' + D.EC[0].slug);
+  await settle(page);
+  const pic = page.locator('#app img').first();
+  await expect.poll(() => pic.evaluate(e => e.complete && e.naturalWidth > 0)).toBe(true);
+});

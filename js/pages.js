@@ -27,7 +27,7 @@ function viewReaderHome() {         // the app's home: the Bible first, the Guid
   const withText = D.entries.filter(e => e.books.some(b => D.CC[b])).length;
   return `
   <h1>Read the Bible.</h1>
-  <p class="lede">All 81 books of the Ethiopian canon, as the Ethiopian and Eritrean Orthodox Tewahedo Churches list them. ${withText} have their text here.</p>
+  <p class="lede">${withText} books of the Ethiopian canon, as the Ethiopian and Eritrean Orthodox Tewahedo Churches list it, with their text here.</p>
   ${continueCard()}
   ${searchForm()}
   <h2>The 81 books</h2>
@@ -39,7 +39,7 @@ function viewReaderHome() {         // the app's home: the Bible first, the Guid
   <h2>Guide</h2>
   ${guideList()}
   <h2>From Kingdom Code</h2>
-  <p class="lede" style="margin-top:8px">Essays from the publication behind this app, kept in their own section, apart from the Bible text.</p>
+  <p class="lede" style="margin-top:8px">Essays from Kingdom Code, the publication behind this app.</p>
   <p style="margin-top:16px"><a class="btn secondary" href="#/kc">Open From Kingdom Code</a></p>`;
 }
 // The website's front page, laid out as the Kingdom Code archive: the mission and the search first, then the study collections as catalog
@@ -127,7 +127,7 @@ function viewHome() {
 
   ${(() => { const have = extras.filter(e => piecesForBook(e.books).length || e.books.some(b => D.CC[b])), rest = extras.length - have.length;
     return `<h2>Books outside most Bibles</h2>
-  <p class="lede">${extras.length} of the 81 are not in a Protestant Bible. ${have.length} have their text here.</p>
+  <p class="lede">${extras.length} books of the Ethiopian canon are not in a Protestant Bible. ${have.length} of them have their text here.</p>
   ${shelf(have)}
   ${rest ? `<p class="cap" style="margin-top:12px">${rest} more are listed, with their text still to come.${D.EN ? ` <a href="#/english" style="color:var(--accent)">Where to read them in English</a>` : ''}</p>` : ''}
   <p style="margin-top:16px"><a class="btn secondary" href="#/books">Browse all 81 books</a></p>`; })()}
@@ -168,7 +168,7 @@ function viewApp() {
   ${backLink('#/about')}
   <img class="appicon" src="img/app-icon.webp" width="96" height="96" alt="KC Tewahedo Bible app icon">
   <h1>KC Tewahedo Bible for Android</h1>
-  <p class="lede">All 81 books of the Ethiopian canon on your phone, ${withText} with their text, every one readable without a connection. Free, with no account and no ads.</p>
+  <p class="lede">${withText} books of the Ethiopian canon on your phone, every one readable without a connection. Free, with no account and no ads.</p>
   <p class="act" style="margin-top:24px"><a class="btn primary" href="${APP_DOWNLOAD}" data-app-download>Download for Android</a></p>
   <p class="cap" style="margin-top:8px">Android 7 or newer. About 6 MB.</p>
   <div class="about">
