@@ -199,8 +199,9 @@ test('the app keeps its own Guide page, without the PDF guides', async ({ page }
 test('the website front page is the Kingdom Code archive: the mission, search, the featured guide, the newest essays and the collections', async ({ page }) => {
   await page.goto('/'); await settle(page);
   await expect(page.locator('#app h1')).toHaveText('Kingdom Code');
-  await expect(page.locator('.ahead')).toHaveText('Recovering ancient wisdom. Investigating history. Understanding Scripture.');
-  await expect(page.locator('.alede')).toContainText('An independent Christian publication exploring Holy Scripture, early Christianity, ancient civilizations, and the historical records that illuminate our world.');
+  await expect(page.locator('.ahead')).toHaveText('Examine the Scriptures daily.');
+  await expect(page.locator('.alede')).toContainText('A free Christian publication in the heritage of the Ethiopian canon. Every essay, word study and profile sends you back to the text, so you can test what you hear against it, as the Bereans did.');
+  await expect(page.locator('.astd')).toHaveText('The standard is Scripture. Everything here is free to read and free to check.');
   await expect(page.locator('#q')).toBeVisible();                                    // search is still first at hand
   await expect(page.locator('.afeat')).toHaveAttribute('href', '/guides/kingdom-code/the-ungovernable-mind/');
   const ids = await page.evaluate(() => essayIds().slice(0, 5));

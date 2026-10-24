@@ -62,8 +62,8 @@ function archiveHome() {
   return `
   <section class="ahero" aria-labelledby="ah-t">
     <h1 id="ah-t">Kingdom <em>Code</em></h1>
-    <p class="ahead"><span>Recovering ancient wisdom.</span> <span>Investigating history.</span> <span>Understanding Scripture.</span></p>
-    <p class="alede">An independent Christian publication exploring Holy Scripture, early Christianity, ancient civilizations, and the historical records that illuminate our world.</p>
+    <p class="ahead"><span>Examine the Scriptures daily.</span></p>
+    <p class="alede">A free Christian publication in the heritage of the Ethiopian canon. Every essay, word study and profile sends you back to the text, so you can test what you hear against it, as the Bereans did.</p>
     <form class="search" role="search" id="sf">
       <label class="sr" for="q">Search by verse, word, or title</label>
       <input id="q" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug" aria-haspopup="listbox" placeholder="Verse, word, or title" autocomplete="off" autocapitalize="none" spellcheck="false" enterkeyhint="search">
@@ -71,6 +71,7 @@ function archiveHome() {
       <ul class="sug" id="sug" role="listbox" aria-label="Suggestions" hidden></ul>
       <div class="sr" id="sugstat" role="status" aria-live="polite"></div>
     </form>
+    <p class="astd">The standard is Scripture. Everything here is free to read and free to check.</p>
     <ul class="chips" aria-label="Popular verses">${chips}</ul>
   </section>
 
