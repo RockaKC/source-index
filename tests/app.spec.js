@@ -98,10 +98,11 @@ test('the site\'s menu sends readers to the app download page, and About no long
   await page.locator('#menubtn').click();
   await page.locator('#menu a[href="/app/"]').click();
   await settle(page);
-  await expect(page.locator('#app h1')).toHaveText('KC Tewahedo Bible for Android');
+  await expect(page.locator('#app h1')).toHaveText('KC Tewahedo Bible');
   await expect(page.locator('#app a[data-app-download]'))
     .toHaveAttribute('href', 'https://github.com/RockaKC/source-index/releases/latest/download/KC-Tewahedo-Bible.apk');
-  await expect(page.locator('#app')).toContainText('Why Android warns you');
+  await expect(page.locator('#app')).toContainText('Coming soon to Google Play and the App Store.');
+  await expect(page.locator('#app')).not.toContainText('independence');
   await page.goto('/app.html#/about');
   await settle(page);
   await expect(page.locator('#app a[href="#/app"]'), 'the app does not offer itself').toHaveCount(0);

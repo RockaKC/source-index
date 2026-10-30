@@ -72,7 +72,7 @@ test('the site: About has no support line or button, and the menu offers Get the
   await page.locator('#menubtn').click();
   await page.locator('#menu a[href="/app/"]').click();
   await settle(page);
-  await expect(page.locator('#app h1')).toHaveText('KC Tewahedo Bible for Android');
+  await expect(page.locator('#app h1')).toHaveText('KC Tewahedo Bible');
 });
 
 test('the translation tier list shows its picture, which loads, before the written tiers', async ({ page }) => {
