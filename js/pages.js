@@ -167,24 +167,24 @@ function viewApp() {
   return `
   ${backLink('#/about')}
   <img class="appicon" src="img/app-icon.webp" width="96" height="96" alt="KC Tewahedo Bible app icon">
-  <h1>KC Tewahedo Bible for Android</h1>
+  <h1>KC Tewahedo Bible</h1>
   <p class="lede">${withText} books of the Ethiopian canon on your phone, every one readable without a connection. Free, with no account and no ads.</p>
+  <p class="lede"><strong>Coming soon to Google Play and the App Store.</strong></p>
   <p class="act" style="margin-top:24px"><a class="btn primary" href="${APP_DOWNLOAD}" data-app-download>Download for Android</a></p>
-  <p class="cap" style="margin-top:8px">Android 7 or newer. About 6 MB.</p>
+  <p class="cap" style="margin-top:8px">Available now for Android 7 or newer, direct from Kingdom Code. About 7 MB.</p>
   <div class="about">
     <h2>Installing it</h2>
     <ol>
       <li>Tap <strong>Download for Android</strong>, then open the file when it finishes.</li>
-      <li>Android warns that the app comes from an unknown source and asks you to allow your browser to install apps. Allow it.</li>
+      <li>If Android asks, allow your browser to install apps.</li>
       <li>Tap <strong>Install</strong>. KC Tewahedo Bible appears with your other apps.</li>
     </ol>
-    <h2>Why Android warns you</h2>
-    <p>Android shows that warning for every app that does not come through the Google Play Store. It says nothing about this app. Kingdom Code publishes the app itself, outside Google's store and its approval process, so no gatekeeper stands between this work and its readers. The warning is the cost of that independence.</p>
-    <p>The app is safe and free, and it collects nothing: no account, no ads, no analytics, no tracking. It asks Android for two permissions. Internet access is used only when you open a link out of the app, such as Patreon or Ko-fi, or when you tap Check for updates or Update now. Permission to install apps is used only to put a newer version of this same app over the old one, when you tap Update now; Android asks you once, and shows its own install screen each time. The whole Bible is stored inside the app, so it reads without a connection.</p>
+    <h2>Privacy</h2>
+    <p>The app is free, and it collects nothing: no account, no ads, no analytics, no tracking. It asks Android for two permissions. Internet access is used only when you open a link out of the app, such as Patreon or Ko-fi, or when you tap Check for updates or Update now. Permission to install apps is used only to put a newer version of this same app over the old one, when you tap Update now; Android asks you once, and shows its own install screen each time. The whole Bible is stored inside the app, so it reads without a connection.</p>
     <h2>Updates</h2>
     <p>When a new version is out, download it again from this page and install it over the old one. Your place and your settings stay. Once the app is installed, it can update itself: open the menu, tap Updates, then Check for updates, and tap Update now when a newer version is found. The new version downloads inside the app, and Android asks you to confirm the install.</p>
     <h2>iPhone</h2>
-    <p>There is no iPhone app yet. On iPhone, open this site in Safari, tap Share, then Add to Home Screen. It opens like an app and keeps the chapters you read for offline use.</p>
+    <p>The iPhone app is coming to the App Store. Until then, open this site in Safari, tap Share, then Add to Home Screen. It opens like an app and keeps the chapters you read for offline use.</p>
   </div>`;
 }
 function viewCredits() {
