@@ -82,9 +82,17 @@ test('the page fits a phone in light and dark, with no sideways scroll', async (
   }
 });
 
-test('the app has no Daily Scripture Formation', async ({ page }) => {
-  await page.goto('/app.html#/formation'); await settle(page);
-  await expect(page.locator('#app h1')).toHaveText('Not found');
+test('the app has Daily Scripture Formation too: today on its home screen, and the page at its own #/ address', async ({ page }) => {
+  await at(page, '2026-11-05T08:00:00');                                     // a Thursday
   await page.goto('/app.html'); await settle(page);
-  await expect(page.locator('.fmhome')).toHaveCount(0);
+  await expect(page.locator('.fmhome h2')).toHaveText('Courage and Faithfulness');
+  await page.locator('.fmhome a.btn').click(); await settle(page);
+  expect(await page.evaluate(() => location.hash)).toBe('#/formation');
+  await expect(page.locator('.fmtheme')).toHaveText('Courage and Faithfulness');
+  await page.locator('.fmcard').first().locator('.fmref').click(); await settle(page);
+  expect(await page.evaluate(() => location.hash)).toBe('#/read/38/3');
+  await page.goBack(); await settle(page);
+  await page.locator('[data-fmday="2"]').click();
+  await page.locator('.fmcard').first().locator('.fmref').first().click(); await settle(page);
+  expect(await page.evaluate(() => location.hash)).toBe('#/read/29/25/28');           // a passage opens its whole chapter at its first verse
 });

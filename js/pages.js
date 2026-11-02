@@ -29,6 +29,7 @@ function viewReaderHome() {         // the app's home: the Bible first, the Guid
   <h1>Read the Bible.</h1>
   <p class="lede">${withText} books of the Ethiopian canon, as the Ethiopian and Eritrean Orthodox Tewahedo Churches list it, with their text here.</p>
   ${continueCard()}
+  ${typeof fmCard === 'function' ? fmCard() : ''}
   ${searchForm()}
   <h2>The 81 books</h2>
   <div class="tabs" role="tablist" aria-label="Testament">
