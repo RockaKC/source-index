@@ -96,3 +96,22 @@ test('the app has Daily Scripture Formation too: today on its home screen, and t
   await page.locator('.fmcard').first().locator('.fmref').first().click(); await settle(page);
   expect(await page.evaluate(() => location.hash)).toBe('#/read/29/25/28');           // a passage opens its whole chapter at its first verse
 });
+
+test('Today in the header opens the day\'s readings from any page, and the header fits the narrowest phone', async ({ page }) => {
+  await at(page, '2026-11-03T08:00:00');
+  for (const [url, today] of [['/bible/genesis/1/', '/daily-scripture/'], ['/app.html#/books', '#/formation']]) {
+    for (const width of [320, 390]) {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto(url); await settle(page);
+      const head = await page.locator('header').evaluate(h => {        // every header item on one line, inside the screen with a margin to spare
+        const els = [...h.querySelectorAll('.wordmark, .tools > *')].filter(e => getComputedStyle(e).display !== 'none');
+        return { right: Math.max(...els.map(e => e.getBoundingClientRect().right)), rows: new Set(els.map(e => Math.round(e.getBoundingClientRect().top / 20))).size };
+      });
+      expect(head.rows, `the header at ${width}px on ${url} keeps one line`).toBe(1);
+      expect(head.right, `the header at ${width}px on ${url} stays on screen`).toBeLessThanOrEqual(width - 8);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    }
+    await page.locator(`header a.nav[href="${today}"]`).click(); await settle(page);
+    await expect(page.locator('.fmtheme')).toHaveText('Self-Control');
+  }
+});
