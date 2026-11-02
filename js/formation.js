@@ -1,4 +1,4 @@
-// formation.js: Daily Scripture Formation: three readings a day, Morning, Afternoon and Evening, in a weekly order (the website only)
+// formation.js: Daily Scripture Formation: three readings a day, Morning, Afternoon and Evening, in a weekly order (the website and the app)
 // Loaded as a plain script after js/witness.js; see index.html for the order. Shared names live in the page's global scope.
 // The readings are edited by hand in tools/curated.json ("formation"); tools/formation.py checks each one against the stored text and writes
 // data/formation.js (FMD). Only references and links reach the page, never the text: each reading opens the archive's own chapter.
@@ -10,7 +10,7 @@ const FM_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday
 const fmCycle = () => FM.cy.find(c => c.id === FM.cur);
 const fmToday = (now = new Date()) => now.getDay();          // 0 is Sunday, the first day; 6 is Saturday, the seventh day, the Sabbath
 const fmDayName = i => i === 6 ? 'Saturday, the seventh day' : i === 0 ? 'Sunday, the first day' : FM_DAYS[i];
-const fmHref = r => r.r[2] ? scriptureHash(r.r) : `#/read/${r.r[0]}/${r.r[1]}`;   // a whole chapter opens at its start
+const fmHref = r => `#/read/${r.r[0]}/${r.r[1]}${r.r[2] ? '/' + r.r[2] : ''}`;   // the chapter, at the reading's first verse: the whole passage, in both products
 const fmRef = r => `<li><a class="fmref" href="${fmHref(r)}">${esc(r.l)}</a><span class="cap">${esc(r.tr)}${r.en ? ` · ${esc(r.en)}` : ''}</span></li>`;
 
 function fmDay(i) {                 // one day: its theme and its three sessions

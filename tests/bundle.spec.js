@@ -83,3 +83,24 @@ test('the guide covers and the Early Church pictures are in the app and load fro
   const pic = page.locator('#app img').first();
   await expect.poll(() => pic.evaluate(e => e.complete && e.naturalWidth > 0)).toBe(true);
 });
+
+test('Daily Scripture Formation is in the app and reads from the phone, with every reading opening its chapter', async ({ page }) => {
+  const outside = [], missing = [];
+  page.on('request', r => { if (!r.url().startsWith(base)) outside.push(r.url()); });
+  page.on('response', r => { if (r.status() >= 400) missing.push(r.url()); });
+  await asApp(page);
+  await page.goto(base + '#/formation');
+  await settle(page);
+  await expect(page.locator('#app h1')).toHaveText('Daily Scripture Formation');
+  for (let i = 0; i < 7; i++) {
+    await page.locator(`[data-fmday="${i}"]`).click();
+    for (const href of await page.locator('.fmref').evaluateAll(a => a.map(x => x.getAttribute('href')))) {
+      await page.evaluate(h => { location.hash = h; }, href); await settle(page);
+      expect(await page.locator('#rtext p').count(), `chapter text for ${href}`).toBeGreaterThan(0);
+      await page.evaluate(() => { location.hash = '#/formation'; }); await settle(page);
+      await page.locator(`[data-fmday="${i}"]`).click();
+    }
+  }
+  expect(missing, 'files the app asked for but does not have').toEqual([]);
+  expect(outside, 'requests that left the phone').toEqual([]);
+});
