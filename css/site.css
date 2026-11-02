@@ -38,7 +38,7 @@ header{position:relative}
 .tools{display:flex;align-items:center;gap:4px}
 .nav{padding:0 8px;font:500 15px/36px var(--sans);color:var(--muted);text-decoration:none;transition:color var(--fade)}
 @media (hover:hover){.nav:hover{color:var(--ink)}}
-.tools .nav:nth-of-type(2){margin-right:4px}
+.tools .nav:last-of-type{margin-right:4px}
 .wordmark{white-space:nowrap}
 .theme,.menubtn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;margin:-6px 0;padding:0;border:0;border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;transition:color var(--fade),background var(--fade)}
 .menubtn[aria-expanded=true]{color:var(--ink);background:var(--surface)}
@@ -386,15 +386,19 @@ dialog.drawer.swiped::backdrop{animation:none}
   .wordmark{display:flex;flex-direction:column;align-items:flex-start}
   .wordmark .sub{margin:0;font-size:12px;line-height:16px}
   .tools{gap:0}
-  .nav{padding:0 6px}
+  .nav{padding:0 4px;font-size:14px}
   .theme,.menubtn{width:32px}
   .menubtn{margin-right:-4px}
   .menu{right:-4px}
   .menubtn.lead{margin:-6px 4px -6px -6px}
 }
+@media (max-width:399px){
+  .wordmark{font-size:17px}
+}
 @media (max-width:359px){
-  .wordmark{font-size:18px}
-  .nav{padding:0 4px}
+  .wordmark{font-size:15px}
+  .nav{padding:0 3px;font-size:13px}
+  .theme,.menubtn{width:28px}
 }
 @media (min-width:720px){
   .wrap{padding:var(--s4) var(--s3) var(--s8)}

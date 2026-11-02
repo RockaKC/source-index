@@ -129,7 +129,7 @@ test('the Download button saves the app from this site once the site holds the f
 test('the site: Guides is in the header where Words was, and Names and Translations left the menu for the Guides page', async ({ page }) => {
   await page.goto('/'); await settle(page);
   const nav = await page.locator('header .tools a.nav').evaluateAll(a => a.map(x => [x.textContent.trim(), x.getAttribute('href')]));
-  expect(nav).toEqual([['Bible', '/bible/'], ['Guides', '/guides/']]);
+  expect(nav).toEqual([['Today', '/daily-scripture/'], ['Bible', '/bible/'], ['Guides', '/guides/']]);   // Today: Daily Scripture Formation
   for (const r of ['/names/', '/translations/', '/words/']) await expect(page.locator(`#menu a[href="${r}"]`)).toHaveCount(0);
   await page.locator('header a.nav[href="/guides/"]').click(); await settle(page);
   await expect(page.locator('#app h1')).toHaveText('Guides');
