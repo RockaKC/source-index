@@ -1636,5 +1636,55 @@
   {"a": "church/moses-the-black", "b": "word/cush", "as": "associated_with",
    "why": "Moses is called the Ethiopian, from the Greek Aithiops. The Cush study follows the biblical land of Cush, which the stored Septuagint calls Ethiopia.",
    "basis": "editorial", "ev": [{"l": "Zephaniah 3:10", "r": [47, 3, 10, 10]}, {"l": "Isaiah 18:1", "r": [34, 18, 1, 1]}]}
- ]
+ ],
+ "formation": {
+  "_about": "Daily Scripture Formation (js/formation.js, /daily-scripture/): three readings a day, Morning, Afternoon and Evening, in a weekly order that begins on Sunday; Saturday is the seventh day, the Sabbath. References are written as English Bibles number them; the exporter (tools/formation.py) converts each one to the stored text's numbering, checks that the verses exist, and refuses anything it cannot find. The page shows references and links only, never the text itself. 'current' names the cycle the page shows; add a new cycle to 'cycles' and point 'current' at it, and the page needs no change. 'do' is the reflection or action for that session.",
+  "title": "Daily Scripture Formation",
+  "lead": "What occupies your mind shapes how you live.",
+  "intro": "Scripture calls us to renew our minds, guard our hearts, and put God’s Word into practice. Begin the morning with truth, return to it during the day, and end the evening in reflection.",
+  "motto": "Read. Meditate. Examine. Obey.",
+  "foundation": ["Romans 12:2", "Psalm 1:1-3", "Proverbs 4:23", "Philippians 4:8", "Hebrews 5:14", "James 1:22"],
+  "sessions": [
+   {"id": "morning", "label": "Morning", "name": "Establish", "minutes": "10–15 minutes",
+    "purpose": "Begin the day with Scripture before social media and other distractions: renew the mind, seek wisdom and discernment, and set the day’s intentions."},
+   {"id": "afternoon", "label": "Afternoon", "name": "Correct", "minutes": "5–10 minutes",
+    "purpose": "Pause during the day to examine your conduct, resist temptation, practise self-control, and bring your actions back in line with Scripture."},
+   {"id": "evening", "label": "Evening", "name": "Examine", "minutes": "5–10 minutes",
+    "purpose": "End the day in reflection, repentance, gratitude, humility, and trust in God."}
+  ],
+  "current": "first-cycle",
+  "cycles": [
+   {"id": "first-cycle", "title": "The first cycle",
+    "days": [
+     {"theme": "Renewing the Mind",
+      "morning": {"refs": ["Romans 12:1-3", "Psalm 1"], "do": "Before you open a screen, offer the day to God. Name one way of thinking this age has pressed on you, and decide what your mind will dwell on instead."},
+      "afternoon": {"refs": ["Philippians 4:4-9"], "do": "Stop and look at what has filled your mind since morning. Measure it against the things Paul tells you to think on, and set aside one thing that does not belong."},
+      "evening": {"refs": ["Psalm 4"], "do": "Lie down in quiet and search your heart. What did you say in your heart today that you need to bring to the Lord?"}},
+     {"theme": "Guarding Attention",
+      "morning": {"refs": ["Proverbs 4:20-27"], "do": "Decide now what your eyes and ears will not take in today, and where your feet will not go. Keep to it."},
+      "afternoon": {"refs": ["Matthew 6:19-24"], "do": "Where has your attention gone since morning? Ask which master it served, and turn it back."},
+      "evening": {"refs": ["Psalm 101"], "do": "Review what you set before your eyes today. Name one thing you will not set before them tomorrow."}},
+     {"theme": "Self-Control",
+      "morning": {"refs": ["Proverbs 25:28", "Galatians 5:16-25"], "do": "Name the desire most likely to rule you today. Before you act on it, stop, seek counsel, and ask what walking by the Spirit would look like."},
+      "afternoon": {"refs": ["1 Corinthians 9:24-27"], "do": "Choose one small act of discipline this afternoon, and keep it without telling anyone."},
+      "evening": {"refs": ["Psalm 51"], "do": "Where did you give way today? Confess it plainly to God, without excuse, and ask Him for a clean heart."}},
+     {"theme": "Wisdom and Discernment",
+      "morning": {"refs": ["Proverbs 2"], "do": "Ask God for wisdom before the day’s first decision, and seek it as you would search for treasure."},
+      "afternoon": {"refs": ["James 1:5-8", "James 1:19-27"], "do": "In your next conversation, be quick to hear and slow to speak. Then do one thing the word asks of you, not only hear it."},
+      "evening": {"refs": ["Psalm 139:23-24"], "do": "Ask God to search you and to show you any way of iniquity in you. Write down what comes to mind, and bring it to Him."}},
+     {"theme": "Courage and Faithfulness",
+      "morning": {"refs": ["Daniel 3"], "do": "Name the place where you are pressed to bow today. Decide now that you will not, whatever it costs."},
+      "afternoon": {"refs": ["Acts 4:13-22"], "do": "Where are you tempted to stay silent about Christ? Speak plainly once today, with courage and respect."},
+      "evening": {"refs": ["Psalm 27"], "do": "What did you fear today? Bring it to the Lord, your light, and wait on Him."}},
+     {"theme": "Humility and Correction",
+      "morning": {"refs": ["Sirach 3:17-31"], "do": "Do your work today in meekness. Where you are greater, humble yourself the more."},
+      "afternoon": {"refs": ["Matthew 18:1-4"], "do": "Where are you seeking to be great today? Take the lower place in one conversation or task."},
+      "evening": {"refs": ["Psalm 131"], "do": "Lay down one ambition or worry that is too great for you, and quiet your soul before the Lord."}},
+     {"theme": "Love, Obedience, and Sabbath Reflection",
+      "morning": {"refs": ["Matthew 5:1-16"], "do": "Read the Beatitudes slowly. Which one is furthest from your life? Ask God to form it in you."},
+      "afternoon": {"refs": ["1 Corinthians 13"], "do": "Measure the week’s words and actions against love as Paul describes it. Where did you fall short, and whom will you seek to make it right with?"},
+      "evening": {"refs": ["John 15:1-17"], "do": "Rest in Christ, the vine. Look back over the week: what fruit has obedience borne, and where must you abide more closely?"}}
+    ]}
+  ]
+ }
 }

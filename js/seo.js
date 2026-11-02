@@ -157,5 +157,6 @@ function seoRoutes() {
     add('#/witness', null, 0.8);
     D.W.e.filter(e => e.st === 'approved').forEach(e => add('#/witness/' + e.n, null, 0.7));
   }
+  if (typeof FM_ON !== 'undefined' && FM_ON) add('#/formation', null, 0.8);       // Daily Scripture Formation
   return out.map(r => Object.assign(r, {path: pathOf(r.hash)}));
 }
