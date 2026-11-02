@@ -100,15 +100,16 @@ test('the app has Daily Scripture Formation too: today on its home screen, and t
 test('Today in the header opens the day\'s readings from any page, and the header fits the narrowest phone', async ({ page }) => {
   await at(page, '2026-11-03T08:00:00');
   for (const [url, today] of [['/bible/genesis/1/', '/daily-scripture/'], ['/app.html#/books', '#/formation']]) {
-    for (const width of [320, 390]) {
+    for (const width of [320, 360, 390, 400]) {                               // the tightest widths: just above each step in the header's sizes
       await page.setViewportSize({ width, height: 800 });
       await page.goto(url); await settle(page);
-      const head = await page.locator('header').evaluate(h => {        // every header item on one line, inside the screen with a margin to spare
+      const head = await page.locator('header').evaluate(h => {        // one line, and room to spare between the wordmark and the links
         const els = [...h.querySelectorAll('.wordmark, .tools > *')].filter(e => getComputedStyle(e).display !== 'none');
-        return { right: Math.max(...els.map(e => e.getBoundingClientRect().right)), rows: new Set(els.map(e => Math.round(e.getBoundingClientRect().top / 20))).size };
+        return { rows: new Set(els.map(e => Math.round(e.getBoundingClientRect().top / 20))).size,
+          spare: h.querySelector('.tools').firstElementChild.getBoundingClientRect().left - h.querySelector('.wordmark').getBoundingClientRect().right };
       });
       expect(head.rows, `the header at ${width}px on ${url} keeps one line`).toBe(1);
-      expect(head.right, `the header at ${width}px on ${url} stays on screen`).toBeLessThanOrEqual(width - 8);
+      expect(head.spare, `the header at ${width}px on ${url} has room to spare, whatever the fonts`).toBeGreaterThanOrEqual(16);
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     }
     await page.locator(`header a.nav[href="${today}"]`).click(); await settle(page);
