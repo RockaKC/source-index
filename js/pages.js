@@ -76,6 +76,7 @@ function archiveHome() {
     <ul class="chips" aria-label="Popular verses">${chips}</ul>
   </section>
 
+  ${typeof fmCard === 'function' ? fmCard() : ''}
   ${typeof witCard === 'function' ? witCard() : ''}
 
   <h2 class="ah2">Study the archive</h2>

@@ -697,3 +697,31 @@ html:not([data-product]){-webkit-tap-highlight-color:transparent;touch-action:ma
 .vbar{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);margin:-4px 0 12px;padding:6px 6px 6px var(--s2);border:1px solid var(--hairline);border-radius:10px;background:var(--surface);font:500 14px/20px var(--sans)}
 .vbar .vref{color:var(--muted);min-width:0}
 .vbar .savebtn{height:36px}
+
+/* Daily Scripture Formation (js/formation.js): the day buttons, the day's theme, and the three session cards */
+.fmintro{max-width:62ch;margin:var(--s2) 0 0;font:400 18px/28px var(--serif);color:var(--ink)}
+.fmmotto{margin:var(--s2) 0 0;font:600 14px/20px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.fmdays{display:flex;flex-wrap:wrap;gap:var(--s1);margin-top:var(--s4)}
+.fmtab{min-width:52px;height:40px;padding:0 var(--s2);border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font:500 15px/20px var(--sans);cursor:pointer;transition:background-color var(--fade)}
+.fmtab[aria-pressed=true]{background:var(--tint);border-color:var(--accent);font-weight:600}
+.fmtab.fmnow{box-shadow:inset 0 -3px 0 var(--accent)}
+.fmtheme{margin:var(--s4) 0 0;font:600 28px/36px var(--serif)}
+.fmwhen{margin-top:4px}
+.fmcards{display:grid;gap:var(--s2);margin-top:var(--s3)}
+.fmcard{padding:var(--s3);border:1px solid var(--hairline);border-top:3px solid var(--accent);border-radius:14px;background:var(--surface)}
+.fmcard .eyebrow{margin:0 0 var(--s1);flex-wrap:wrap;gap:2px 12px}
+.fmcard h3{margin:0;font:600 22px/28px var(--serif)}
+.fmrefs{list-style:none;margin:var(--s2) 0 0;padding:0}
+.fmrefs li{margin:0 0 var(--s1)}
+.fmrefs .fmref{display:block;font:600 18px/26px var(--serif);color:var(--accent)}
+.fmwhy{margin:var(--s2) 0 0;font:400 15px/22px var(--sans);color:var(--muted)}
+.fmdo{margin:var(--s2) 0 0;font:400 17px/26px var(--serif);color:var(--ink)}
+.fmhome{margin:var(--s6) 0 0;padding:var(--s3);border:1px solid var(--hairline);border-top:3px solid var(--accent);border-radius:14px;background:var(--surface)}
+.fmhome .eyebrow{margin:0 0 var(--s1);flex-wrap:wrap;gap:2px 12px}
+.fmht{margin:0;font:600 28px/36px var(--serif)}
+.fmht a{text-decoration:none}
+.fmhact{display:flex;flex-wrap:wrap;gap:var(--s1);margin:var(--s2) 0 0}
+.fmhlist{list-style:none;margin:var(--s2) 0 0;padding:0;font:400 16px/24px var(--sans)}
+.fmhlist li{display:grid;grid-template-columns:96px 1fr;gap:8px;margin:0 0 6px}
+.fmhlist b{color:var(--muted);font-weight:600}
+.fmhlist a{color:var(--accent)}
