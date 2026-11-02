@@ -393,12 +393,15 @@ dialog.drawer.swiped::backdrop{animation:none}
   .menubtn.lead{margin:-6px 4px -6px -6px}
 }
 @media (max-width:399px){
-  .wordmark{font-size:17px}
+  .wordmark{font-size:16px}
+  .nav{padding:0 3px;font-size:13px}
+  .theme,.menubtn{width:30px}
 }
 @media (max-width:359px){
-  .wordmark{font-size:15px}
-  .nav{padding:0 3px;font-size:13px}
-  .theme,.menubtn{width:28px}
+  .wordmark{font-size:14px}
+  .nav{padding:0 2px;font-size:12px}
+  header{gap:4px}
+  .theme,.menubtn{width:26px}
 }
 @media (min-width:720px){
   .wrap{padding:var(--s4) var(--s3) var(--s8)}
